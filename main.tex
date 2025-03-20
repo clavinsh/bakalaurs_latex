@@ -1,0 +1,1148 @@
+\documentclass[12pt]{report}% Šablona Kristiāns Kacars 2022. Last updated 08.02.2023
+
+%\usepackage[utf8]{inputenc} neizmanto XeLatex, tad jāatkomentē.
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\geometry{
+ a4paper,
+ left=30mm,
+ top=20mm,
+ right=20mm,
+ bottom=20mm,
+ includehead
+ }
+
+
+\usepackage{xcolor}
+\usepackage[]{graphicx}
+\usepackage{setspace}
+%\onehalfspacing %rindstarpas 1.5 vienības
+\linespread{1.5}
+\usepackage{placeins}%ērti izmantot \FloatBarrier, lai neļauti attēliem aiziet pārāk tālu no vajadzīgās vietas.
+\usepackage{titlesec}%izveido atstarpes starp chapter un section nosaukumu
+\usepackage{indentfirst}%pirmai rindkopai sekcijas sākumā nav atkāpe, ar šo tā tiek uzlikta
+\titleformat{\chapter}
+  {\normalfont\fontsize{16}{18}\bfseries\raggedright}{\thechapter.}{0pt}{\MakeUppercase}{}
+  
+\titleformat{\section}
+  {\normalfont\fontsize{14}{16}\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}
+  {\normalfont\fontsize{12}{16}\bfseries}{\thesubsection}{1em}{}  
+
+\titlespacing*{\chapter}{0pt}{0pt}{10pt}
+\titlespacing*{\section}{0pt}{5pt}{5pt}
+
+
+\usepackage{fancyhdr}%šis izveido header, lai tur ir līnija ar section nosaukumu
+\newcommand{\changefont}{%
+    \fontsize{9}{11}\selectfont
+}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot[C]{\thepage}
+\fancyhead[L]{\changefont \leftmark}
+
+\usepackage{polyglossia}
+\setdefaultlanguage{latvian}
+\usepackage{lipsum}
+\setlength{\parskip}{1.5pt}%atstarpe starp rindkopām
+
+%matematikas paketes
+\usepackage{amsmath} 
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{bm}%ērts priekš treknraksta matemātiskajā vidē
+\usepackage{esint}%integrāļu zīmes, kas nav parastajās ams paketēs
+
+%--pašizveidotās matemātikas komandas
+\newcommand{\bra}{\langle}
+\newcommand{\ket}{\rangle}
+%--
+
+\newtheorem{theorem}{Teorēma}
+\theoremstyle{definition}
+\newtheorem{definition}{Definīcija}
+
+\usepackage{siunitx}%mērvienībām
+
+%Algoritmu atspoguļošanai
+\usepackage[ruled, vlined, linesnumbered, algochapter]{algorithm2e}
+\renewcommand{\algorithmcfname}{Algoritms}% nomaina nosaukumu uz latviešu variantu
+\usepackage[labelfont={bf}]{caption}%attēlu un tabulu nosaukumu fonts
+
+\usepackage[style=phys,%der arī citi, piem., chem-angew(bibliogrāfijā pie article nav links)
+articletitle=false,
+biblabel=brackets,%
+chaptertitle=false,%
+    sorting=none,%kārto pēc citēšanas secības
+    date=short]{biblatex}
+\addbibresource{biblio.bib}
+
+
+\usepackage{hyperref}%Izveido spiežamus linkus saturam, bibliogrāfijām uc.
+\hypersetup{
+    colorlinks,
+    citecolor=blue,
+    filecolor=black,
+    linkcolor=black,
+    urlcolor=black
+}
+
+
+\newcommand*{\SavedEqref}{}%Dod krāsainus un spiežamus vienādojumu linkus
+\let\SavedEqref\eqref
+\renewcommand*{\eqref}[1]{%
+  \begingroup
+    \hypersetup{
+      linkcolor=blue,
+      linkbordercolor=black,
+    }%
+    \SavedEqref{#1}%
+  \endgroup
+}%vienādojumiem
+
+
+\usepackage{chngcntr}%figure numeration
+\counterwithin{figure}{chapter}
+\counterwithin{table}{chapter}
+\counterwithin{equation}{chapter}%vienadojumu numerācija veidojas pa nodaļām
+
+
+
+%Pakete izveido apzīmējumu sarakstu
+\usepackage{nomencl}
+\makenomenclature
+\renewcommand{\nomname}{Apzīmējumu saraksts}
+%% Sadala grupās apzīmējumus
+%Ja gribat pievienot papildu kategoriju, nokopējat-->
+%   \ifstrequal{#1}{F}{Fizikas konstantes}{%
+% tikai pēdējā rindiņā( kur ir Lielumu apzīmējumi) ieliekat papildu "}"
+% -----------------------------------------
+\usepackage{etoolbox}
+\renewcommand\nomgroup[1]{%
+  \item[\bfseries
+  \ifstrequal{#1}{N}{}
+]}
+
+% pakete priekš koda formatēšanas
+\usepackage{listings}
+\renewcommand{\lstlistingname}{Izdruka}
+\lstset{
+  language=C++,
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{blue},
+  stringstyle=\color{red},
+  commentstyle=\color{green!50!black},
+  numbers=left,
+  numberstyle=\tiny\color{gray},
+  stepnumber=1,
+  frame=single,
+  tabsize=2,
+  breaklines=true,
+  showstringspaces=false,
+  aboveskip=1mm, % Reduce space above the listing
+  belowskip=1mm, % Reduce space below the listing
+  lineskip=-1pt, % Adjust line spacing between lines
+}
+
+
+
+
+% --------------------------------------------
+% ------- beidzas package izsaukšana un stila veidošana
+
+
+
+
+
+
+%%%--------- Aizpildīt titullapu---------- 
+%% Šis aizpildīs template titullapu ar jūsu informāciju
+% Darba tips, i.e. bakalaura vai maģistra
+\def\degree{Kursa darbs}
+% Fakultātes nosaukums
+\def\faculty{Eksakto zinātņu un tehnoloģiju fakultāte}
+% Nodaļa iekš fakultātes
+\def\department{Datorikas nodaļa}
+% Universitātes nosaukums
+\def\university{Latvijas Universitāte}
+% Universitātes logo
+\def\crest{\includegraphics[width = 0.5\textwidth]{LU_logo_LV_horiz.png}}%ja ieliekat attēlu kādā mapē, tad jāsauc attēls no šīs mapes, citādi neparādīsies tas titullapā.
+\def\vietlaiks{Rīga, 2024}
+\def\supervisor{Darba vadītājs: profesors, Dr. dat. Leo Seļāvo}
+\def\studaplieciba{ak21373}
+\author{Artūrs Kļaviņš}
+\title{GPU programmēšana Nvidia CUDA un AMD ROCm saskarnēs}
+\date{Decembris 2024}
+\newcommand{\thedate}[0]{01.12.2024}%iesniegšanas datums
+%%%---------- Beidz aizpildīt titullapu----------- 
+
+
+
+
+\begin{document}
+
+
+
+\thispagestyle{empty}
+\makeatletter
+   \begin{center}
+       \vspace*{1cm}
+        
+    \vspace{10mm}
+    {\Large LATVIJAS UNIVERSITĀTE\\
+    \MakeUppercase{\faculty}\\
+    \vspace{2mm}
+    \MakeUppercase{\department}
+    }
+    \vspace*{10mm}
+    
+    
+    
+    \vspace{5mm}
+    {\Large \MakeUppercase{\textbf{\@title}}}
+    \vspace{5mm}
+    
+
+       \vspace{1cm}
+    \Large
+    \MakeUppercase{\degree}
+    \end{center}
+    \vspace{3cm}
+    \begin{flushleft}
+    \large
+       Autors: \textbf{\large \@author}\\
+       Studenta apliecības Nr.: \studaplieciba \\
+       \supervisor
+    \end{flushleft}
+
+       \vfill
+     
+    \begin{center}
+    \Large      
+    \MakeUppercase{\vietlaiks}
+   \end{center}
+\makeatother
+
+\newpage
+
+
+
+
+\thispagestyle{empty}
+\noindent \textbf{Anotācija}
+
+\noindent Anotācijas saturs
+
+
+\vspace{4mm}
+\noindent \textbf{Atslēgas vārdi}: GPU, Nvidia, AMD, CUDA, ROCm
+
+\vspace{20mm}
+\noindent \textbf{Abstract}
+
+\noindent Abstract body
+
+\vspace{4mm}
+\noindent \textbf{Keywords}: GPU, Nvidia, AMD, CUDA, ROCm
+
+\newpage
+\tableofcontents
+\newpage
+
+%Apzīmējumu saraksts
+
+\nomenclature[N]{GPU}{Grafiskais procesors (no angļu val. \textit{Graphical Processing Unit})}
+\nomenclature[N]{CPU}{Centrālais procesors (no angļu val. \textit{Central Processing Unit})}
+\nomenclature[N]{CUDA}{\textit{Compute Unified Device Architecture} ir Nvidia ieviests API, kas ļauj
+programmatūrai izmantot NVIDIA ražotos GPU}
+\nomenclature[N]{GPGPU}{\textit{General-purpose computing on graphics processing units} - plašlietojama
+skaitļošana uz grafiskajiem procesoriem, mūsdienās ņem vērā un ievieš procesora arhitektūras līmenī}
+\nomenclature[N]{Ēnotājs}{Datorgrafikas programma, kura apstrādā tekstūru, 3D objektu un ainu gaismas
+līmeņus un krāsas}
+\nomenclature[N]{HPC}{Augstas veiktspējas skaitļošana (no angļu val. \textit{High-performance Computing})
+ir datoru klāsteru izmantošana, lai ar lielu paralelitātes pakāpi risinātu kādu problēmu, apstrādātu milzīga
+apjoma datus}
+\nomenclature[N]{ROCm}{AMD izstrādātā atvērtā pirmkoda platforma priekš HPC un AI darbiem ar videokartēm}
+\nomenclature[N]{HIP}{ROCm sastāvdaļa, C++ API programmu izstrādei uz AMD un Nvidia videokartēm
+(no angļu val. \textit{Heterogeneous-computing Interface for Portability})}
+\nomenclature[N]{AI}{Mākslīgais intelekts (no angļu val. \textit{Artifical Intelligence})}
+
+\printnomenclature
+
+\chapter{Ievads}
+Grafiskais procesors vai nu kā atsevisķa vai centrālajā procesorā integrēta komponente ir sastopama
+gandrīz visos modernajos datoros. Vēsturiski izmantota tikai grafisko elementu
+apstrādei, kur paralēli veicami daudzi līdzīgi darbi, piemēram, teksta renderēšana, pikseļu aizpildīšana uz
+ekrāna, 3D ēnotāju funkcijas.
+
+Kļuva skaidrs, ka GPU augstās paralelizācijas iespējas varētu izmantot citos uzdevumos,
+kuri klasiski pildāmi uz CPU. Rezultātā tos būtu daudz efektīvāk pildīt uz GPU, palielinot programmu
+ātrdarbību.
+
+Pirms moderniem ietvariem, saskarnēm un arhitektūras atbalstu, ar kuru palīdzību uz GPU iespējams skaitļot
+principā jebko, programmētājiem vajadzēja atrast 'nestandarta' risinājumus, lai pildītu ne-grafiskas problēmas.
+Piemēram, 2003. gadā radās risinājums kā skaitļot vispārējus lineārās algebras vienādojumus,
+pārveidojot matricu datus kā tekstūras un uz tām izpildot ēnotājus. \cite{10.1145/882262.882363}
+
+Līdz ar to radās pieprasījums pēc plašlietojamas skaitļošanas uz grafiskajiem procesoriem. GPU ražotāji
+to sāka ņemt vērā un 2006. gadā Nvidia ieviesa CUDA API platformu ar tiešu tās atbalstu uz Nvidia 
+videokartēm, sākot ar "Tesla" GPU mikroarhitektūru.\cite{nvidia_tesla_p100}
+
+Nvidia videokartes sākot jau no tā paša 2006. gada ir bijušas tirgus līderes, un tādas ir vēl joprojām.
+AMD nepalīdzēja fakts, ka savu ROCm platformu ieviesa daudz vēlāk, tikai 2016. gadā, kā tieši konkurentu CUDA,
+kad jau CUDA bija praktiski pierādīta un lietota 10 gadus.
+
+Nvidia videokartes un CUDA dominē kā populārākā GPU izvēle un plašlietojuma GPU skaitļošanas (GPGPU)
+platforma. No digitālās izplatīšanas platformas "Steam" 2024. gada decembra aparatūras un programmatūras
+aptaujas var secināt, ka 75\% "Steam" lietotāju izmanto Nvidia videokartes, bet tikai 16\% - AMD.
+\cite{steam_survey}
+
+Bet ROCm programmatūras steks ar GPU programmēšanas, dziļās mašīnmācīšanās, HPC iespējām līdzinās
+pieejamajās iespējās ar CUDA. Tāpēc šī darbā mērķis ir salīdzināt abas platformas, to pieejāmas salīdzināmās
+funkcijas, ātrdarbību un iespējamās priekšrocības, izvēloties vienu vai otru.
+\begin{center}
+\chapter{GPGPU arhitektūra un programmēšana}
+\end{center}
+
+Procesi, kas izmanto GPU resursus, tipiski iedala atmiņu un sagatavo datus uz CPU, un tad nodod darbu
+grafiskajam procesoram. Atmiņas iedalīšanas varianti ir stipri atkarīgi no veicamā uzdevuma un, būtiskāk, no
+pieejamā GPU arhitektūras.
+
+Vecākās videokartēs atmiņas iedalīšanu strikti veica CPU un to atmiņas ir pavisam atdalītas 
+(RAM un VRAM - Video RAM). Modernāki risinājumi spējīgi pielietot vienotu
+atmiņas apgabalu (CPU un GPU abi var piekļūt viens otra atmiņai), piemēram, Nvidia kartes sākot ar Pascal
+mikroarhitektūru \cite{nvidia_tesla_p100}. Rezultātā programmētājam nav jāpārvalda,
+kuras adreses ir centrālā un kuras grafiskā procesora. Vēl arī jāapsver, vai ir iespēja pa tiešo no GPU
+iedalīt atmiņu, vai to darīs tikai CPU.
+
+Protams, noteiktus abstrakcijas slāņus zemāk, procesoru atmiņas tomēr dzīvo dažādās vietās un nav apvienojami,
+izņemot procesorus, kuros CPU un GPU dzīvo vienā čipā (integrētās videokartes).
+
+Uz GPU izpildāmā programma tiek saukta par kodolu (no angļu val. \textit{kernel}), un no CPU ar draiveru
+palīdzību tiek nodots:
+\begin{itemize}
+    \item uz GPU pavedieniem izpildāmais kodols,
+    \item pavedienu skaits,
+    \item kodola funkcijas argumenti (visbiežāk tās būs apstrādājamo datu atmiņas adreses - rādītāji).
+\end{itemize}
+
+Jāpārveido, lai nav grāmatas tulkojums:    GPU sastāv no daudziem kodoliem un katrs kodols izpilda
+SIMT (\textit{Single instruction, multiple threads}) modelim atbilstošu iedoto izpildāmo kodolu
+
+
+
+
+Derētu tad minēt šādas lietas
+\begin{itemize}
+   \item Augsta darbu paralelizācija lielo kodolu skaitu dēļ
+   \item Īpašas instrukcijas konkrētu datu apstrādei
+   \item Darbus nodod procesors (kaut kā īsti nezinu kā) GPU un GPU izmet atpakaļ rezultātu vai prasīto uzzīmē uz ekrāna
+   \item Darbus var nodot GPU caur saskarnēm kā Nvidia CUDA vai AMD ROCm
+\end{itemize}
+
+SIMT kodoli - single instruction, multiple threads. Sadalās SIMT frontendā un SIMD (multiple data) backendā
+
+SIMT steks, lai atbilstītu zarošanos
+
+SIMT deadlock - paveidiens gaida uz atomicCAS, tālāk neies kamēr neizpildīs (while (!atomicCAS) ...), kad to dara vairāki paveidieni, tad var notikt deadlock
+
+\begin{center}
+\chapter{Platformu salīdzinājums}
+\end{center}
+Lai piesaistītu GPU programmētājus, AMD jau no sākuma dizainēja ROCm, lai tā līdzinātos CUDA. Protams,
+abas platformas ir paradzētas GPU programmēšanai un apakšējā videokaršu arhitektūra nebūs tik atšķirīga.
+Galvenā atšķirība, neskaitot platformu mērķa grafiskos procesorus, ir fakts, ka atšķirībā no CUDA, kura
+ir slēgtā, ROCm ir atklātā pirmkoda programmatūra, līdz ar to, ja nepieciešams, visu programmatūras saturu 
+var izpētīt, modificiēt, kompilēt pats, kā arī dot savu pienesumu gan dokumentācijā, gan kodā.\cite{what_is_ROCM}
+
+ROCm dokumentācija ir ar savām problēmām, piemēram, lai atrastu instalāciju nākas diezgan dziļi meklēt
+un 'lēkāt' starp lapām, lai atrastu konkrēto instalācijas failu. Instalācijas pamācības un lejupielādes
+lapas ir diezgan sadalītas. CUDA šis process ir vienkāršāks, kā arī CUDA ir pastāvējusi daudz ilgāku
+laiku, līdz ar to pieejamā literatūra, forumu diskusiju skaits ārpus oficiālajām dokumentācijām ir daudz 
+lielāks nekā priekš ROCm.
+
+ROCm satur vairākas programmas, bibliotēkas un ietvarus dažādiem darbiem ar augstas veiktspējas,
+paralelizācijas skaitļošanu, bet konkrētais C++ API priekš GPU programēšanas ir HIP (no angļu val.
+\textit{Heterogeneous-computing Interface for Portability}).\cite{HIP_docs}
+
+Noteiktas HIP dizaina izvēles ir tieši aizņemtas no CUDA, lai CUDA vidē pieredzējušajiem
+izstrādātājiem pāriet uz ROCm būtu vieglāk. Piemēram, C++ dekoratori, kuri norāda vai funkcija ir CPU
+vai GPU, vai GPU kodola funkcija ir vienādi (skatīt  izdruku \ref{lst:cuda_hip_fn_decorators}).
+
+\begin{lstlisting}[caption={CUDA un HIP funkciju definīciju salīdzinājums},
+  label=lst:cuda_hip_fn_decorators,
+  captionpos=t
+]
+// CUDA:
+__host__ myCpuFunction() {/*...*/}
+__device__ myGpuFunction() {/*...*/}
+__global__ kernel() {}
+
+// HIP:
+__host__ myCpuFunction() {/*...*/}
+__device__ myGpuFunction() {/*...*/}
+__global__ kernel() {/*...*/}
+\end{lstlisting}
+
+HIP ir diezgan liels atbalsts ne tikai AMD videokartēm, bet arī Nvidia. Tas iespējams tāpēc, ka 
+daudzas HIP saskarnes ir CUDA savietojamas, piemēram, GPU matemātisko funckiju API, tās saturošās funkcijas
+ir tieši atbilstošas CUDA funkcijām.\cite{HIP_math_API,CUDA_math_API}
+
+Kompilēšanas līmenī šis atbalsts ir iespējams, jo HIP izmanto kompilatoru draiveri 'hipcc', kurš,
+atkarībā no platformas, veiks pirms-apstrādi un izsauks attiecīgo kompilatoru -
+AMD videokartes gadījumā 'amdclang++' un Nvidia CUDA - 'nvcc'. \cite{HIP_compilers}.
+
+Tā kā varētu interpretēt, ka CUDA ir tieša apakškopa ROCM un HIP platformai, bet tomēr pilnīgs atbalsts
+visām CUDA funkcijām nav pieejams.
+
+
+
+Tā kā, rakstot CUDA kodu, arī tiek izmantots tas pats 'nvcc' kompilators, ROCm piedāvā utilītu
+pirmkoda migrēšanai - 'HIPIFY'. \cite{HIPIFY_github}
+
+Potenciāls mīnuss HIP saistītām utilītām un bibliotēkam ir fakts, ka vairākām nav pieejama
+"\textit{out of the box}" instalācija. Ir nepieciešamība kompilēt pirmkodu pašam, šo papildus soli
+sarežģī atkarīgo pakešu pārvaldīšana. Windows gadījumā arī rodas sarežģījumi, jo ROCm utilītu noklusētā vide
+ir Linux un visa ROCm izmantotais kompilators ir Clang/LLVM, kam uz Windows ir nepieciešama papildus 
+konfigurēšana.
+Piemērs šādai utilītai ir "HIPIFY", ar kuru iespējams pārveidot CUDA pirmkodu uz HIP. \cite{HIPIFY_github}
+
+Tā kā CUDA ir slēgtā pirmkoda, tad, protams, visa programmatūra un rīki pieejami caur instalācijām un
+rezultātā šis process ir daudz vienkāršāks.
+
+Lai gan HIP atbalsta ir diezgan liels ierobežojums atbalstītajām videokartēm
+
+
+
+
+ROCm paradzētā vide ir Linux, bet CUDA tā ir Windows. ROCm dokumentācijā, kur nepieciešams darbs ar komandrindas rīkiem, pamācības ir tikai Linux operētājsistēmai. CUDA gadījumā problēmas rodas jau instalācījas brīdī darbā ar Linux, jo nepieciešamas papildus darbības, konfigurācijas atkarībā no distributīva, izmantotā pakotņu pārvaldnieka sistēmas.
+
+Atšķirībā no AMD, CUDA neizplata informāciju par savām videokartēm un tā kā Linux pats par sevi ir atklātā
+pirmkoda programmatūra, tā nenāk ar Nvidia draiveriem. Tomēr projekts nouveau ar reversēs inženierijas
+metodēm cenšas piedāvāt atklātā pirmkoda draiverus nvidia videokartēm
+% https://en.wikipedia.org/wiki/Nouveau_(software)
+
+Bet, lai izmantotu CUDA šis risinājums neder, jebkurā gadījumā nāksies overridot visus ne-Nvidia izlaistus draiverus. Linus |TOrvalds par arī ir izteicies, ka nosoda šādu kompānijas politiku.
+
+
+% https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html
+
+
+
+ROCm nav iekļauts populārākajās pakotņu pārvaldnieku sistēmās, lai gan ar automātisko instalāciju 
+tiek iekļauts visa nepieciešamā programatūrā darbam ar ROCm programmām, problēmas rodas saskarnē ar
+CUDA, jo nākas atrisināt atkarību problēmas. Noklusēti tiks meklēta cuda atkarība distributīva izmantotajā
+pārvaldniekā, piemēram, Ubuntu "apt". Bet, šī atkarība satur tikai CUDA draiverus, nevis 
+izstrādes rīkus, lai veiktu darbu ar CUDA Toolkit. 
+
+Līdz ar to ir manuāli jāatrisina neatbilstošas pakotņu atkarības.
+
+
+% https://github.com/ROCm/HIP/issues/820 - kā atrisināt cuda dependency
+
+
+
+
+Kopumā AMD mērķis ar ROCm, atbalstot konkurent-kompāniju, ir sniegt gala lietotājiem, izstrādātājiem
+vieglāku pārēju uz AMD platformu un videokartēm. Uzturot funkcionalitāti platform-neatkarīgu un
+programmatūru rakstot HIP platformā, izstrādātāji ir spējīgi atbalstīt abu platformu videokartes.
+
+Rezultātā kompānijas un gala lietotāji, sastādot datoru, serveru specifikāciju, varētu neuztraukties
+par platform-atkarību, jo uzņēmumam svarīgā programmatūra, piemēram, mašīnmācīšanās bibliotēkas
+strādātu bez problēmām gan uz Nvidia, gan AMD videokartēm.
+
+AMD gadījumā, protams, ka labāka situācija būtu, ka tiktu izvēlēta viņu ražota videokarte. Un šādā teorētiskā
+scenārijā tāds arī būtu iznākums, jo aptuveni vienādas specifikācijas videokartes starp abiem ražotājiem
+ir ar lielu cenas starpību.
+
+TABULA AR SPECIEM UN CENU
+
+
+Bet, tā kā CUDA parādījās pirmā, kļuva par industrijas standartu un agrāk citu risinājumu nebija, 
+mūsdienās plaši lietota programmatūra ir rakstīta uz CUDA. Piemēram, mašīnmācīšanās bibliotēka TensorFlow. \cite{tensorflow_github}
+
+Migrēšana lielos projektos tomēr nav tik vienkāršs process, un ar šobrīdējo lielo AI pieprasījumu 
+
+
+\chapter{Uzdevums}
+
+Praktiskai platformu salīdzināšanai tomēr būtu nepieciešama videokarte.
+Darba izstrādes laikā bija pieejams portatīvais dators ar:
+\begin{itemize}
+  \item AMD Ryzen 5600H procesoru ar Radeon Graphics integrēto videokarti
+  \item Nvidia GeForce RTX 3060 Laptop ārējo videokarti
+\end{itemize}
+
+Lai gan it kā viena datora ietvaros būtu pieejamas gan Nvidia, gan AMD videokartes, diemžēl
+integrētajai Radeon Graphics kartei nav ROCm atbalsts, kā arī HIP nav oficiāls atbalsts 
+Nvidia videokārtēm uz Windows, tikai Linux. \textcolor{red}{Tāpēc par pamata platformu analīzē tiks izmantota CUDA.}
+
+Iespējams risinājums ir WSL - \textit{Windows Subsystem for Linux}, ar kuru iespējams izmantot
+Linux paredzētās programmas uz Windows. Gan CUDA, gan ROCm ir atbalsts un pamācības kā sakonfigurēt 
+šīs platformas darbam uz WSL.\cite{nvidia_wsl_guide,rocm_wsl_guide}
+
+
+
+
+
+
+
+Bet ņemot vērā, ka HIP atbalsta arī CUDA, būs iespējams apskatīt HIP iespējas uz Nvidia videokartes.
+
+Jāizvēlas tāds uzdevums, kuru iespējams 'augsti' paralelizēt, tas ir, sadalīt uzdevumu daudzos mazos gabalos (vēlams skaitā >= 1 miljons),
+lai būtu pievienotā vērtība (ātrdarbība) to pildīt uz GPU, ņemot vērā papildus darbu un nepieciešamās zināšanas, lai ieviestu GPU risinājumu.
+
+Relatīvi vienkāršs, bet pietiekams uzdevums, lai parādītu ietvaru atšķirības un vispārīgi atšķirīgās
+paradigmas starp CPU un GPU programmēšanu būtu paroļu lauzējs.
+
+Nobriedušāki paroļi lauzēji, jeb precīzāk - paroļu atkopēji kā HashCat ir spējīgi ņemt vērā vairākas paroļu
+variācijas, maskas, faktus, ka parole, piemēram, iesākusies ar "123" un citas sarežģītākas potenciālo paroļu
+iegūšanas metodes. Demonstrācijas vajadzībām pietiktu izstrādāt pašu 'kodolu', kas, ar jau saņemtu
+iespējamo paroļu sarakstu, tās pārbaudīs.
+
+
+Tātad jāizstrādā programma, kas ņemot vērā ieejas failu ar potenciālajām parolēm, no kādas paroles
+jaucējvērtības spētu noskaidrot 'hešoto' paroli.
+Uzdevumu būtu vērts risināt uz GPU, jo pie liela paroļu skaita, katrs GPU kodols varētu rēķināt savas
+paroles jaucējvērtību un pārbaudīt to pret uzlaužamo.
+
+\section{Izstrādājamās programmas definīcija}
+Programma ir domāta kā komandrindas utilīta ar CLI argumentiem:
+\begin{itemize}
+  \item testu palaišanais arguments
+  \item ievades faila ceļš,
+  \item paroles jaucējvērtība.
+\end{itemize}
+
+Apstrādājamais fails saturēs potenciālās paroles, katra savā rindā, kurām tiks izrēķināta jaucējvērtība un
+salīdzināta pret doto. Izmantojamais jaukšanas algoritms - SHA256. Jaucējvērtību rēķināšana un salīdzināšana
+jārealizē izpildei uz GPU.
+
+SHA256 izvēlēts tā tīri tā popularitātes un relatīvi ātrās izpildes dēļ, paroles uzlaušanas demonstrācijas
+vajadzībām ar šo pietiek, nepieciešamības gadījumā iespējams ieviest citu jaukšanas algoritmu un aizstāt
+ar esošo.
+
+
+Programmu iespējams palaist ar:
+\begin{itemize}
+  \item \texttt{\$ pwCracker --test}, lai vispārīgi pārbaudītu programmas darbību pret zināmām jaucējvērtībām
+  un to attiecīgajiem ziņojumiem, kā arī, lai pārbaudītu GPU kodola programmas darbību, platformas
+  pieejamību uz šī datora apartūras
+  \item \texttt{\$ pwCracker <paroļu faila ceļs> <paroles hash vērtība>}, lai veiktu galveno programmas izpildi
+\end{itemize}
+
+
+\subsection{CUDA risinājums}
+
+Lai gan CUDA ir domāta izstrādei uz C++, izpildāmais kods uz GPU ir ar saviem ierobežojumiem, kas neļauj pielietot C++ standarta bibliotēkas funkcijas, jo tās iekš 'CUDA device code' nav implementētas.
+Vai nu tāpēc, ka kāda konkrēta funkcija ir visparīgi reti lietota, vai tā nav īsti paredzēta lietošanai iekš GPU.
+
+Piemēram, nav pieejamas std::string, std::vector struktūras, jo tās dinamiski iedala atmiņu, kas darbībā iekš CUDA kerneļa būtu ļoti lēna darbība.
+Tā kā paroles par nelaimi ir simbolu virknes, tad tās nāksies apstrādāt C stilā (char*), vai arī kā baitu masīvus (uint8\_t*).
+
+Izstrādē ir jāvelta arī palielināta uzmanība datu struktūrām, to izvietojumam atmiņā, piemēram,
+problēma kā glabāt pārbaudāmo paroļu sarakstu. Naivais risinājums būtu masīvs ar adresēm, kuras norāda uz pirmo simbolu konkrētās paroles simbolu virknē.
+
+Problēma šajā risinājumā ir, ka netiek nodrošināta atmiņas blakusnodalīšana, tas ir, vienā nepārtrauktā atmiņas
+apgabalā, jo konkrētā parole var teorētiski atrasties jebkur, paroles savstarpēji nav obligāti viena otrai
+blakus. Līdz ar to varētu rasties lēndarbība no konkrētā pavediena izpildes kodolā - katrs pavediens savu
+paroli meklētu teorētiski patvaļīgā vietā, kas var radīt kešatmiņas netrāpījumus.
+
+
+Arī datu kopēšanas uz GPU atmiņu būs lēna, nāksies izmantot vairākas cudaMemcpy instrukcijas, katrai parolei.
+
+Labāks risinājums ir izmantot nepārtrauktu paroļu buferi un katrai parolei fiksēt garumu, tām liekot galā 
+nuļļu papildinājumus.
+
+
+Jāņem vērā arī definētie kerneļa bloku un pavedienu skaiti ..
+
+A reasonable minimum target is to launch a total number of threads of at least of SM * 2048.
+
+https://forums.developer.nvidia.com/t/cuda-sha256-calculations-improvements/56757/4
+
+These should be split between blocks with usually something in the range of 128,256, or 512 threads per block. It might be that 1024 threads per block is “OK”, it just requires some analysis to confirm.
+
+Your GTX970 has 13 SMs, so target 13*2048 = 26K threads, ballpark, minimum. If you put 1024 threads per block, that would be 26 blocks. I’m not saying I know how to transform your code from 4 blocks to 26, but that is a reasonable performance goal, to maximize throughput.
+
+\begin{lstlisting}
+__global__ void kernel(
+    const cuda::std::uint8_t *passwords,
+    const int *pwLengths,
+    int pwCount,
+    cuda::std::uint64_t maxPwLength,
+    const cuda::std::uint8_t *targetHash,
+    int *resultIndex
+)
+{
+    int idx = blockIdx.x * blockDim.x +threadIdx.x;
+
+    if(idx >= pwCount)
+    {
+        return;
+    }
+
+    const cuda::std::uint8_t *password = passwords + (idx * maxPwLength);
+    int pwLength = pwLengths[idx];
+
+    cuda::std::uint8_t hash[32];
+
+
+    sha256(password, pwLength, hash);
+
+    // ja hashi sakrīt, tad ierakstām paroles indeksu iekš 'resultIndex',
+    // tā kā tā mainīgā adrese atrodas device kopīgajā atmiņā, jālieto atomiska funkcija
+    if(compareHashes(targetHash, hash))
+    {
+        // ja resultIndex glabājas vērtība -1, tad aizstāj to ar idx
+        // ar šo tiek arī reizē nodrošināts, ka ja kāds pavediens vēlāk tomēr nonāk līdz šim stāvoklim,
+        // tad modifikācija netiks veikta, jo tajā brīdī jau 'resultIndex' != -1
+        atomicCAS((unsigned int*)resultIndex, -1, (unsigned int)idx);
+    }
+}
+\end{lstlisting}
+
+
+\texttt{nvcc -O2 kernel.cu -o main.exe}
+
+\subsection{Portēšana uz HIP caur WSL 2}
+
+\subsection{Analīze un secinājumi}
+
+Ir jāpievērš uzmanība mērķa videokartei un mikroarhitektūrai, jo izstrādājot programmu uz personīgā datora 
+ar RTX 3060 videokarti bija pieejamas funkijas, kuras testējot uz cita datora ar Quattro sērījas videokarti,
+programma nestrādāja.
+
+Ir situācijas, kad šo problēmu var atrisināt, kompilācijas brīdī definējot mērķa arhitektūras, bet,
+ja izmantota kāda konkrēta funkcionalitāte, kura vienkārši nav pieejama uz mērķa, programma nestrādās.
+
+
+Veiktspējas metrikas
+
+\textbf{Vēl ir jāņem vērā virsdarbe, kopējot datus no iekārtas uz CPU un atpakaļ, šāda darbība ir relatīvi dārga}
+
+\chapter{Platformneatkarīgi risinājumi}
+ZLUDA, OpenCL
+
+
+\cleardoublepage
+\phantomsection
+\addcontentsline{toc}{chapter}{Bibliogrāfija}
+\printbibliography
+
+\newpage
+\chapter*{Pielikumi}
+\addcontentsline{toc}{chapter}{Pielikumi}
+
+\begin{lstlisting}[caption={Paroļu lauzēja implementācija CUDA vidē},
+  label=lst:cuda_impl,
+  captionpos=t
+  ]
+
+// SHA 256 implementacija CUDA vide
+// https://en.wikipedia.org/wiki/SHA-2
+
+#include <cuda_runtime.h>
+#include <device_launch_parameters.h>
+#include <cuda/std/cstdint> // analogs C/C++ <cstdint>, bet nodrosina fiksetus datu tipu lielumus uz device
+#include <string>
+#include <vector>
+#include <stdio.h>
+#include <fstream>
+#include <iostream>
+#include <stdlib.h>
+#include <string.h>
+#include <sstream>
+#include <algorithm>
+#include <assert.h>
+#include <iomanip>
+#include <cstdint>
+
+// forward deklaracija funkcijam, lai nav intelisense warningi, ka tas nav definetas (ir pieejamas uz device bez header include)
+__device__ unsigned int __funnelshift_r(unsigned int lo,unsigned int hi,unsigned int shift);
+unsigned int atomicCAS(unsigned int* address,unsigned int compare,unsigned int val);
+
+// macro prieks katra cuda API izsaukuma rezultata parbaudes
+// nemts no https://stackoverflow.com/questions/14038589/what-is-the-canonical-way-to-check-for-errors-using-the-cuda-runtime-api
+#define CUDA_CHECK(ans) { gpuAssert((ans), __FILE__, __LINE__); }
+inline void gpuAssert(cudaError_t code, const char *file, int line, bool abort=true)
+{
+   if (code != cudaSuccess) 
+   {
+      fprintf(stderr,"GPU assert: %s %s %d\n", cudaGetErrorString(code), file, line);
+      if (abort) exit(code);
+   }
+}
+
+// ROTR(x,n) rote x-a bitus pa labi pa n pozicijam, izmantojam cuda iebuveto funnelshift funkciju:
+// https://docs.nvidia.com/cuda/cuda-math-api/cuda_math_api/group__CUDA__MATH__INTRINSIC__INT.html 
+// __device__ unsigned int __funnelshift_r(unsigned int lo, unsigned int hi, unsigned int shift)
+// Concatenate hi : lo , shift right by shift & 31 bits, return the least significant 32 bits. 
+// Ja konkatene x ar pasu sevi, tad pec nobides, mazakie 32 biti satures attiecigo ROTR no x
+#define ROTR(x, n) __funnelshift_r(x, x, n)
+
+// makro funkcijas attieciga sha bloka apstradei
+#define SS0(x) (ROTR(x, 7) ^ ROTR(x, 18) ^ (x >> 3))
+#define SS1(x) (ROTR(x, 17) ^ ROTR(x, 19) ^ (x >> 10))
+#define S0(x) (ROTR(x, 2) ^ ROTR(x, 13) ^ ROTR(x, 22))
+#define S1(x) (ROTR(x, 6) ^ ROTR(x, 11) ^ ROTR(x, 25))
+#define CH(x, y, z)  ((x & y) ^ (~x & z))
+#define MAJ(x, y, z) ((x & y) ^ (x & z) ^ (y & z))
+
+// pirmie 32 biti kv. saknei no pirmajiem 8 pirmskaitliem 2 - 19 (no dalas aiz komata)
+__device__ cuda::std::uint32_t h0 = 0x6a09e667;
+__device__ cuda::std::uint32_t h1 = 0xbb67ae85;
+__device__ cuda::std::uint32_t h2 = 0x3c6ef372;
+__device__ cuda::std::uint32_t h3 = 0xa54ff53a;
+__device__ cuda::std::uint32_t h4 = 0x510e527f;
+__device__ cuda::std::uint32_t h5 = 0x9b05688c;
+__device__ cuda::std::uint32_t h6 = 0x1f83d9ab;
+__device__ cuda::std::uint32_t h7 = 0x5be0cd19;
+
+// pirmie 32 biti no kubsaknem pirmajiem 64 pirmskaitliem 2 - 311
+__device__ __constant__ cuda::std::uint32_t k[] =
+{
+    0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,
+    0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,
+    0xe49b69c1,0xefbe4786,0x0fc19dc6,0x240ca1cc,0x2de92c6f,0x4a7484aa,0x5cb0a9dc,0x76f988da,
+    0x983e5152,0xa831c66d,0xb00327c8,0xbf597fc7,0xc6e00bf3,0xd5a79147,0x06ca6351,0x14292967,
+    0x27b70a85,0x2e1b2138,0x4d2c6dfc,0x53380d13,0x650a7354,0x766a0abb,0x81c2c92e,0x92722c85,
+    0xa2bfe8a1,0xa81a664b,0xc24b8b70,0xc76c51a3,0xd192e819,0xd6990624,0xf40e3585,0x106aa070,
+    0x19a4c116,0x1e376c08,0x2748774c,0x34b0bcb5,0x391c0cb3,0x4ed8aa4a,0x5b9cca4f,0x682e6ff3,
+    0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208,0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2
+};
+
+// apstrada vienu, konkretu 512 bitu bloku 
+// 'state' ir 8 skaitlu masivs, kuram apstrades sakuma jasatur h0-h7 konstantes, apstrades beigas satures hash vertibu
+// 'chunk' satur apstradajamo bitu bloku
+__device__ void sha256ProcessChunk(cuda::std::uint32_t *state, cuda::std::uint8_t *chunk)
+{
+    cuda::std::uint32_t w[64];
+
+    // iekope visus 512 bitus ieks w masiva (512/32 = 16 vertibas)
+    // baiti jaieliek ieks 32 bitu vardiem, lai pirmais baits butu pirmais (skatoties no kreisas uz labo pusi),
+    // tas japabida pa kreisi pa 24, nakamie pa 16, 8, 0
+    // attieciga soli nakamie 'mazaksvarigie' biti ir nulles, tapec baitus sos baitus var konkatenet ar OR (|) operatoru 
+    for(int i = 0; i < 16; i++)
+    {
+        w[i] = chunk[i * 4 + 0] << 24;
+        w[i] |= chunk[i * 4 + 1] << 16;
+        w[i] |= chunk[i * 4 + 2] << 8;
+        w[i] |= chunk[i * 4 + 3];
+    }
+
+    // aizpilda parejas 'w' vertibas
+    for(int i = 16; i < 64; i++)
+    {
+        w[i] = w[i-16] + SS0(w[i-15]) + w[i-7] + SS1(w[i-2]);
+    }
+
+    cuda::std::uint32_t a = state[0];
+    cuda::std::uint32_t b = state[1];
+    cuda::std::uint32_t c = state[2];
+    cuda::std::uint32_t d = state[3];
+    cuda::std::uint32_t e = state[4];
+    cuda::std::uint32_t f = state[5];
+    cuda::std::uint32_t g = state[6];
+    cuda::std::uint32_t h = state[7];
+
+    for(int i = 0; i < 64; i++)
+    {
+        cuda::std::uint32_t temp1 = h + S1(e) + CH(e,f,g) + k[i] + w[i];
+        cuda::std::uint32_t temp2 = S0(a) + MAJ(a,b,c);
+        h = g;
+        g = f;
+        f = e;
+        e = d + temp1;
+        d = c;
+        c = b;
+        b = a;
+        a = temp1 + temp2;
+    }
+
+    state[0] += a;
+    state[1] += b;
+    state[2] += c;
+    state[3] += d;
+    state[4] += e;
+    state[5] += f;
+    state[6] += g;
+    state[7] += h;
+}
+
+__device__ void sha256(const cuda::std::uint8_t *input, cuda::std::uint64_t length, cuda::std::uint8_t *output)
+{
+    // vienkarsibas pec apstradasim viena bloka ietvaros, tapec, nemot vera zinojuma garumu un padding,
+    // zinojuma garums nedrikst but lielaks par 440 bitiem, lai viss ietilpstu viena 512 bitu bloka
+    // https://crypto.stackexchange.com/questions/54852/what-happens-if-a-sha-256-input-is-too-long-longer-than-512-bits
+    bool lengthOk = length <= (440/8);
+    assert(lengthOk);
+
+    cuda::std::uint32_t state[8] = {
+        h0,h1,h2,h3,h4,h5,h6,h7
+    };
+
+    cuda::std::uint8_t chunk[64];
+
+    // sakuma nonullejam bloku
+    for(int i = 0; i < 64; i++) {
+        chunk[i] = 0;
+    }
+    
+    // ierakstam pasu zinojumu
+    for(int i = 0; i < length; i++) {
+        chunk[i] = input[i];
+    }
+    
+    // pec prasibam ir japieliek '1' bits, parejas baita vertibas attiecigi ir nulles, atbilstosi SHA mainiga 'K' prasibam
+    chunk[length] = 0b10000000;
+
+    // padding gala japieliek zinojuma garums ka 64 bitu big-endian skaitlis
+    for(int i = 1; i <= 8; i++)
+    {
+        chunk[64-i] = ((length * 8) >> ((i-1) * 8)) & 0xFF;
+    }
+
+    sha256ProcessChunk(state, chunk);
+
+    // sadalam 32 bitu vertibas 4as 8 bitu un ierakstam output masiva
+    for(int i = 0; i < 8; i++) {
+        cuda::std::uint32_t currentStateValue = state[i];
+
+        output[i * 4] = (cuda::std::uint8_t)(currentStateValue >> 24);
+        output[i * 4 + 1] = (cuda::std::uint8_t)(currentStateValue >> 16);
+        output[i * 4 + 2] = (cuda::std::uint8_t)(currentStateValue >> 8);
+        output[i * 4 + 3] = (cuda::std::uint8_t)(currentStateValue);
+    }
+}
+
+__device__ bool compareHashes(const cuda::std::uint8_t *h1, const cuda::std::uint8_t *h2)
+{
+    for(int i = 0; i < 32; i++)
+    {
+        if(h1[i] != h2[i])
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+__global__ void kernel(
+    const cuda::std::uint8_t *passwords,
+    const int *pwLengths,
+    int pwCount,
+    cuda::std::uint64_t maxPwLength,
+    const cuda::std::uint8_t *targetHash,
+    int *resultIndex
+)
+{
+    int idx = blockIdx.x * blockDim.x +threadIdx.x;
+
+    if(idx >= pwCount)
+    {
+        return;
+    }
+
+    const cuda::std::uint8_t *password = passwords + (idx * maxPwLength);
+    int pwLength = pwLengths[idx];
+
+    cuda::std::uint8_t hash[32];
+
+
+    sha256(password, pwLength, hash);
+
+    // ja hashi sakrit, tad ierakstam paroles indeksu ieks 'resultIndex',
+    // ta ka ta mainiga adrese atrodas device kopigaja atmina, jalieto atomiska funkcija
+    if(compareHashes(targetHash, hash))
+    {
+        // ja resultIndex glabajas vertiba -1, tad aizstaj to ar idx
+        // ar so tiek ari reize nodrosinats, ka ja kads pavediens velak tomer nonak lidz sim stavoklim,
+        // tad modifikacija netiks veikta, jo taja bridi jau 'resultIndex' != -1
+        atomicCAS((unsigned int*)resultIndex, -1, (unsigned int)idx);
+    }
+}
+
+static uint8_t parseHexByte(const std::string &hash, size_t offset)
+{
+    std::string byteString = hash.substr(offset, 2);
+    return static_cast<uint8_t>(std::stoi(byteString, nullptr, 16));
+}
+
+std::vector<uint8_t> hexStringToBytes(const std::string &hash)
+{
+    assert(hash.size() == 64); // 256 biti => 64 hex skaitli
+    
+    std::vector<uint8_t> result(32);
+
+    for(size_t i = 0; i < 32; i++)
+    {
+        result[i] =  parseHexByte(hash, i * 2);
+    }
+
+    return result;
+}
+
+
+std::string parseBytesToHexString(const uint8_t* data, size_t length)
+{
+    std::ostringstream ss;
+    
+    for(size_t i = 0; i < length; i++)
+    {
+        ss << std::hex << std::setw(2) << std::setfill('0') << (int)data[i];
+    }
+
+    return ss.str();
+}
+
+void hashCheck(std::vector<std::string>& passwords, std::vector<uint8_t>& hash, int *cracked_idx)
+{
+    assert(*cracked_idx == -1); // te sakuma jau jabut vertibai -1, padota no main
+
+    const int passwordCount = passwords.size();
+    const int maxPwLength = 55; // maksimalais zinojuma garums, lai tas ietilptu viena sha bloka
+    const size_t passwordsSize = passwordCount * maxPwLength; // ar pienemumu, ka viens simbols ir 1 baits
+
+    std::vector<uint8_t> pwBuffer(passwordsSize, 0);
+    std::vector<int> pwLengths(passwordCount);
+
+    for(size_t i = 0; i < passwordCount; i++) {
+        const std::string pw = passwords[i];
+        int pwLength = pw.size();
+
+        assert(pwLength <= maxPwLength);
+
+        pwLengths[i] = pwLength;
+        
+        for(size_t j = 0; j < pwLength; j++)
+        {
+            // ja parole ir isaka par maxPwLength, tad 'tuksie' masiva elementi bus aizpilditi ar nullem
+            pwBuffer[i * maxPwLength + j] = (uint8_t)pw[j]; 
+
+        }
+    }
+
+    cuda::std::uint8_t *d_passwords;
+    cuda::std::uint8_t *d_hash;
+    int *d_pwLengths;
+    int *d_cracked_idx;
+
+    *cracked_idx = -1;
+    
+    CUDA_CHECK(cudaSetDevice(0));
+
+    CUDA_CHECK(cudaMalloc(&d_passwords, pwBuffer.size() * sizeof(uint8_t)));
+    CUDA_CHECK(cudaMemcpy(d_passwords, pwBuffer.data(), pwBuffer.size() * sizeof(uint8_t), cudaMemcpyHostToDevice));
+
+    CUDA_CHECK(cudaMalloc(&d_hash, 32));
+    CUDA_CHECK(cudaMemcpy(d_hash,hash.data(), 32, cudaMemcpyHostToDevice));
+
+    CUDA_CHECK(cudaMalloc(&d_pwLengths, passwordCount * sizeof(int)));
+    CUDA_CHECK(cudaMemcpy(d_pwLengths, pwLengths.data(),passwordCount * sizeof(int), cudaMemcpyHostToDevice));
+
+    CUDA_CHECK(cudaMalloc(&d_cracked_idx, sizeof(int)));
+    CUDA_CHECK(cudaMemcpy(d_cracked_idx, cracked_idx, sizeof(int), cudaMemcpyHostToDevice));
+
+       
+    int numThreads = 256;
+    int numBlocks = (passwordCount + numThreads - 1 ) / numThreads;
+
+    kernel<<<numBlocks, numThreads>>>(d_passwords, d_pwLengths, passwordCount, maxPwLength, d_hash, d_cracked_idx);
+
+    CUDA_CHECK(cudaGetLastError());
+    CUDA_CHECK(cudaDeviceSynchronize());
+
+    CUDA_CHECK(cudaMemcpy(cracked_idx, d_cracked_idx, sizeof(int), cudaMemcpyDeviceToHost));
+
+    cudaFree(d_passwords);
+    cudaFree(d_hash);
+    cudaFree(d_cracked_idx);
+}
+
+
+void processFile(const std::string& fileName, std::vector<std::string>& buffer)
+{
+    std::ifstream file(fileName);
+
+    if(!file.is_open())
+    {
+        throw std::runtime_error("Error opening file\n");
+    }
+
+    std::string line;
+    unsigned int currentOffset = 0;
+    
+    while(std::getline(file,line))
+    {
+        buffer.push_back(line);
+    }
+
+    file.close();
+}
+
+// sha funkcijas testa device kodols
+__global__ void testKernel(
+    const cuda::std::uint8_t *input,
+    cuda::std::uint64_t length,
+    cuda::std::uint8_t *calculatedHash
+)
+{
+    // testam pietieks ar pirmo pavedienu
+    if(threadIdx.x != 0 || blockIdx.x != 0) {
+        return;
+    }
+
+    sha256(input,length,calculatedHash);
+}
+
+void testSha(const std::string &password,const std::string hexExpectedHash)
+{
+    std::vector<uint8_t> expectedHash = hexStringToBytes(hexExpectedHash);
+
+    size_t pwLength = password.size();
+    std::vector<uint8_t> passwordBytes(pwLength);
+
+    for(size_t i = 0; i < pwLength; i++)
+    {
+        passwordBytes[i] = password[i];
+    }
+
+    cuda::std::uint8_t *d_password;
+    cuda::std::uint8_t *d_hash;
+    cuda::std::uint8_t *d_calculatedHash;
+
+    CUDA_CHECK(cudaSetDevice(0));
+
+    CUDA_CHECK(cudaMalloc(&d_password,pwLength));
+    CUDA_CHECK(cudaMemcpy(d_password, passwordBytes.data(),pwLength,cudaMemcpyHostToDevice));
+    
+    CUDA_CHECK(cudaMalloc(&d_calculatedHash,32));
+    CUDA_CHECK(cudaMemcpy(d_calculatedHash, std::vector<uint8_t>(32,0).data(), 32, cudaMemcpyHostToDevice));
+
+
+    int numThreads = 1;
+    int numBlocks = 1;
+
+    testKernel<<<numBlocks, numThreads>>>(d_password,pwLength,d_calculatedHash);
+    
+    CUDA_CHECK(cudaGetLastError());
+    CUDA_CHECK(cudaDeviceSynchronize());
+
+    cuda::std::uint8_t h_calculatedHash[32];
+
+    CUDA_CHECK(cudaMemcpy(&h_calculatedHash, d_calculatedHash, 32, cudaMemcpyDeviceToHost));
+
+    cudaFree(d_password);
+    cudaFree(d_calculatedHash);
+
+    std::cout << "Expected:\t" << hexExpectedHash << "\nActual:\t\t" << parseBytesToHexString(h_calculatedHash,32) << '\n';
+}
+
+
+int main()
+{
+    std::cout << "SHA Tests\n";
+    
+    testSha("","e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855");
+    testSha("123456","8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92");
+
+
+    std::cout << "Hash Converison Tests\n";
+
+    std::string testHexHash = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92";
+    auto hexbytes = hexStringToBytes(testHexHash);
+    std::cout << "Original hash:\t\t" << testHexHash << "\nRoundtrip converted: \t" << parseBytesToHexString(hexbytes.data(),hexbytes.size()) << '\n';
+
+    std::cout << "Tests complete\n";
+
+    const std::string INPUT_FILE_NAME = "C:\\Users\\hazya\\Desktop\\10-million-password-list-top-1000000.txt";
+
+    std::vector<std::string> buffer;
+
+    processFile(INPUT_FILE_NAME, buffer);
+
+    std::string hexHash = "701402a369ed3107a22195f5d570ed29df71f39e2ce01123ea0c564bc8333270";
+
+    std::vector<uint8_t> hash = hexStringToBytes(hexHash);
+
+    int cracked_idx = -1;
+
+    hashCheck(buffer, hash, &cracked_idx);
+
+    if (cracked_idx != -1)
+    {
+        std::cout << "Yipeee! Found the password at index:" << cracked_idx << std::endl;
+        std::cout << buffer[cracked_idx] << std::endl;
+    }
+    else
+    {
+        std::cout << "No matching passwords" << std::endl;
+    }
+
+    CUDA_CHECK(cudaDeviceReset());
+
+    return 0; 
+}
+\end{lstlisting}
+
+Ja darbam nepieciešams, dažādus palīgmateriālus var ievietot pielikumā. Tajā
+parasti iekļauj aprēķinu starprezultātus, ilustrācijas, anketu paraugus, kartes, aparātu un ierīču
+aprakstus u. c.
+
+
+%dokumentācijas lapa
+% autoram/ei izskatīt, nomainīt locījumu vārdiem
+\newpage
+\thispagestyle{empty}
+\makeatletter
+{\setstretch{2.0}
+\noindent
+\degree \ "\@title" izstrādāts LU Datorikas fakultātē.
+\newline
+\newline
+\noindent
+Ar savu parakstu apliecinu, ka pētījums veikts patstāvīgi, izmantoti tikai tajā norādītie informācijas avoti.
+\newline
+\newline
+\noindent
+Autors: \@author \space \rule{30mm}{0.2mm}
+\newline
+\newline
+\newline
+\noindent
+Rekomendēju/nerekomendēju darbu aizstāvēšanai (nevajadzīgo izsvītrot)
+\newline
+\newline
+\noindent 
+\supervisor \space \rule{30mm}{0.2mm}
+\newline
+\newline
+\newline
+\newline
+\newline
+\noindent 
+Darbs iesniegts Datorikas fakultātē
+\newline
+\newline
+\noindent 
+Dekāna pilnvarotā persona:
+\newline
+\newline
+\newline
+\newline
+\noindent 
+Darbs aizstāvēts kursa darbu komisijas sēdē
+\newline
+\newline
+\newline
+\newline
+\newline
+\noindent 
+Komisija:
+}
+\makeatother
+
+\end{document}
