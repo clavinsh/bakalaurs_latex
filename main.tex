@@ -172,9 +172,9 @@ chaptertitle=false,%
 \def\supervisor{Darba vadītājs: profesors, Dr. dat. Leo Seļāvo}
 \def\studaplieciba{ak21373}
 \author{Artūrs Kļaviņš}
-\title{GPU programmēšana Nvidia CUDA un AMD ROCm saskarnēs}
-\date{Decembris 2024}
-\newcommand{\thedate}[0]{01.12.2024}%iesniegšanas datums
+\title{GPU programmēšanas salīdzinājums CUDA, ROCm un OpenCL saskarnēs}
+\date{Maijs 2025}
+\newcommand{\thedate}[0]{01.05.2025}%iesniegšanas datums
 %%%---------- Beidz aizpildīt titullapu----------- 
 
 
@@ -232,11 +232,15 @@ chaptertitle=false,%
 \thispagestyle{empty}
 \noindent \textbf{Anotācija}
 
-\noindent Anotācijas saturs
-
+\noindent Darbā gan teorētiski, gan praktiski tiks apskatītas CUDA, ROCm un OpenCL GPU
+programmēšanas saskarnes. Tiks salīdzināta saskarņu dokumentācija, piedāvātās
+programmatūras iespējas un ierobežojumi atbalstītajā aparatūrā. Praktiski tiks ieviesta
+paroļu uzlaušanas un Džona Konveja dzīves spēles programmas katrā saskarnē,
+apskatīti īstenošanas apsvērumi un analizēta ātrdarbība uz vienas un tās pašas
+aparatūras.
 
 \vspace{4mm}
-\noindent \textbf{Atslēgas vārdi}: GPU, Nvidia, AMD, CUDA, ROCm
+\noindent \textbf{Atslēgas vārdi}: GPU, Nvidia, AMD, CUDA, ROCm, OpenCL
 
 \vspace{20mm}
 \noindent \textbf{Abstract}
@@ -267,6 +271,16 @@ apjoma datus}
 \nomenclature[N]{HIP}{ROCm sastāvdaļa, C++ API programmu izstrādei uz AMD un Nvidia videokartēm
 (no angļu val. \textit{Heterogeneous-computing Interface for Portability})}
 \nomenclature[N]{AI}{Mākslīgais intelekts (no angļu val. \textit{Artifical Intelligence})}
+
+% jaunie (iepriekšminētajiem derētu pārskatīt atbilstību)
+
+\nomenclature[N]{Saimnieks}{}
+\nomenclature[N]{Ierīce}{}
+
+
+
+
+
 
 \printnomenclature
 
@@ -301,6 +315,221 @@ aptaujas var secināt, ka 75\% "Steam" lietotāju izmanto Nvidia videokartes, be
 Bet ROCm programmatūras steks ar GPU programmēšanas, dziļās mašīnmācīšanās, HPC iespējām līdzinās
 pieejamajās iespējās ar CUDA. Tāpēc šī darbā mērķis ir salīdzināt abas platformas, to pieejāmas salīdzināmās
 funkcijas, ātrdarbību un iespējamās priekšrocības, izvēloties vienu vai otru.
+
+
+\begin{center}
+\chapter{Pieraksti par OpenCL}
+\end{center}
+
+Izskatās, ka ir diezgan zems apjoms ar modernām OpenCL 3.0 pamācībām, izņemot tehniskās
+specifikācijas, kuras iesācējām varētu nebūtu piemērotas.
+
+Jaunākā pamācības literatūra ir priekš opengl 2.0, iznāca 2015 gadā \cite{heterogeneous-computing-with-opencl-2-0}(debetable vai jaunākā, bet
+zināmākā)
+
+OpenCL nav beginner friendly, pārsvarā paredzēts izstrādātājiem, kuri jau labi spējīgi orientēti precīzi tehniskās specifikācijās,
+lai rakstītu platform-neaktarīgas programmas priekš CPU, GPU u.c. hardware paātrinātājiem
+
+Nvidia izskatās, ka ir OpenCL atbalsts
+
+Izmanto SPIR starp-posma reprezentācijas (intermediate represenatation) valodu, kas izmantota arī citās Khronos Group
+valodās, ietvaros - Vulkan, SYCL
+
+Labi atsaukties uz specifikāciju \cite{opencl-spec}
+
+Varbūt derētu realizēt benchmarkingu ar profilēšanas rīkiem, lai precizāk noskaidrot dažādās 'veiktspējas'
+dažādos izpildes posmos, piemēram:
+\begin{itemize}
+    \item atmiņas iedalīšana uz gpu,
+    \item vendor atrašana un iespējams kodola kompilēšana (opencl gadījumā ig)
+    \item kodola izpilde,
+    \item atmiņas atbrīvošana
+\end{itemize}
+
+
+Kādas varētu būt atšķirības programmēšanas modelī starp CUDA, HIP, OpenCL? Idejiski jau mērķa arhitektūra ir
+apmēram vienāda, līdz ar to liekas, ka modelim ar tādam vajadzētu būt.
+
+
+
+\section{OpenCL platformas modelis - pieraksti pa taisno no dokumentācijas}
+Sastāv no saimnieka (CPU) ar vienu vai vairākām OpenCL iekārtām (GPU).
+
+OpenCL iekārta ir iedalīta vienā vai vairākās \textit{compute} vienībās (Compute Units), un tās ir iedalītas apstrādes elementos (processing elements)
+
+Skaitļošana notiek šajos apstrādes elementos
+
+OpenCL programma sastāv no saimnieka koda un iekārtas koda. 
+Saimnieka koda daļa nodod kodola (kernel) kodu OpenCL iekārtai un iekārta to izpilda uz tās apstrādes elementiem.
+
+
+Kad apstrādes elementi apstrādes vienībā izpilda to pašu secību ar priekšrakstiem (? varētu labāk izvārdod), tad vadības plūsma ir saucama par kopdarbīgu (converged)
+
+Kopdarbīga vadības plūsma ir labi piemērota uz tādas aparatūrus kā GPU, kura ir specializēta vienas instrukciju kopas izpildei paralēli uz vairākiem apstrādes elementiem.
+Nav grūti izsecināt, ka uz šādas aparatūras noteiktas OpenCL programmas izpildīs konkrētus uzdevumus ātrāk par līdzīgu risinājumu uz saimnieka - CPU.
+
+Iekārtas kodola kodu ir iespējams sniegt kā OpenCL C99 pirmkoda simbolu virkni, SPIR-V starpvalodu vai bināru objektu.
+OpenCL piedāvā kompilatoru, kas spējīgs no minētajiem formātiem izveidot izpildāmo programmas objektu.
+
+Kompilators var būt 'tiešsaistes' vai 'bezsaistes' jeb
+\begin{itemize}
+    \item Tiešsaistes kompilators ir pieejams saimnieka programmas izpildes laikā
+    \item Bezsaistes tiek izsaukts atsevišķi un saimnieka programmai tiek nodots un ielādēts gatavs izpildāms fails 
+\end{itemize}
+
+\textcolor{red}{Izskatās, ka salīdzinot ar HIP un CUDA, te ir lielāka brīvība veidos kā realizē kodola programmas kompilēšana un palaišanu, bet derētu paskatīties vairāk par šo tajās platformās}
+
+
+
+Ņemot vērā kā GPU arhitektūru apraksta Nvidia un AMD, šis OpenCL platformas modeļa abstrakcijas slānis ir raksturojams kā 'tuvu dzelžiem'.
+Tomēr kodola kompilatoram ir diezgan brīva izvēle optimizācijās starp faktiskajiem arhitektūras elementiem un kā tos reprezentē OpenCL.
+
+Piemērs, šim faktam ir situācijas, kur iekārtas kodola programma tiek kompilēta priekš CPU. Centrālais procesors arhitektūras līmenī var nesaturēt
+vairākus kodolus vai pavedienus, kurus programmētājs sagaida izstrādājot iekārtas kodolu.
+
+Vai arī, palaižot kodolu, tiek definēts pavedienu grupas izmērs (piemēram, izmērā 128), kas uz visām iekārtām nebūs pieejams tādā skaitā.
+Kompilators šo situāciju atrisinātu, izsaucot kodolu vairākās partijās, bet no pirmkoda puses tiek definēta viena partija. 
+
+
+
+\textcolor{red}{Te arī jāpārliecinās, bet man liekas, ka HIP un CUDA pie nederīga grupas/pavediena izmēra izmestu izpildes laika kļūdu, OpenCL dod lielāku brīvību}
+
+
+\begin{center}
+    \chapter{Etalonuzdevuma rezultātu līdzvērtība}
+\end{center}
+Salīdzinot dažādus ietvarus ar it kā vienu un to pašu uzdevumu nav tik vienkārši, jo ar naivu risinājumu ir grūti garantēt,
+ka attiecīgās izveidotās programmas ir pietiekami līdzvērtīgas, lai tās varētu godīgi salīdzināt.
+
+Piemēram, salīdzinot dažādu programmēšanas valodu veiktspēju ar noteiktu etalonuzdevumu, varētu izvēlēties valodas C++ un Python,
+apstrādājot kādu failu caur standarta ievadi, aprēķinot cik rindas satur dotais fails (skatīt izdruku \ref{lst:cpp_file_stdin} un \ref{lst:py_file_stdin})
+
+
+\begin{lstlisting}[caption={Vienkārša faila apstrāde valodā C++ caur standarta ievadi},
+  label=lst:cpp_file_stdin,
+  captionpos=t
+]
+#include <cstdio>
+#include <iostream>
+#include <string>
+
+int main()
+{
+	std::string line;
+	size_t lineCount = 0;
+
+	while (std::getline(std::cin, line))
+	{
+		lineCount++;
+	}
+
+	printf("Fails satur %zu rindas\n", lineCount);
+
+	return 0;
+}
+\end{lstlisting}
+
+
+\begin{lstlisting}[caption={Vienkārša faila apstrāde valodā Python caur standarta ievadi},
+  label=lst:py_file_stdin,
+  captionpos=t
+]
+import sys 
+
+def main():
+    line_count = 0
+    input_line = ''
+
+    for line in sys.stdin:
+        input_line = line
+        line_count += 1
+
+    print("Fails satur " + str(line_count) + " rindas");
+
+if __name__ == "__main__":
+    main()
+\end{lstlisting}
+
+Pārbaudot izpildes laikus, piemēram, ar failu ar 100 miljoniem rindu, izmantojot time utilītu, var iegūt rezultātus, kuri skatāmi izdrukā \ref{lst:example_benchmark_result}.
+
+\begin{lstlisting}[caption={Etalonuzdevuma rezultāti failam ar 100 miljoniem rindu},
+  label=lst:example_benchmark_result,
+  captionpos=t
+]
+$ time ./cpp_benchmark < 100mil.txt 
+Fails satur 100000000 rindsas
+
+real    0m25.787s
+user    0m24.884s
+sys     0m0.892s
+
+$ time python py_benchmark.py < 100mil.txt 
+Fails satur 100000000 rindsas
+
+real    0m7.129s
+user    0m6.303s
+sys     0m0.819s
+\end{lstlisting}
+
+Tātad pēc iegūtājiem datiem (25,787s priekš C++ un 7,129s priekš Python) varētu secināt, ka
+Python ir ~3,6 reizes veiktspējīgāks nekā C++, kas sarežģītākos piemēros būtu nepiemērots apgalvojums.
+Līdz ar to, dotajam piemērēram kā vispārīgam dažādu valodu salīdzinājumam ir problēmas:
+\begin{itemize}
+    \item reālos programmēšanas scenārijos reti pārādīsies nepieciešamība risināt minēto problēmu, 
+    \item etalonuzdevums nesatur darbības ar sarežģītākām datu struktūrām un algoritmiem, kuras drīzāk parādītos netriviālās programmās
+    \item un iespējams vissvarīgāk - augsta līmeņa valoda kā Python abstraktē relatīvi sarežģītas darbības ar failiem, datu buferiem, standarta ievadi / izvadi, ieviešot optimizācijas
+        izpildes laikā, tāpēc dotos risinājumus nevar uzskatīt par ekvivalentiem.
+\end{itemize}
+
+C++ risinājumā ieviešot pat ļoti vienkāršas optimizācijas konfigurācijā ar standarta ievadi, var iegūt krietni labāku rezultātu (skatīt izdruku \ref{lst:cpp_optimized} un \ref{lst:cpp_optimized_benchmark}).
+
+\begin{lstlisting}[caption={Optimizēta vienkārša faila apstrāde valodā C++ caur standarta ievadi },
+  label=lst:cpp_optimized,
+  captionpos=t
+]
+#include <cstdio>
+#include <iostream>
+#include <string>
+
+int main()
+{
+    std::ios::sync_with_stdio(false); // nesinhronize C un C++ stdio 
+    std::cin.tie(nullptr); // neflusho cout, kad tiek lietots cin
+
+	std::string line;
+	size_t lineCount = 0;
+
+	while (std::getline(std::cin, line))
+	{
+		lineCount++;
+	}
+
+	printf("Fails satur %zu rindas\n", lineCount);
+
+	return 0;
+}
+\end{lstlisting}
+
+
+\begin{lstlisting}[caption={Optimizētā C++ etalonuzdevuma rezultāti failam ar 100 miljoniem rindu},
+  label=lst:cpp_optimized_benchmark,
+  captionpos=t
+]
+$ time ./cpp_test < 100mil.txt 
+File contains 100000000 lines
+
+real    0m2.002s
+user    0m1.690s
+sys     0m0.308s
+\end{lstlisting}
+
+
+
+
+\textcolor{red}{varbūt jāmin ka kādu laiku atpakaļ soc tīklos bija populārs benchmarks apstrādāt 1 miljardu rindu garu failu - līdzīgs problemātisks benchmarks}
+
+Līdz ar to, darbojoties ar etalonuzdevumiem, jāņem vērā, ka var iegūt nepatiesu līdzvērtību
+
 \begin{center}
 \chapter{GPGPU arhitektūra un programmēšana}
 \end{center}
