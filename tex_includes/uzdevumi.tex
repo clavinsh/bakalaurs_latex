@@ -5,7 +5,7 @@
 \section{Uzdevumu izvēles pamatojums}
 
 Praktiskai saskarņu salīdzināšanai nepieciešams definēt programmēju problēmu,
-kuru iespējams izstrādāt uz abām saskarnēm.  Jāizvēlas tāds uzdevums, kuru
+kuru iespējams izstrādāt uz visām platformām.  Jāizvēlas tāds uzdevums, kuru
 iespējams 'augsti' paralelizēt, tas ir, sadalīt uzdevumu daudzos mazos un (it
 īpaši) neatkarīgos gabalos, lai būtu pievienotā vērtība (ātrdarbība) to pildīt
 uz GPU, ņemot vērā papildus darbu un nepieciešamās zināšanas, lai ieviestu GPU
@@ -15,9 +15,15 @@ Tā kā uzdevuma risinājumu primārais mērķis ir izmantot etalonuzdevumā, ta
 tam ir jābūt tādam, ar kuru iespējams notestēt kādu biežu lietotu GPGPU
 platformu funkciju apakškopu.
 
+Viena uzdevuma ietvaros varētu rasties šaubas par etalonuzdevuma rezultātu
+ticamību, tas ir, iespējams radītie risinājumi, uzstādījums vai pats uzdevums
+radījis kādu īpašu situāciju, kurā kāda konkrēta platforma noteiktos mērījumos
+izvirzās vadībā, kas nebūtu tiesa citās reālās programmās ar pievienoto
+vērtību. Tāpēc tiek izvirzīta prasība pēc diviem dažādiem uzdevumiem.
+
 Par vienu uzdevumu tiks izmantots jau autora kursa darbā definētais un 
 izstrādatais uzdevums (uz CUDA un ROCm, bet ne OpenCL) - paroļu lauzējs,
-atkopējs priekš SHA-256 jauktām, šifrētām parolēm.\cite{kursa-darbs}
+atguvējs priekš SHA-256 jauktām, šifrētām parolēm.\cite{kursa-darbs}
 
 Nobriedušāki paroļi lauzēji, jeb precīzāk - paroļu atkopēji kā
 "hashcat"\cite{hashcat} ir spējīgi ņemt vērā vairākas paroļu variācijas,
@@ -27,61 +33,124 @@ izstrādāt pašu 'kodolu', kas, ar jau saņemtu iespējamo paroļu sarakstu, t�
 pārbaudīs, jeb tā sauktais 'vārdnīcas' tipa uzbrukums.\cite{hashcat_dict_atk}
 
 Šādā uzdevuma implementācijās būs nepieciešamība izmantot datu straumi parolēm,
-pie atbilstošas paroles atrašanas, jānodrošina atomiska datu ierakstīšana
-no attiecīgā veiksmīgā GPGPU pavediena.
-
-Šim uzdevumam, ņemot vērā definētu straumes bufera izmēru un apstrādājamo
-paroļu skaitu, ir fiksēts izpildāmo GPGPU kodolu un laidienu skaits. Daudzos
-praktiskos scenārijos GPU resursi tiek izmantoti ilgtermiņa darbībām, kur
-izpildāmo kodolu skaits varētu nebūt definēts, piemēram, mākslīgā intelekta
-mašīnmācīšanās modeļi, kuri tiek trenēti kamēr sasniegts kāds kvalitātes
-kritērijs.
+pie atbilstošas paroles atrašanas, jānodrošina atomiska datu ierakstīšana no
+attiecīgā veiksmīgā GPGPU pavediena. Kā arī šim uzdevumam, ņemot vērā definētu
+straumes bufera izmēru un apstrādājamo paroļu skaitu, ir fiksēts izpildāmo
+GPGPU kodolu un laidienu skaits. Daudzos praktiskos scenārijos GPU resursi tiek
+izmantoti ilgtermiņa darbībām, kur izpildāmo kodolu skaits varētu nebūt
+definēts, piemēram, mākslīgā intelekta mašīnmācīšanās modeļi, kuri tiek trenēti
+kamēr sasniegts kāds kvalitātes kritērijs.
 
 Noteiktajos etalonuzdevuma prasību ietvaros tomēr vajadzētu kādu statiski
 nosakāmu izpildes apjomu, tāpēc, lai notestētu šādu ilgtermiņa izpildi tiek
 noteikts otrs uzdevums - Džona Konveja dzīves spēles \cite{conway1970conway}
 realizācija, kurā izpildes apjoms definējams kā šūnu automāta darbības soļi.
 
-
-\section{Apkalpapojošās programmatūras, aparatūras uzstādījums}
-
-
-Etalonuzdevumu izpildei izmantots dators ar:
+Šīs šūnu automāts ir viens no zināmākajiem tā vienkāršo noteikumu un
+iespējamās kompleksās šūnu mijiedarbības dēļ (ar to iespējams
+uzkonstruēt jebkuru Tjūringa mašīnu). Šūnas ir izkārtotas 2 dimensionālā režģī,
+virmsā. Katra šūna ir vai nu dzīva vai mirusi un nākamajā solī šūnas stāvoklis
+ir atkarīgs no tās tiešajiem 8 kaimiņiem\cite{conway1970conway}:
 \begin{itemize}
-    \item Arch Linux operētājsistēmu,
+    \item ja šūna ir mirusi:
+        \begin{itemize}
+            \item ja tai ir precīzi 3 kaimiņi, tā nākamajā solī būs dzīva,
+            \item jebkurā citā situācijā tā paliks mirusi.
+        \end{itemize}
+    \item ja šūna ir dzīva:
+        \begin{itemize}
+            \item ja tai ir 2 vai trīs kaimiņi, tā paliks dzīva,
+            \item ja tai vai nu mazāk par 2 vai vairāk par 3 kaimiņiem,
+                tā nākamajā solī nomirs (it kā vai nu no nepietiekamas
+                apdzīvotības vai pārapdzīvotības).
+        \end{itemize}
+\end{itemize}
+
+Uzdevumu ir vērts pildīt uz GPU, jo katru automāta šūnu iespējams apstrādāt
+savā pavedienā gandrīz vai kā 2D bildi, kur katrs pikselis atbilst katrai
+automāta šūnai. Papildus sarežģītība un iespējamās platformu ātrdarbības
+atšķirības meklējamas GPU atmiņas datu izveidē un apmaiņā pie liela spēles soļu
+skaita, jo ar katru soli nākas mainīt ieejas datus, izejas datus.
+
+
+\section{Programmatūras, aparatūras uzstādījums}
+Tā kā programmas notikumu ilgumi dažādās konfigurācijās nāks no CPU, CUDA, HIP
+un OpenCL pusēm, tad lai būtu vienota un viegli apstrādājama datu kopa,
+notikumi tiks žurnalēti failā, izmantojot, spdlog\cite{spdlog-github}, C++
+žurnalēšanas bibliotēku.
+
+Ērtai datu apstrādei, izmantojamais faila formāts ir CSV, un datu formāts
+skatāms izdrukā \ref{lst:benchmark_log_example}.
+
+\begin{lstlisting}[caption={Etalonuzdevuma žurnālfaila ieraksta formāts},
+  label=lst:benchmark_log_example,
+  captionpos=t
+]
+<Platformas tips>,<Notikuma apraksts>,<Ilgums, ms>
+OpenCL, Kodola izpildes laiks, 2.0736
+CUDA, Datu parraide uz GPU, 1.83927
+HIP, Atminas malloc uz GPU, 6.42058
+\end{lstlisting}
+
+Notikuma ilgums norādāms milisekundēs, jo, galvenokārt, tādā mērvienībā
+notikumu ilgumu noklusēti atgriež gan CUDA, gan HIP profilēšanas funkcijas
+\textit{cudaEventElapsedTime}, \textit{hipEventElapsedTime}. OpenCL funkcija
+\textit{clGetEventProfilingInfo} atgriež notikuma ilgumu nanosekundēs, šajā
+gadījumā rezultāti tiks pārveidoti, lai nodrošinātu konsekvenci starp pārējām
+platformām.
+
+Uzdevumu izstrādei, testēšanai un etalonuzdevumu izpildei izmantots dators ar:
+\begin{itemize}
+    \item Arch Linux operētājsistēmu ar Linux 6.14.5-arch1-1 OS kodolu
     \item AMD Ryzen 5600H procesoru ar Radeon Graphics integrēto videokarti,
     \item Nvidia GeForce RTX 3060 Laptop ārējo videokarti.
 \end{itemize}
 
-Programmu izstrādē izmantojamo platformu versijas:
+Lai nodrošinātu risinājumu izolāciju caur Docker, visu konteineru izveidē par
+bāzes Docker bildi izmantota Ubuntu 24.04. Par pamata Docker failu HIP
+risinājumam izmantots AMD izstrādatais \cite{amd_dockerfile} ar sagatavotu vidi
+ROCm un CUDA platformām. Līdzīgi priekš CUDA izmantota Nvidia
+sagatavotā bilde\cite{nvidia_dockerfile}, kurai pamatā ir Ubuntu (pilnās Docker bilžu
+atkarības skatīt attēlā \ref{fig:directed-graph}).
 
+\begin{figure}[h]
+  \centering
+  \begin{tikzpicture}
+    \node[draw, rounded corners, thick, minimum width=2.5cm, text width=2.3cm, align=center] (1) at (0,4) {ubuntu 24.04};
+    \node[draw, rounded corners, thick, minimum width=2.5cm, text width=3.5cm, align=center] (2) at (0,0) {nvidia/cuda:12.8.1-devel-ubuntu24.04};
+    \node[draw, rounded corners, thick, minimum width=2.5cm, text width=2.3cm, align=center] (3) at (4,4) {rocm/dev-ubuntu-24.04};
+    \node[draw, rounded corners, thick, minimum width=2.5cm, text width=2.3cm, align=center] (4) at (6,2) {ROCm kopīgā bilde};
+    \node[draw, rounded corners, thick, minimum width=2.5cm, text width=2.3cm, align=center] (5) at (10,4) {ROCm priekš CUDA};
+    \node[draw, rounded corners, thick, minimum width=2.5cm, text width=2.3cm, align=center] (6) at (10,0) {ROCm priekš HIP};
+    \node[draw, rounded corners, thick, minimum width=2.5cm, text width=2.3cm, align=center] (7) at (2,-3) {CUDA bilde};
+    \node[draw, rounded corners, thick, minimum width=2.5cm, text width=2.3cm, align=center] (8) at (-1,-3) {OpenCL bilde};
+    
+    \draw[->, thick] (1) -- (3);
+    \draw[->, thick] (1) -- (2);
+    \draw[->, thick] (2) -- (7);
+    \draw[->, thick] (2) -- (8);
+    \draw[->, thick] (2) -- (4);
+    \draw[->, thick] (3) -- (4);
+    \draw[->, thick] (4) -- (5);
+    \draw[->, thick] (4) -- (6);
+  \end{tikzpicture}
+  \caption{Docker pamatbilžu atkarības}
+  \label{fig:directed-graph}
+\end{figure}
 
-Lai nodrošinātu risinājumu izolāciju caur Docker, visu konteineru izveidē
-par bāzes Docker bildi tiks izmantota Ubuntu 24.04
-nvidia-devel
-amd something
-image from ... jo tur vairāki image essentially
+Pašu programmu izstrādei un kompilēšanai izmantots sekojošs programmatūras
+steks ar fiksētām versijām:
 
+\begin{itemize}
+    \item Make 4.4.1-2
+    \item CMake 4.0.1-2
+    \item gcc 15.1.1
+    \item CUDA, nvcc 12.8.97
+    \item ROCm HIP, hipcc 6.3.4
+    \item spdlog 1.15.2-1
+\end{itemize}
 
-Par pamata Docker failu HIP risinājumam izmantots AMD izstrādatais
-ar sagatavotu vidi ROCm un CUDA platformām. \cite{amd_dockerfile}
-
-
-Pārējās izstrādei nepieciešamās programmatūras steks:
-Cmake versija
-Gcc
-Docker versija
-
-
-
-docker config, cmake config, citu izmantoto softu versijas
-
-žurnālfailu spdlog config, un csv izejas faila formāts
-
-
-
-
-\section{Paroļu atguvēja īstenojums}
+\section{Paroļu atguvēja īstenojums} \label{sha256_section}
 Tātad jāizstrādā programma, kura, ņemot vērā ieejas failu ar potenciālajām
 parolēm, no kādas paroles jaucējvērtības spētu noskaidrot pašu paroli. Uzdevumu
 būtu vērts risināt uz GPU, jo pie liela paroļu skaita, katrs GPU pavediens
@@ -133,7 +202,7 @@ passwords, offsets, count =  readPasswordFromFile(inputFile)
 log(fileLoadTime())
 
 passwordsPinnedMemory = mallocPinnedMemory(sizeof(passwords))
-offsetsPinnedMemory = mallocPinnedMemory(sizeof(offsets))
+offsetsPinnedMemory = mallocPinnedMemory(sizeof(of\cite{amd_dockerfile}fsets))
 
 devicePasswordsBuffer = deviceMalloc(sizeof(passwords))
 deviceOffsetsBuffer = deviceMalloc(sizeof(offsets))
@@ -170,7 +239,7 @@ PwCracker(passwords, pwOffsets, count, hash, outputIdx):
         atomicStore(outputIdx, i)
 \end{lstlisting}
 
-\section{Dzīves spēles šūnu automāta īstenojums}
+\section{Dzīves spēles šūnu automāta īstenojums} \label{gol_section}
 
 Tāpat kā paroļu atguvējam, programma darbināma no komandrindas, padodot CLI
 argumentus:
@@ -341,16 +410,153 @@ clGetEventProfilingInfo(event, CL_PROFILING_COMMAND_COMPLETE, sizeof(end), &end,
 float elapsedTime = static_cast<double>(end - start);
 \end{lstlisting}
 
-\section{Risinājumu repozitorijs, failu struktūra un kompilēšana}
+\section{Ievaddatu ģenerēšana un etalonuzdevuma darbināšana}
+\subsection{Ģenerēšanas}
+Paroļu atguvēja programmām, lai iegūtu nepieciešamos paroļu failus, izmantots
+Python skripts\cite{kursa-darbs}, kas:
+\begin{itemize}
+    \item Nejauši ģenerē paroles pēc lietotāja ievadītā paroļu skaita,
+    \item Katra parole ir garumā 6 - 16 un sastāv no ASCII simboliem.
+\end{itemize}
+
+Izvēlētas šādas prasības, jo paroles pārsvarā tiek definētas, izmantojot ASCII
+simbolus, un tās  tiek rakstītas dotajā simbolu diapazonā.
+\cite{pw_user_practice}
+
+Skripts darbināms caur komandrindu, padodot CLI argumentus paroļu skaitam
+un faila nosaukumam, ceļam (skatīt izdruku \ref{lst:pwgen_cli}).
+\begin{lstlisting}[caption={Paroļu faila ģenerēšanas skripta darbināšana},
+    label=lst:pwgen_cli, language=bash]
+$ python3 ./pwgen.py <parolu skaits> <izejas faila cels>
+\end{lstlisting}
+
+Līdzīgi izveidots Dzīves spēles režģa ievadfaila ģenerēšanas skripts, kurš
+katru šūnu nejauši aizpilda ar 1 vai 0. Skripts darbināms caur komandrindu,
+padodot CLI arguments režģa platumam un garumam, faila nosaukumam (skatīt
+izdruku \ref{lst:gridgen_cli}).
+
+\begin{lstlisting}[caption={Režģa failaģenerēšanas skripta darbināšana},
+    label=lst:gridgen_cli, language=bash]
+$ python3 ./gridfile_gen.py <platums jeb x> <garums jeb y> <izejas faila cels>
+\end{lstlisting}
+
+\subsection{Etalonuzdevumu skripts}
+Ņemot vērā izveidotās programmas un etalonuzdevumu izveides apsvērumus,
+definētās katra uzdevuma risinājuma dažādas laidienu konfigurācijas.
+
+Paroļu atguvējam noteikti sekojoši parametri: \cite{kursa-darbs}
+\begin{itemize}
+    \item Risinājuma platforma:
+    \begin{itemize}
+        \item CUDA 
+        \item HIP 
+        \item OpenCL 
+    \end{itemize}
+    \item Paroļu apjoms failā:
+    \begin{itemize}
+        \item 10 000 paroles
+        \item 1 miljons paroles
+        \item 100 miljonu paroļu
+    \end{itemize}
+    \item Laušanas rezultāts:
+    \begin{itemize}
+        \item Veikmsīgi atrasta parole
+        \item Neatrasta parole
+    \end{itemize}
+    \item Uzlaužamās paroles atrašanās vieta failā:
+    \begin{itemize}
+        \item 1. kvartile (pirmie 25\%)
+        \item 2. kvartile
+        \item 3. kvartile
+        \item 4. kvartile
+    \end{itemize}
+\end{itemize}
+
+
+Tā kā tiek lietota ievaddatu straumēšana, tomēr kaut kādā apmērā notiek secīga
+elementu apstrāde, dati tiek ielasīti un izņemti no GPU atmiņas, un kodoli
+laisti pēc kārtas. Līdz ar to izpildes ilgums pie lieliem failu izmēriem ir
+atkarīgs no paroļu skaita. Lai redzētu šo ietekmi un atšķirības starp
+platformām, noteikta laidiena konfigurācija ar dažādiem paroļu garumiem un
+paroles atrašanos failā, tās pozīciju.
+
+Līdzīgi definēta Dzīves spēles laidiena konfigurācija:
+\begin{itemize}
+    \item Risinājuma platforma:
+    \begin{itemize}
+        \item CUDA 
+        \item HIP 
+        \item OpenCL 
+    \end{itemize}
+    \item Ieejas režģa izmērs
+    \begin{itemize}
+        \item 100x100 
+        \item 1000x1000 
+        \item 10000x10000
+    \end{itemize}
+    \item Automāta soļu skaits:
+    \begin{itemize}
+        \item 1 
+        \item 100 
+        \item 1000
+        \item 10000
+    \end{itemize}
+\end{itemize}
+
+Viena no etalonuzdevumu prasībām ir lieki nenoslogota sistēma, tāpēc, lai
+etalonuzdevuma skripts mazinātu savu ietekmi uz sistēmu un attiecīgi
+pēc iespējas mazāk ietekmētu programmas, mērķtiecīgi tiek iegūti visi
+iespējamie dati darbam pirmsapstrādes solī, kurš beidzas ar piespiedu kārtā 
+izsauktu Python drazu savācēja, mazinot lieko RAM patērīņu.
+
+Pēc laidienu konfigurācijām etalonuzdevuma pirmsapstrādes solī ar
+atbilstošajiem failu ģenerēšanas skriptiem tiek izveidoti ievadfaili, un failu
+direktorijas, ja tādas neeksistē. Failu struktūra sākot no skripta palaišanas
+saknes ir šāda:
+\begin{itemize}
+    \item Ģenerētie ieejas dati: ./benchmark\_data/input
+    \item Programmu izveidoti izejas dati: ./benchmark\_data/output
+    \item Programu izveidotie žurnālfaili: ./benchmark\_data/logs
+\end{itemize}
+Tālāk katram paroļu failam pēc atbilstošajām pozīcijām tiek atrastas un
+nošifrētas meklējamās paroles, katrai laidiena konfigurāciju permutācijai
+sagatavota komandrindas teksta virkne, ar kuru tiks palaists atbilstošais
+Docker konteineris, ar atbilstošo ievadfailu, žurnālfailu un izejas failu vai
+paroles jaucējvērtību.
+
+Katra laidiena konfigurācija tiek darbināta vairākas reizes un operētājsistēmas
+kešatmiņa tiek piespiedu kārtā iztīrīta pēc katra laidiena. Laidienu reižu
+skaits tiek padods caur komandrindu.
+
+
+\begin{lstlisting}[caption={Etalonuzdevumu darbināšanas Python skripta darbināšana},
+    label=lst:bench_cli, language=bash]
+$ python3 benchmark.py <konfiguracijas darbinasanas skaits>
+\end{lstlisting}
+
+
+\section{Risinājumu repozitorijs, failu struktūra, kompilēšana, darbināšana}
 Bakalaura darba repozitorijs uzdevumu risinājumiem,
 ievadfailu ģenerēšanas un etalonuzdevuma Python skriptiem publicēts un pieejams
 GitHub.\cite{bak_github_repo} Projekta saknē atrodas 7 direktorijas (katra uzdevuma
 risinājumi katrā platformā un Python skripti).
 
-Attiecīgo projektu no tā direktorijas saknes iespējams kompilēt \textit{cmake}
-vai ar \textit{Docker} (skatīt izdrukas \ref{lst:sha_cuda_compile}
+Attiecīgo projektu no tā direktorijas saknes iespējams kompilēt ar \textit{cmake}
+vai ar \textit{Docker} (skatīt izdrukas \ref{lst:gol_cl_compile} un \ref{lst:gol_hip_compile}).
 
-\begin{lstlisting}[caption={Dzīves spēles risinājums priekš HIP}, label=lst:gol_hip_compile, language=bash]
+\begin{lstlisting}[caption={OpenCL un CUDA risinājumu kompilēšana},
+    label=lst:gol_cl_compile, language=bash]
+# Kompilesana
+
+$ cmake -S . -B build
+$ cmake --build build
+
+# Uz Docker
+
+$ docker buildx build . -t golcl
+\end{lstlisting}
+
+\begin{lstlisting}[caption={ROCm HIP risinājumu kompilēšana}, label=lst:gol_hip_compile, language=bash]
 # Kompilesana 
 $ cmake -S . -B build # (prieks ROCm)
 $ cmake -S . -B build -D GPU_RUNTIME=CUDA # (prieks CUDA)
@@ -362,12 +568,22 @@ $ docker buildx build . --target rocm -t golhip:rocm #(prieks ROCM)
 \end{lstlisting}
 
 
-Gan CUDA, gan HIP risinājumu pirmkods meklējams GitHub glabātuvē.\cite{kursa_darba_repo}
-No projekta saknes, atrodoties direktorijā './src', iespējams kompilēt CUDA programmu ar:
-\begin{lstlisting}[caption={Programmas kompilēšana uz CUDA}, label=lst:cuda_compile]
-$ nvcc -O2 kernel.cu sha256_cpu.cpp -o pwcracker
-\end{lstlisting}
-Līdzīgi HIP platformai:
-\begin{lstlisting}[caption={Programmas kompilēšana uz HIP}, label=lst:hip_compile]
-$ hipcc -O2 kernel.hip sha256_cpu.cpp -o pwcracker
+Ja programmas kompilētas pa taisno ar CMake, tad caur komandrindu, padodot CLI
+arguments, var darbināt kā norādīts \ref{sha256_section} un \ref{gol_section}
+nodaļās. Darbināšanai ar Docker sākumā jānorāda  GPU izmantošana, un jāmontē
+Docker sējums ievaddatiem un izvaddatiem (skatīt izdruku
+\ref{lst:docker_konteinera_run}).
+
+\begin{lstlisting}[caption={Docker konteinera darbināšanas konfigurācija},
+  label=lst:docker_konteinera_run,
+  captionpos=t,
+  language=bash
+]
+$ docker run --rm --gpus all -v <datu direktorija>/:/data <konteinera nosaukums> /data/<apstradajamais fails> /data/<izvada fails> <citas opcijas ...>
+
+# Parolu atguvejs 
+$ sudo docker run --rm --gpus=all -v <datu direktorija>:/data <konteinera nosaukums> /data/<parolu faila cels> /data/<paroles hash vertiba> /data<zurnalfaila cels> /data/<zurnafails>
+
+# Dzives spele 
+$ sudo docker run --rm --gpus=all -v <datu direktorija>:/data <konteinera nosaukums> /data/<ieejas rezga faila cels> /data/<izejas rezga faila cels> /data<automata solu skaits> <zurnalfaila cels> 
 \end{lstlisting}

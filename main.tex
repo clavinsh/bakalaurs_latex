@@ -146,6 +146,7 @@ chaptertitle=false,%
 }
 
 \usepackage{tabularx}
+\usepackage{tikz}
 
 
 
@@ -546,27 +547,6 @@ $ docker run --rm --gpus all -v ./data/:/data <konteinera nosaukums> /data/<apst
 \end{lstlisting}
 
 
-Tā kā programmas notikumu ilgumi dažādās konfigurācijās nāks no CPU, CUDA, HIP un OpenCL pusēm, tad lai būtu
-vienota un viegli apstrādājama datu kopa, notikumi tiks žurnalēti failā, izmantojot, spdlog\cite{spdlog-github}, C++ žurnalēšanas bibliotēku.
-
-Ērtai datu apstrādei, izmantojamais faila formāts ir CSV, un datu formāts skatāms izdrukā \ref{lst:benchmark_log_example}.
-
-\begin{lstlisting}[caption={Etalonuzdevuma žurnālfaila ieraksta formāts},
-  label=lst:benchmark_log_example,
-  captionpos=t
-]
-<Iekartas/platformas tips>,<Notikuma apraksts>,<Ilgums milisekundēs>
-OpenCL, Kodola izpildes laiks, 38971
-CUDA, Kodola izpildes laiks, 38971
-HIP, Kodola izpildes laiks, 38971
-\end{lstlisting}
-
-Notikuma ilgums norādāms milisekundēs, jo, galvenokārt, tādā mērvienībā
-notikumu ilgumu noklusēti atgriež gan CUDA, gan HIP profilēšanas funkcijas
-\textit{cudaEventElapsedTime}, \textit{hipEventElapsedTime}. OpenCL funkcija
-\textit{clGetEventProfilingInfo} atgriež notikuma ilgumu nanosekundēs, šajā
-gadījumā rezultāti tiks pārveidoti, lai nodrošinātu konsekvenci starp pārējām
-platformām.
 
 
 \begin{center}
