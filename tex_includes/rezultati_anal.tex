@@ -1,5 +1,41 @@
 \begin{center}
-    \chapter{Iegūtie rezultāti un analīze}
+    \chapter{Datu analīze}
 \end{center}
+
+Tā kā no žurnālfailiem ir iegūti dažādi ar GPU izpildi saistītu notikumu
+izpildes laiki, kuri starp risinājumiem ir pēc iespējas ielikti ekvivalentās
+vietās, tad vienkārši apskatot tekošo kopējo uzkrāto (kumulatīvo) summu,
+var vizualizēt katras platformas izpildes laikus pret pietiekami
+līdzīgiem atskaites punktiem (skatīt attēlus \ref{img:sha256_100m_not_found_cum},
+\ref{img:gol_10k10k_10k_steps_cum}).
+
+\begin{figure}[h]
+    \caption{Paroļu atguvēja izpildes laiki 100m parolēm (parole netika
+    atrasta), datu straumes izmērs \( 2^{20} = 1048576\)}
+
+    \includegraphics[width=\textwidth]{images/sha256_100m_not_found.png}
+    \label{img:sha256_100m_not_found_cum}
+\end{figure}
+
+\begin{figure}[h]
+    \caption{10000x10000 Dzīves spēle ar 10000 soļiem}
+    \includegraphics[width=\textwidth]{images/gol_10k_by_10k_10ksteps.png}
+    \label{img:gol_10k10k_10k_steps_cum}
+\end{figure}
+
+Pēc grafiem var apstiprināt to, kas jau tika noskaidrots kursa darbā
+saistībā ar CUDA un ROCm HIP - ROCm HIP ir neliela virsdarbe, salīdzinot
+ar CUDA.\cite{kursa-darbs} Sakarā ar
+OpenCL, šij platformai katrs notikums ir ar, relatīvi runājot, daudz lielāku
+virsdarbi.
+
+precīzi dati un līknes koef.
+
+
+buferi salīdzinājums turp un atpakaļ
+
+
+viena kodola izpilde priekš sha un gol pie dažādiem izmēriem
+
 
 
