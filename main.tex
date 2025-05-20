@@ -9,7 +9,7 @@
  top=20mm,
  right=20mm,
  bottom=20mm,
- includehead
+ includefoot
  }
 
 
@@ -33,14 +33,14 @@
 \titlespacing*{\section}{0pt}{5pt}{5pt}
 
 
-\usepackage{fancyhdr}%šis izveido header, lai tur ir līnija ar section nosaukumu
-\newcommand{\changefont}{%
-    \fontsize{9}{11}\selectfont
-}
-\pagestyle{fancy}
-\fancyhf{}
-\fancyfoot[C]{\thepage}
-\fancyhead[L]{\changefont \leftmark}
+% \usepackage{fancyhdr}%šis izveido header, lai tur ir līnija ar section nosaukumu
+% \newcommand{\changefont}{%
+%     \fontsize{9}{11}\selectfont
+% }
+% \pagestyle{fancy}
+% \fancyhf{}
+% \fancyfoot[C]{\thepage}
+% \fancyhead[L]{\changefont \leftmark}
 
 \usepackage{polyglossia}
 \setdefaultlanguage{latvian}
@@ -78,6 +78,12 @@ chaptertitle=false,%
     date=short]{biblatex}
 \addbibresource{biblio.bib}
 
+% normalizēts formatējums atsaucēm
+\DeclareFieldFormat*{title}{\textnormal{#1}}
+\DeclareFieldFormat*{journaltitle}{\textnormal{#1}}
+\DeclareFieldFormat*{booktitle}{\textnormal{#1}}
+\DeclareFieldFormat{url}{\textnormal{\url{#1}}}
+\AtEveryBibitem{\normalfont}
 
 \usepackage{hyperref}%Izveido spiežamus linkus saturam, bibliogrāfijām uc.
 \hypersetup{
