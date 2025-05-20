@@ -1,0 +1,320 @@
+\begin{center}
+    \chapter{Etalonuzdevumu izveides apsvērumi}
+\end{center}
+
+Etalonuzdevumu izveidē (programmatūras vai algoritmu salīdzināšanas vajadzībām)
+jābūt pārliecinātam, ka izveidotā programma, izmantotie profilēšanas rīki un
+jebkāda cita programmatūra, kas kopumā paredzēta mērījumu iegūšanai,
+noformēšanai un analīzei, ir uzticama un atkārtojuma.
+
+Apskatot šo problēmu vispārīgāk kā kāda eksperimenta veikšanu, darbības
+rezultātam, secinājumiem jābūt neatkarīgi atkārtojamiem. Lai labāk atdalītu un
+līdz ar to izprastu dažādas atkārtojamības pakāpes, ASV bāzētā, starptautiskā
+Skaitļošanas tehnikas asociācija (ACM) definē šādu terminoloģiju eksperimentiem
+(tulkojot no angļu val.):
+\cite{acm-experiment-terms}
+
+\begin{itemize}
+    \item Atkārtojamība (repeatability) - tā pati komanda\footnote{Šajā
+        kontekstā ar komandu saprotami cilvēki, eksperimenta veicēji.}, tāds
+        pats uzstādījums,
+    \item Reproducējamība (reproducability) - cita komanda, tāds pats
+        uzstādījums,
+    \item Atdarināmība (replicability) -  cita komanda, cits uzstādījums.
+\end{itemize}
+
+
+Praktisko ierobežojumu dēļ garantēt pat reproducējamību šī darba ietvaros nav
+iespējams, bet uz to var tiekties precīzi definējot noteikumus, kuri tiks
+ievēroti programmu un etalonuzdevumu izstrādē, iegūstot atkārtojamību, tā lai
+to pašu varētu veikt arī citi.
+
+Lai izveidotu etalonuzdevumu CUDA, ROCm HIP un OpenCL platformām,
+būs nepieciešams definēt kādu problēmu, kuras risinājumu ir jēga realizēt
+izpildei uz videokartes.
+
+Jāizvēlas tāds uzdevums, kuru iespējams 'augsti' paralelizēt, tas ir, sadalīt
+uzdevumu daudzos mazos un (it īpaši) neatkarīgos gabalos, lai būtu pievienotā
+vērtība (ātrdarbība) to pildīt uz GPU, ņemot vērā papildus darbu un
+nepieciešamās zināšanas, lai ieviestu GPU risinājumu.
+
+Autora kursa darbā\cite{kursa-darbs} tāds jau tika definēts, bet netika
+pievērsta papildus uzmanība etalonuzdevuma uzticamībai.
+
+Salīdzinot dažādus ietvarus ar it kā vienu un to pašu uzdevumu, jāņem vērā, ka
+ar naivu risinājumu ir grūti garantēt, ka attiecīgās izveidotās programmas ir
+pietiekami līdzvērtīgas, lai iegūtos datus un līdz ar to ietvarus varētu godīgi
+salīdzināt.
+
+Piemēram, salīdzinot dažādu programmēšanas valodu veiktspēju ar noteiktu
+etalonuzdevumu, varētu izvēlēties valodas C++ un Python, apstrādājot kādu failu
+caur standarta ievadi, aprēķinot cik rindas satur dotais fails (skatīt izdruku
+\ref{lst:cpp_file_stdin} un \ref{lst:py_file_stdin})
+
+\begin{lstlisting}[caption={Vienkārša faila apstrāde valodā C++ caur standarta ievadi},
+  label=lst:cpp_file_stdin,
+  captionpos=t
+]
+#include <cstdio>
+#include <iostream>
+#include <string>
+
+int main()
+{
+	std::string line;
+	size_t lineCount = 0;
+
+	while (std::getline(std::cin, line))
+	{
+		lineCount++;
+	}
+
+	printf("Fails satur %zu rindas\n", lineCount);
+
+	return 0;
+}
+\end{lstlisting}
+
+
+\begin{lstlisting}[caption={Vienkārša faila apstrāde valodā Python caur standarta ievadi},
+  label=lst:py_file_stdin,
+  captionpos=t
+]
+import sys 
+
+def main():
+    line_count = 0
+    input_line = ''
+
+    for line in sys.stdin:
+        input_line = line
+        line_count += 1
+
+    print("Fails satur " + str(line_count) + " rindas");
+
+if __name__ == "__main__":
+    main()
+\end{lstlisting}
+
+Pārbaudot izpildes laikus, piemēram, ar failu, kas satur 100 miljons rindu,
+izmantojot time\cite{time_man_page} utilītu, var iegūt rezultātus, kuri skatāmi
+izdrukā \ref{lst:example_benchmark_result}.
+
+\begin{lstlisting}[caption={Etalonuzdevuma rezultāti failam ar 100 miljoniem rindu},
+  label=lst:example_benchmark_result,
+  captionpos=t
+]
+$ time ./cpp_benchmark < 100mil.txt 
+Fails satur 100000000 rindas
+
+real    0m25.787s
+user    0m24.884s
+sys     0m0.892s
+
+$ time python py_benchmark.py < 100mil.txt 
+Fails satur 100000000 rindas
+
+real    0m7.129s
+user    0m6.303s
+sys     0m0.819s
+\end{lstlisting}
+
+Tātad no iegūtajiem rezultātiem (25,787s ilgs izpildes laiks priekš C++ un
+7,129s priekš Python) varētu secināt, ka Python ir ~3,6 reizes veiktspējīgāks
+nekā C++, kas sarežģītākos piemēros būtu nepiemērots apgalvojums. Līdz ar to,
+dotajam piemērēram kā vispārīgam dažādu valodu salīdzinājumam ir problēmas:
+augsta līmeņa valoda kā Python abstraktē relatīvi sarežģītas darbības ar
+failiem, datu buferiem, straumēm, standarta ievadi un izvadi, ieviešot optimizācijas
+izpildes laikā, tāpēc dotos risinājumus nevar uzskatīt par ekvivalentiem.
+
+C++ risinājumā ieviešot pat ļoti vienkāršas optimizācijas konfigurācijā ar
+standarta ievadi, var iegūt krietni labāku rezultātu (skatīt izdruku
+\ref{lst:cpp_optimized} un \ref{lst:cpp_optimized_benchmark}).
+
+\begin{lstlisting}[caption={Optimizēta vienkārša faila apstrāde valodā C++ caur standarta ievadi },
+  label=lst:cpp_optimized,
+  captionpos=t
+]
+#include <cstdio>
+#include <iostream>
+#include <string>
+
+int main()
+{
+    std::ios::sync_with_stdio(false); // nesinhronize C un C++ stdio 
+    std::cin.tie(nullptr); // neiztira cout, kad tiek lietots cin
+
+    std::string line;
+    size_t lineCount = 0;
+
+    while (std::getline(std::cin, line))
+    {
+        lineCount++;
+    }
+
+    printf("Fails satur %zu rindas\n", lineCount);
+
+    return 0;
+}
+\end{lstlisting}
+
+
+\begin{lstlisting}[caption={Optimizētā C++ etalonuzdevuma rezultāti failam ar 100 miljoniem rindu},
+  label=lst:cpp_optimized_benchmark,
+  captionpos=t
+]
+$ time ./cpp_test < 100mil.txt 
+Fails satur 100000000 rindas 
+
+real    0m2.002s
+user    0m1.690s
+sys     0m0.308s
+\end{lstlisting}
+
+Līdz ar to, izstrādājot etalonuzdevumus, jāņem vērā, ka var iegūt nepatiesu
+līdzvērtību starp risinājumiem dažādās valodās un neuzticamus datus,
+rezultātus.
+
+CUDA, ROCm HIP un OpenCL platformās šī problēma ir mazāk izteikta, jo ietvari
+ir diezgan līdzīgā "abstrakcijas" pakāpē, bet tāpat tiek izvirzīti šādi
+ierobežojumi:
+\begin{itemize}
+    \item Netiek lietota OpenCL automātiskā atmiņas pārvaldīšana, izdalīšana,
+        tā vietā visos risinājumos konkrētai programmai tiek definēts vienāda
+        izmēra buferis datu straumes ielasīšanai, apstrādei. Lai gan varētu kritizēt
+        faktu, ka netiek lietota kāda potenciāla optimālāka  vai ērtāka
+        funkcionalitāte, kura netiek lietota tīri salīdzināšanas vajadzībām, no
+        OpenCL atmiņas iespējām tāpat nāktos daļēji atteikties tādu datu
+        apstrādē, kuri pārsniedz gan VRAM, gan RAM ierobežojumus.
+    \item Starp visām platformām tiek lietoti līdzīgi vai ekvivalenti GPGPU
+        puses atmiņu tipi.
+    \item Ieviestais algoritms un paštaisītās datu struktūras ir vienādas
+        pseidokoda līmenī.
+\end{itemize}
+
+
+Konkrētas programmatūras etalonuzdevuma izpildē, jādefinē kā tiks mērīti
+resursi - laiks un atmiņa. Vienkāršākais risinājums laika mērīšanai ir mērīt
+kopējo CPU laiku (lietotāja un sistēmas), kas paterēts programmas izpildei, kā,
+piemēram, ar jau iepriekš minēto time utilītu.
+
+Tā kā mērķis ir analizēt GPGPU platformas un to konkrētu funkcionalitāšu
+ātrdarbību, tad tikai ar kopējo CPU laiku nepietieks (kā tas tika darīts autora
+kursa darbā analizējot CUDA un ROCm HIP platformas\cite{kursa-darbs}). Tiks
+pieskaitīts laiks, kas iespējams nav tik svarīgs vai vispār saistīts ar
+konkrēto platformu, kādu tās API funckiju, piemēram, CPU puses faila apstrāde.
+
+Ja gala mērķis ir sasniegt etalonuzdevuma atdarināmību, tad faila apstrādes,
+datu sagatavošana un vispārīgi darbības ar disku var negatīvi ietekmēt
+rezultātus. Uzstādījumā var tikt izmantot neproprocionāli lēna datu
+uzglabāšanas iekārta attiecībā pret GPU.
+
+Lai izvairītos no šādām problēmām, uzstādījumā jādefinē plāšāks
+analizējamo datu klāsts. Lai izprastu konkrētās platformas stiprās un vājās
+puses, tiek noteikts, ka individuāli jāmēra:
+\begin{itemize}
+    \item CPU puses datu apstrāde, sagatavošana
+    \item GPU iekārtas, vides sagatavošana, platformas inicializēšana
+    \item GPGPU kodolu izpilde
+    \item Datu pārsūtīša no/uz GPU
+\end{itemize}
+
+Uzticamam etalonuzdevumam jānodrošina konsekventa un ideālā gadījumā
+deterministiska vide un programmas izpilde. Kā minēts Dirk Beyer, Stefan Löwe
+un Philipp Wendler darbā "Reliable benchmarking: requirements and solutions"
+\cite{reliable-benchmarking}, ir vairāki parametri (aparatūras arhitektūra, I/O
+darbības, laika mērīšanas rīku nianses, atmiņas iedalīšana), kuri var pēc
+nejaušības principa ietekmēt rezultātus.
+
+Autori analizē arī citas potenciālās problēmas un izvirza 6 galvenās prasības
+uzticamākiem etalonuzdevumiem: \cite{reliable-benchmarking}
+\begin{itemize}
+    \item Precīzi jāmēra un jāierobežo resursi,
+    \item Procesi jāizbeidz uzticami,
+    \item Procesiem apzināti jāpiesķir kodoli,
+    \item Jāņem vērā nevienveida atmiņas piekļuve (NUMA) vairākprocesoru
+        situācijās,
+    \item Jāizvairās no mijmaiņas,
+    \item Jāizolē individuāli laidieni.
+\end{itemize}
+
+Izstrādātās prasības ir, galvenokārt, domātas CPU izpildes analīzei. GPU
+patēriņa mērīšana ir sarežģītāka tīri tā iemesla dēļ, ka nav pieejama vienota
+arhitektūras saskarne, līdz ar to ārpus daudzu etalonuzdevumu un profilēšanas
+rīku tvēruma. \cite{reliable-benchmarking}
+
+Risinājums būtu lietot konkrēto videokaršu izstrādātāju piedāvātos rīkus 
+(Nvidia Nsights\cite{nvidia-nsights} Systems un AMD ROCm Systems
+Profiler\cite{rocm-profiler}), bet, analizējot OpenCL programmas caur tiem,
+tiks iegūta tikai zemā līmeņa informācija par to ko OpenCL ir "nodevis" GPU.
+
+Diemžēl ar Nvidia Nsights un AMD ROCm Systems Profiler nav iespējams iegūt
+konkrētu informāciju (kaut vai par GPGPU kodolu izpildes ilgumu) no OpenCL
+programmām, šāds atbalsts vispār netiek
+sniegts.\cite{rocm_sys_profiler_use_case} OpenCL gadījumā ārējie profilēšanas
+rīki nav pieejami, nākas pašam apieties ar pieejamajām API funkcijām.
+
+Lai nodrošinātu kaut cik līdzīgu uz attiecīgajām platformām izstrādāto
+programmu konsekvenci, visām programmām jāsatur attiecīgie ekvivalentie GPU
+notikumu profilēšanas izsaukumi, kuri tiek vienādi apstrādāti un žurnalēti
+programmas izpildes laikā. Piemēram, ar platformu API funkcijām
+\textit{cudaEventRecord}, \textit{hipEventRecord},
+\textit{clGetEventProfilingInfo}.
+
+
+
+Lai ievērotu 6 iepriekšminētās prasības, tiek piedāvāti šādi risinājumi:
+
+\section{Jāizolē individuāli laidieni}
+Izolācijai tiks izmantots programmatūras virtualizācijas rīks - Docker.
+\cite{docker-docs-engine}
+
+\section{Precīzi jāmēra un jāierobežo resursi}
+Mērīšanai tiks izmantotas attiecīgo platformu GPUGPU notikumu profilēšanas
+funkcijas. Maksimālais RAM apjoms piešķirts ar Docker (skatīt izdruku
+\ref{docker_container_ram}) un laika ierobežojumu apstrādās etalonuzdevuma
+Python skripts.
+\begin{lstlisting}[caption={Docker konteinera palaišana, piešķirot tam konkrēti
+    12GiB RAM}, label=lst:docker_container_ram]
+$ docker run --memory="12g" ...
+\end{lstlisting}
+
+\section{Procesi jāizbeidz uzticami}
+Etalonuzdevuma Python skriptam pēc definētā maksimālā izpildes laika ilguma
+jāapstādina laidienā mērāmā programma.
+
+\section{Procesiem apzināti jāpiesķir kodoli}
+Ar Docker tiek iedots konkrēts kodols ar komndarindas opciju (skatīt izdruku
+\ref{lst:docker_container_cpu}).
+\begin{lstlisting}[caption={Docker konteinera palaišana, piešķirot tam konkrēti
+    pirmo CPU kodolu}, label=lst:docker_container_cpu]
+$ docker run --cpuset-cpus="0" ...
+\end{lstlisting}
+
+\section{Jāņem vērā nevienveida atmiņas piekļuve (NUMA) vairākprocesoru situācijās}
+Tā kā CPU puses kods neizmanto pavedienus un tā kā šo etalonuzdevumu ietvaros
+izmantotā aparatūra satur tikai vienu CPU, par šo problēmu nav jāuztraucas.
+
+
+\section{Jāizvairās no mijmaiņas}
+Lai nodrošinātu mijmaiņas neizmantošanu Linux operētājsistēmā var īslaicīgi
+izslēgt mijmaiņas krātuvi (skatīt izdruku \ref{lst:swapoff_linux}).
+\begin{lstlisting}[caption={Mijmaiņas krātuves izlēgšana uz Linux}, label=lst:swapoff_linux]
+$ swapoff -a
+\end{lstlisting}
+
+Kā konfigurācijas redundanci, Docker konteineriem iespējams arī definēt kā pats
+Docker dzinējs veiks vai neveiks mijmaiņu ar konkrētu Docker konteineri (skatīt
+izdruku \ref{lst:swapoff_docker}).
+
+\begin{lstlisting}[caption={Mijmaiņas krātuves izlēgšana Docker konteinerim},
+    label=lst:swapoff_docker]
+$ docker run --memory="12g" --memory-swap="12g" --memory-swappiness=0 ...
+\end{lstlisting}
+
+Izmantojot iepriekš definēto atmiņas ierobežojumu, ja tiek noteikts mijmaiņas
+krātuves un RAM atmiņas kopējais ierobežojums (\textit{--memory-swap}) vienādā
+lielumā ar RAM ierobežojumu, tad būtībā mijmaiņas krātuves lielums ir 0.
+
+
+

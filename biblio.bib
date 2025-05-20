@@ -1,171 +1,368 @@
 @article{10.1145/882262.882363,
-author = {Kr\"{u}ger, Jens and Westermann, R\"{u}diger},
-title = {Linear algebra operators for GPU implementation of numerical algorithms},
-year = {2003},
-issue_date = {July 2003},
-publisher = {Association for Computing Machinery},
-address = {New York, NY, USA},
-volume = {22},
-number = {3},
-issn = {0730-0301},
-url = {https://doi.org/10.1145/882262.882363},
-doi = {10.1145/882262.882363},
-abstract = {In this work, the emphasis is on the development of strategies to realize techniques of numerical computing on the graphics chip. In particular, the focus is on the acceleration of techniques for solving sets of algebraic equations as they occur in numerical simulation. We introduce a framework for the implementation of linear algebra operators on programmable graphics processors (GPUs), thus providing the building blocks for the design of more complex numerical algorithms. In particular, we propose a stream model for arithmetic operations on vectors and matrices that exploits the intrinsic parallelism and efficient communication on modern GPUs. Besides performance gains due to improved numerical computations, graphics algorithms benefit from this model in that the transfer of computation results to the graphics processor for display is avoided. We demonstrate the effectiveness of our approach by implementing direct solvers for sparse matrices, and by applying these solvers to multi-dimensional finite difference equations, i.e. the 2D wave equation and the incompressible Navier-Stokes equations.},
-journal = {ACM Trans. Graph.},
-month = jul,
-pages = {908–916},
-numpages = {9},
-keywords = {graphics hardware, numerical simulation}
+    author = {Kr\"{u}ger, Jens and Westermann, R\"{u}diger},
+    title = {Linear algebra operators for GPU implementation of numerical
+             algorithms},
+    year = {2003},
+    issue_date = {July 2003},
+    publisher = {Association for Computing Machinery},
+    address = {New York, NY, USA},
+    volume = {22},
+    number = {3},
+    issn = {0730-0301},
+    url = {https://doi.org/10.1145/882262.882363},
+    doi = {10.1145/882262.882363},
+    abstract = {In this work, the emphasis is on the development of strategies
+                to realize techniques of numerical computing on the graphics
+                chip. In particular, the focus is on the acceleration of
+                techniques for solving sets of algebraic equations as they occur
+                in numerical simulation. We introduce a framework for the
+                implementation of linear algebra operators on programmable
+                graphics processors (GPUs), thus providing the building blocks
+                for the design of more complex numerical algorithms. In
+                particular, we propose a stream model for arithmetic operations
+                on vectors and matrices that exploits the intrinsic parallelism
+                and efficient communication on modern GPUs. Besides performance
+                gains due to improved numerical computations, graphics algorithms
+                benefit from this model in that the transfer of computation
+                results to the graphics processor for display is avoided. We
+                demonstrate the effectiveness of our approach by implementing
+                direct solvers for sparse matrices, and by applying these solvers
+                to multi-dimensional finite difference equations, i.e. the 2D
+                wave equation and the incompressible Navier-Stokes equations.},
+    journal = {ACM Trans. Graph.},
+    month = jul,
+    pages = {908–916},
+    numpages = {9},
+    keywords = {graphics hardware, numerical simulation},
 }
 
 @online{nvidia_tesla_p100,
-  author = {Nvidia},
-  title = {NVIDIA Tesla P100},
-  url = {https://images.nvidia.com/content/pdf/tesla/whitepaper/pascal-architecture-whitepaper.pdf},
-  year = {2016},
-  addendum = "(Piekļūts: 03.01.2025)"
+    author = {Nvidia},
+    title = {NVIDIA Tesla P100},
+    url = {
+           https://images.nvidia.com/content/pdf/tesla/whitepaper/pascal-architecture-whitepaper.pdf
+           },
+    year = {2016},
+    addendum = "(Piekļūts: 03.01.2025)",
 }
 
 @misc{HIP_docs,
-  title = {HIP documentation},
-  url = "https://rocm.docs.amd.com/projects/HIP/en/latest/index.html",
-  addendum = "(Piekļut: 04.01.2025)"
+    author = {{Advanced Micro Devices}},
+    title = {HIP documentation},
+    url = "https://rocm.docs.amd.com/projects/HIP/en/latest/index.html",
+    addendum = "(Piekļūts: 04.01.2025)",
 }
 
 @misc{HIP_compilers,
-  author = {{Advanced Micro Devices}},
-  howpublished = {\url{https://rocm.docs.amd.com/projects/HIP/en/latest/understand/compilers.html}},
-  title = {HIP Compilers},
-  addendum = {(Piekļūts: 05.01.2025)},
-  year = {2024}
+    author = {{Advanced Micro Devices}},
+    howpublished = {\url{
+                    https://rocm.docs.amd.com/projects/HIP/en/latest/understand/compilers.html
+                    }},
+    title = {HIP Compilers},
+    addendum = {(Piekļūts: 05.01.2025)},
+    year = {2024},
 }
 
 
 @misc{HIPIFY_github,
-  author = {{ROCm}},
-  howpublished = {\url{https://github.com/ROCm/HIPIFY}},
-  title = {HIPIFY pirmkoda krātuve},
-  addendum = {(Piekļūts: 05.01.2025)},
-  year = {2025}
+    author = {{ROCm}},
+    howpublished = {\url{https://github.com/ROCm/HIPIFY}},
+    title = {HIPIFY pirmkoda krātuve},
+    addendum = {(Piekļūts: 05.01.2025)},
+    year = {2025},
 }
 
 
 @misc{HIP_math_API,
-  author = {{Advanced Micro Devices}},
-  howpublished = {\url{https://rocm.docs.amd.com/projects/HIP/en/latest/reference/math_api.html}},
-  title = {HIP math API},
-  addendum = {(Piekļūts: 05.01.2025)},
-  year = {2024}
+    author = {{Advanced Micro Devices}},
+    howpublished = {\url{
+                    https://rocm.docs.amd.com/projects/HIP/en/latest/reference/math_api.html
+                    }},
+    title = {HIP math API},
+    addendum = {(Piekļūts: 05.01.2025)},
+    year = {2024},
 }
 
 @misc{CUDA_math_API,
-  author = {{Nvidia}},
-  howpublished = {\url{https://docs.nvidia.com/cuda/cuda-math-api/index.html}},
-  title = {CUDA Math API Reference Manual},
-  addendum = {(Piekļūts: 05.01.2025)},
-  year = {2024}
+    author = {{Nvidia}},
+    howpublished = {\url{https://docs.nvidia.com/cuda/cuda-math-api/index.html}},
+    title = {CUDA Math API Reference Manual},
+    addendum = {(Piekļūts: 05.01.2025)},
+    year = {2024},
 }
 
 @misc{tensorflow_github,
-  author = {{TensorFlow komūna}},
-  howpublished = {\url{https://github.com/tensorflow/tensorflow}},
-  title = {TensorFlow pirmkoda krātuve},
-  addendum = {(Piekļūts: 05.01.2025)},
-  year = {2025}
+    author = {{TensorFlow komūna}},
+    howpublished = {\url{https://github.com/tensorflow/tensorflow}},
+    title = {TensorFlow pirmkoda krātuve},
+    addendum = {(Piekļūts: 05.01.2025)},
+    year = {2025},
 }
 
 @misc{nvidia_wsl_guide,
-  author = {{Nvidia}},
-  howpublished = {\url{https://docs.nvidia.com/cuda/wsl-user-guide/index.html}},
-  title = {CUDA on WSL User Guide},
-  addendum = {(Piekļūts: 06.01.2025)},
-  year = {2024}
+    author = {{Nvidia}},
+    howpublished = {\url{https://docs.nvidia.com/cuda/wsl-user-guide/index.html}
+                    },
+    title = {CUDA on WSL User Guide},
+    addendum = {(Piekļūts: 06.01.2025)},
+    year = {2024},
 }
 
 
 @misc{rocm_wsl_guide,
-  author = {{Advanced Micro Devices}},
-  howpublished = {\url{https://rocm.docs.amd.com/projects/radeon/en/latest/docs/install/wsl/howto_wsl.html}},
-  title = {WSL How to guide - Use ROCm on Radeon GPUs},
-  addendum = {(Piekļūts: 06.01.2025)},
-  year = {2024}
+    author = {{Advanced Micro Devices}},
+    howpublished = {\url{
+                    https://rocm.docs.amd.com/projects/radeon/en/latest/docs/install/wsl/howto_wsl.html
+                    }},
+    title = {WSL How to guide - Use ROCm on Radeon GPUs},
+    addendum = {(Piekļūts: 06.01.2025)},
+    year = {2024},
 }
 
 
 
 @misc{what_is_ROCM,
-  author = {{Advanced Micro Devices}},
-  howpublished = {\url{https://rocm.docs.amd.com/en/latest/what-is-rocm.html}},
-  title = {What is ROCm?},
-  addendum = {(Piekļūts: 05.01.2025)},
-  year = {2024}
+    author = {{Advanced Micro Devices}},
+    howpublished = {\url{https://rocm.docs.amd.com/en/latest/what-is-rocm.html}},
+    title = {What is ROCm?},
+    addendum = {(Piekļūts: 05.01.2025)},
+    year = {2024},
 }
 
 
 @misc{steam_survey,
-  author = {{Valve Corporation}},
-  howpublished = {\url{https://store.steampowered.com/hwsurvey}},
-  title = {Steam Hardware \& Software Survey: December 2024},
-  addendum = {(Piekļūts: 05.01.2025)},
-  year = {2024}
+    author = {{Valve Corporation}},
+    howpublished = {\url{https://store.steampowered.com/hwsurvey}},
+    title = {Steam Hardware \& Software Survey: December 2024},
+    addendum = {(Piekļūts: 05.01.2025)},
+    year = {2024},
 }
 
 
 @online{Algorithm,
     title = "Algorithm",
-    url  = "https://mlg.ulb.ac.be/files/algorithm2e.pdf",
+    url = "https://mlg.ulb.ac.be/files/algorithm2e.pdf",
     addendum = "(Piekļūts: 07.03.2022)",
-    keywords = "Algorithm"
+    keywords = "Algorithm",
 }
 @online{AlgorithmLV,
     title = "Algorithm keywords",
-    url  = "https://stackoverflow.com/questions/54058758/using-algorithm2e-in-english-and-french",
+    url = "
+           https://stackoverflow.com/questions/54058758/using-algorithm2e-in-english-and-french
+           ",
     addendum = "(Piekļūts: 07.03.2022)",
-    keywords = "Algorithm, keywords"
+    keywords = "Algorithm, keywords",
 }
 
 @article{PhysRev.140.A1133,
-  title = {Self-Consistent Equations Including Exchange and Correlation Effects},
-  author = {Kohn, W. and Sham, L. J.},
-  journal = {Phys. Rev.},
-  volume = {140},
-  issue = {4A},
-  pages = {A1133--A1138},
-  numpages = {0},
-  year = {1965},
-  month = {11},
-  publisher = {American Physical Society},
-  doi = {10.1103/PhysRev.140.A1133},
-  url = {https://link.aps.org/doi/10.1103/PhysRev.140.A1133}
+    title = {Self-Consistent Equations Including Exchange and Correlation
+             Effects},
+    author = {Kohn, W. and Sham, L. J.},
+    journal = {Phys. Rev.},
+    volume = {140},
+    issue = {4A},
+    pages = {A1133--A1138},
+    numpages = {0},
+    year = {1965},
+    month = {11},
+    publisher = {American Physical Society},
+    doi = {10.1103/PhysRev.140.A1133},
+    url = {https://link.aps.org/doi/10.1103/PhysRev.140.A1133},
 }
 
 
 @book{dirac,
-    title={The Principles of Quantum Mechanics},
-    author={Paul Adrien Maurice Dirac},
-    isbn={9780198520115},
-    series={International series of monographs on physics},
-    year={1981},
-    publisher={Clarendon Press},
-    keywords = {physics}
+    title = {The Principles of Quantum Mechanics},
+    author = {Paul Adrien Maurice Dirac},
+    isbn = {9780198520115},
+    series = {International series of monographs on physics},
+    year = {1981},
+    publisher = {Clarendon Press},
+    keywords = {physics},
 }
 
 @book{heterogeneous-computing-with-opencl-2-0,
-  title = {Heterogeneous Computing with OpenCL 2.0},
-  editor = {David Kaeli and Perhaad Mistry and Dana Schaa and Dong Ping Zhang},
-  publisher = {Morgan Kaufmann},
-  address = {Boston},
-  year = {2015},
-  isbn = {978-0-12-801414-1},
-  doi = {10.1016/B978-0-12-801414-1.00001-8},
-  url = {https://www.sciencedirect.com/book/9780128014141/heterogeneous-computing-with-opencl-2-0}
+    title = {Heterogeneous Computing with OpenCL 2.0},
+    editor = {David Kaeli and Perhaad Mistry and Dana Schaa and Dong Ping Zhang},
+    publisher = {Morgan Kaufmann},
+    address = {Boston},
+    year = {2015},
+    isbn = {978-0-12-801414-1},
+    doi = {10.1016/B978-0-12-801414-1.00001-8},
+    url = {
+           https://www.sciencedirect.com/book/9780128014141/heterogeneous-computing-with-opencl-2-0
+           },
 }
 
 
 @misc{opencl-spec,
-  author = {{Khronos OpenCL\texttrademark Working Group}},
-  howpublished = {\url{https://registry.khronos.org/OpenCL/specs/3.0-unified/html/OpenCL_API.html}},
-  title = {The OpenCL\texttrademark Specification},
-  addendum = {(Piekļūts: 02.04.2025)},
-  year = {2024}
+    author = {{Khronos OpenCL\texttrademark Working Group}},
+    howpublished = {\url{
+                    https://registry.khronos.org/OpenCL/specs/3.0-unified/html/OpenCL_API.html
+                    }},
+    title = {The OpenCL\texttrademark Specification},
+    addendum = {(Piekļūts: 02.04.2025)},
+    year = {2024},
+}
+
+@article{reliable-benchmarking,
+    author = {Beyer, Dirk and L{\"o}we, Stefan and Wendler, Philipp},
+    title = {Reliable benchmarking: requirements and solutions},
+    journal = {International Journal on Software Tools for Technology Transfer},
+    year = {2019},
+    month = {Feb},
+    day = {01},
+    volume = {21},
+    number = {1},
+    pages = {1-29},
+    abstract = {Benchmarking is a widely used method in experimental computer
+                science, in particular, for the comparative evaluation of tools
+                and algorithms. As a consequence, a number of questions need to
+                be answered in order to ensure proper benchmarking, resource
+                measurement, and presentation of results, all of which is
+                essential for researchers, tool developers, and users, as well as
+                for tool competitions. We identify a set of requirements that are
+                indispensable for reliable benchmarking and resource measurement
+                of time and memory usage of automatic solvers, verifiers, and
+                similar tools, and discuss limitations of existing methods and
+                benchmarking tools. Fulfilling these requirements in a
+                benchmarking framework can (on Linux systems) currently only be
+                done by using the cgroup and namespace features of the kernel. We
+                developed BenchExec, a ready-to-use, tool-independent, and
+                open-source implementation of a benchmarking framework that
+                fulfills all presented requirements, making reliable benchmarking
+                and resource measurement easy. Our framework is able to work with
+                a wide range of different tools, has proven its reliability and
+                usefulness in the International Competition on Software
+                Verification, and is used by several research groups worldwide to
+                ensure reliable benchmarking. Finally, we present guidelines on
+                how to present measurement results in a scientifically valid and
+                comprehensible way.},
+    issn = {1433-2787},
+    doi = {10.1007/s10009-017-0469-y},
+    url = {https://doi.org/10.1007/s10009-017-0469-y},
+}
+
+@misc{kursa-darbs,
+    author = {{Artūrs Kļaviņš}},
+    title = {{GPU programmēšana Nvidia CUDA un AMD ROCm saskarnēs}},
+    addendum = {kursa darbs},
+    year = {2024},
+}
+
+@misc{docker-docs-engine,
+    author = {{Docker Inc.}},
+    howpublished = {\url{https://docs.docker.com/engine/}},
+    title = {Docker Engine},
+    addendum = {(Piekļūts: 17.04.2025)},
+    year = {2025},
+}
+
+@misc{spdlog-github,
+    author = {{gabime}},
+    howpublished = {\url{https://github.com/gabime/spdlog}},
+    title = {Fast C++ logging library.},
+    addendum = {(Piekļūts: 23.04.2025)},
+    year = {2024},
+}
+
+@misc{hip-lib-docker,
+    author = {{Advanced Micro Devices}, {Beanavil}, {MKKnorr}},
+    howpublished = {\url{
+                    https://github.com/ROCm/rocm-examples/blob/develop/Dockerfiles/hip-libraries-cuda-ubuntu.Dockerfile
+                    }},
+    title = {Dockerfiles for the examples},
+    addendum = {(Piekļūts: 06.05.2025)},
+    year = {2024},
+}
+
+@online{time_man_page,
+    author = {Michael Kerrisk},
+    url = {https://www.man7.org/linux/man-pages/man1/time.1.html},
+    title = {time(1) — Linux manual page},
+    addendum = {(Piekļūts: 09.01.2025)},
+    year = {2024},
+}
+
+
+@online{acm-experiment-terms,
+    author = {{Association for Computing Machinery}},
+    title = {Artifact Review and Badging - Current},
+    url = {
+           https://www.acm.org/publications/policies/artifact-review-and-badging-current
+           },
+    addendum = {(Piekļūts: 12.04.2025)},
+    year = {2020},
+}
+
+@online{nvidia-nsights,
+    author = {{Nvidia}},
+    title = {Nsight Systems - User Guide},
+    url = {https://docs.nvidia.com/nsight-systems/UserGuide/index.html},
+    addendum = {(Piekļūts: 24.04.2025)},
+    year = {2025},
+}
+
+@online{rocm-profiler,
+    author = {{Advanced Micro Devices}},
+    title = {ROCm Systems Profiler documentation},
+    url = { https://rocm.docs.amd.com/projects/rocprofiler-systems/en/latest/index.html}, addendum = {(Piekļūts: 28.04.2025)},
+    year = {2025},
+}
+
+@article{conway1970conway,
+    title = {Conway's game of life},
+    author = {Conway, John},
+    journal = {Scientific American},
+    year = {1970},
+}
+
+
+@online{hashcat,
+    author = {{"hashcat" izstrādātāju komūna}},
+    url = {https://hashcat.net/hashcat/},
+    title = {Hashcat},
+    addendum = {(Piekļūts: 17.12.2024)},
+    year = {2024},
+}
+
+
+@online{hashcat_dict_atk,
+    author = {{"hashcat" izstrādātāju komūna}},
+    url = {https://hashcat.net/wiki/doku.php?id=dictionary_attack},
+    title = {Dictionary Attack},
+    addendum = {(Piekļūts: 17.12.2024)},
+    year = {2024},
+}
+
+
+@online{rocm_sys_profiler_use_case,
+    author = {{Advanced Micro Devices}},
+    url = {https://rocm.docs.amd.com/projects/rocprofiler-systems/en/latest/conceptual/rocprof-sys-feature-set.html},
+    title = {ROCm Systems Profiler features and use cases},
+    addendum = {(Piekļūts: 18.05.2025)},
+    year = {2025},
+}
+
+@online{std_chrono,
+    author = {{"cppreference" komūna}},
+    url = {https://en.cppreference.com/w/cpp/chrono},
+    title = {Date and time library},
+    addendum = {(Piekļūts: 19.05.2025)},
+    year = {2025},
+}
+
+@online{bak_github_repo,
+    title = "Risinājumu un etalonuzdevumu repozitorijs",
+    author = "Artūrs Kļaviņš",
+    url  = "https://github.com/clavinsh/cuda_hip_cl_benchmark",
+    addendum = "(Piekļūts: 19.05.2025)"
+}
+
+@online{amd_dockerfile,
+    title = "A collection of examples for the ROCm software stack",
+    subtitle = "Dockerfiles for the examples",
+    author = "{{Advanced Micro Devices}}",
+    url  = "https://github.com/ROCm/rocm-examples/tree/amd-staging/Dockerfiles",
+    addendum = "(Piekļūts: 07.05.2025)"
 }

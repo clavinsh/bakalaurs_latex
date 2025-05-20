@@ -145,6 +145,8 @@ chaptertitle=false,%
   lineskip=-1pt, % Adjust line spacing between lines
 }
 
+\usepackage{tabularx}
+
 
 
 
@@ -350,7 +352,10 @@ dažādos izpildes posmos, piemēram:
 Kādas varētu būt atšķirības programmēšanas modelī starp CUDA, HIP, OpenCL? Idejiski jau mērķa arhitektūra ir
 apmēram vienāda, līdz ar to liekas, ka modelim ar tādam vajadzētu būt.
 
-
+Kodola funkciju deklarācijā jāuzmanās no bool tipiem. Lai gan iekšēji OpenCl kodā ir atbalstīts bool tips,
+šim tipam nav tieša attiecība API definīcijā, saskaroties ar samnieka puses kodu.
+Plašāk skatoties, samnieka pusē ir, piemēram \textit{cl\_int} un OpenCL kodolā ir vienkārši \textit{int}.
+Šāda it kā iebūvētop
 
 \section{OpenCL platformas modelis - pieraksti pa taisno no dokumentācijas}
 Sastāv no saimnieka (CPU) ar vienu vai vairākām OpenCL iekārtām (GPU).
@@ -374,12 +379,17 @@ OpenCL piedāvā kompilatoru, kas spējīgs no minētajiem formātiem izveidot i
 Kompilators var būt 'tiešsaistes' vai 'bezsaistes' jeb
 \begin{itemize}
     \item Tiešsaistes kompilators ir pieejams saimnieka programmas izpildes laikā
-    \item Bezsaistes tiek izsaukts atsevišķi un saimnieka programmai tiek nodots un ielādēts gatavs izpildāms fails 
+    \item Bezsaistes tiek izsaukts atsevišķi un saimnieka programmai tiek nodots un ielādēts gatavs SPIR-V izpildāms fails 
 \end{itemize}
 
 \textcolor{red}{Izskatās, ka salīdzinot ar HIP un CUDA, te ir lielāka brīvība veidos kā realizē kodola programmas kompilēšana un palaišanu, bet derētu paskatīties vairāk par šo tajās platformās}
 
+Tiešsaistes kodolu kompilēšana nodrošina lielāku savietojamību ar dažādām aparatūrām, jo OpenCL kompilēs kodu tiešai attiecīgajai aparatūrai,
+jo OpenCL nodrošina izpildes laika kompilēšanu visos gadījumos un API versijās.
 
+Turpretī, gatavie SPIR-V binārie faili nav atbalstīti uz jebkuras aparatūras, kā arī ne visas OpenCL versijas ir savietojamas ar visām SPIR-V versijām.
+
+Tomēr izpildes laika kodolu kompilēšana ir ar savu mīnusu - programmai jāvelta laiks kompilējot kodolus, ieviešot ātrdarbības zudumus. \textcolor{red}{te varētu novērtēt šos zudumus}
 
 Ņemot vērā kā GPU arhitektūru apraksta Nvidia un AMD, šis OpenCL platformas modeļa abstrakcijas slānis ir raksturojams kā 'tuvu dzelžiem'.
 Tomēr kodola kompilatoram ir diezgan brīva izvēle optimizācijās starp faktiskajiem arhitektūras elementiem un kā tos reprezentē OpenCL.
@@ -390,146 +400,189 @@ vairākus kodolus vai pavedienus, kurus programmētājs sagaida izstrādājot ie
 Vai arī, palaižot kodolu, tiek definēts pavedienu grupas izmērs (piemēram, izmērā 128), kas uz visām iekārtām nebūs pieejams tādā skaitā.
 Kompilators šo situāciju atrisinātu, izsaucot kodolu vairākās partijās, bet no pirmkoda puses tiek definēta viena partija. 
 
-
+Izskatās, ka daudz plašāks iebūveto tipu saraksts un atbalsts
 
 \textcolor{red}{Te arī jāpārliecinās, bet man liekas, ka HIP un CUDA pie nederīga grupas/pavediena izmēra izmestu izpildes laika kļūdu, OpenCL dod lielāku brīvību}
 
+Ne-primitīvu datu struktūru izveide un apstrāde:
+Jāņem vērā, ka dinamiski mainīgas datu struktūras GPU kodā neiesaka lietot, kā arī OpenCL kontekstā, lietojamas tikai OpenCL standarta primitīvās datu struktūras,
+tāpēc, papildus potenciāla problēma var būt ne-konsekventa atmiņas izlīdzināšana starp host, kodola kodu: \ref{lst:opencl_struct}
+
+\begin{lstlisting}[caption={Piemērs struktūras definēšanai, kura lietojama OpenCL kodolā},
+  label=lst:opencl_struct,
+  captionpos=t
+]
+// Host kods
+typedef struct __atribute__ ((packed)) _mana_struktura
+{
+    cl_int a;
+    cl_int b;
+    cl_int c;
+} mana_struktura;
+
+
+// Device kods
+typedef struct __atribute__ ((packed)) _mana_struktura
+{
+    int a;
+    int b;
+    int c;
+};
+
+// Argumenta padosana no host
+clSetKernelArg(kernel, 0, sizeof(mana_struktura), mana_struktura);
+\end{lstlisting}
+
+Tā kā OpenCL kodolu valoda ir balstīta uz C99 standarta, 
+
+
+
+
+Atšķirībā no CUDA un HIP, OpenCL ir mazāka brīvība iekārtas un saimnieka
+funkciju definēšanā, kur CUDA un HIP ir iespējams definēt kaut ko šādu (skatīt
+izdruku \ref{lst:device_host_func}):
+\begin{lstlisting}[caption={Piemērs struktūras definēšanai, kura lietojama OpenCL kodolā},
+  label=lst:device_host_func,
+  captionpos=t
+]
+// CUDA un HIP
+__device__ __host__ myVersatileFunc();
+\end{lstlisting}
+
+OpenCL gadījumā šādu funkciju kā minimums vajadzētu izcelt atsevišķā C galvenes
+failā, ar krietni lielākām pieejamās funkcionalitātes limitācijām, balstoties
+uz to, ka šai funkcijai jāatbilst OpenCL C valodas standartam.
+
+\include{tex_includes/platformu_salidzin}
+
+\include{tex_includes/etalonuzdevumu_config}
+
+\include{tex_includes/uzdevumi}
+
+\include{tex_includes/rezultati_anal}
 
 \begin{center}
     \chapter{Etalonuzdevuma rezultātu līdzvērtība}
 \end{center}
-Salīdzinot dažādus ietvarus ar it kā vienu un to pašu uzdevumu nav tik vienkārši, jo ar naivu risinājumu ir grūti garantēt,
-ka attiecīgās izveidotās programmas ir pietiekami līdzvērtīgas, lai tās varētu godīgi salīdzināt.
-
-Piemēram, salīdzinot dažādu programmēšanas valodu veiktspēju ar noteiktu etalonuzdevumu, varētu izvēlēties valodas C++ un Python,
-apstrādājot kādu failu caur standarta ievadi, aprēķinot cik rindas satur dotais fails (skatīt izdruku \ref{lst:cpp_file_stdin} un \ref{lst:py_file_stdin})
 
 
-\begin{lstlisting}[caption={Vienkārša faila apstrāde valodā C++ caur standarta ievadi},
-  label=lst:cpp_file_stdin,
-  captionpos=t
-]
-#include <cstdio>
-#include <iostream>
-#include <string>
+\section{Uzticamu etalonuzdevumu izveide}
 
-int main()
-{
-	std::string line;
-	size_t lineCount = 0;
-
-	while (std::getline(std::cin, line))
-	{
-		lineCount++;
-	}
-
-	printf("Fails satur %zu rindas\n", lineCount);
-
-	return 0;
-}
-\end{lstlisting}
+Lai nodrošinātu, ka etalonuzdevuma rezultāti ir uzticami, tiem jābūt
+atkārtojamiem, kā minimums, uz tādas pašas aparatūras un programmatūras.
+\cite{reliable-benchmarking}
 
 
-\begin{lstlisting}[caption={Vienkārša faila apstrāde valodā Python caur standarta ievadi},
-  label=lst:py_file_stdin,
-  captionpos=t
-]
-import sys 
 
-def main():
-    line_count = 0
-    input_line = ''
+Kā min viena publikācija \cite{reliable-benchmarking}, mērīt pilno programmas
+izpildes laiku var nebūt pietiekoši, piemēram, ar time utilītu, it īpaši
+vairākpavedienu scenārijos. Lai gan minētajā pētījumā etalonuzdevumu
+sastādīšana apspriesta tīri CPU izpildes kontekstā, vairākpavedienu izpildi un
+to ietekmi no I/O darbībām var attiecināt arī priekš GPU.
 
-    for line in sys.stdin:
-        input_line = line
-        line_count += 1
+Kaut kāda programmas izpildes daļa norisināsies uz CPU, un, mērot laikus uz
+dažādām aparatūrām (ar uzsvaru uz izteikti atšķirīgu I/O ātrdarbību), var iegūt
+neuzticamus rezultātus, jo etalonuzdevuma fokuss nav uz ievades, izvades
+ātrumu.
 
-    print("Fails satur " + str(line_count) + " rindas");
+Bakalaura darba autora kursa darbā\cite{kursa-darbs} tika izmantota iepriekš
+minētā neieteiktā metode (ar time utilītu mērīts kopējais laiks), bet ņemot
+vērā, ka etalonuzdevums tika veikts tikai vienas aparatūras ietvaros, tad
+varētu secināt, ka I/O ietekme uz uzticamiem mērījumiem bija minimāla.
 
-if __name__ == "__main__":
-    main()
-\end{lstlisting}
+Tomēr nevar garantēt, ka, izpildot programmu uz citas aparatūras, varētu iegūt
+tādus datus, kas mainītu iegūtos gala secinājumus kursa darbā.
 
-Pārbaudot izpildes laikus, piemēram, ar failu ar 100 miljoniem rindu, izmantojot time utilītu, var iegūt rezultātus, kuri skatāmi izdrukā \ref{lst:example_benchmark_result}.
+Lai no šādiem riskiem izvairītos, tiks mērīti konkrēti programmas notikumi,
+piemēram, kodola kompilēšanas laiks, kodola izpildes laiks, kopējais pavadītais
+laiks GPU pusē u.tml.
 
-\begin{lstlisting}[caption={Etalonuzdevuma rezultāti failam ar 100 miljoniem rindu},
-  label=lst:example_benchmark_result,
-  captionpos=t
-]
-$ time ./cpp_benchmark < 100mil.txt 
-Fails satur 100000000 rindsas
 
-real    0m25.787s
-user    0m24.884s
-sys     0m0.892s
+Līdzīgi nevar iegūt noderīgus mērījumus par atmiņas lietojumu, jo iedalītā atmiņa ne-triviālai programmai mainās laika gaitā.
 
-$ time python py_benchmark.py < 100mil.txt 
-Fails satur 100000000 rindsas
+Tāpēc, kvalitātam etalonuzdevuma uzstadījumam papildus jāsatur:
+maksimāli atļautais atmiņas lietojums,
+maksimālais programmas izpildes laiks,
 
-real    0m7.129s
-user    0m6.303s
-sys     0m0.819s
-\end{lstlisting}
+Vēl viena prasība ir konsekvents kopējais sistēmas stāvoklis pirms un pēc programmas darbināšanas. Lai to visvieglāk nodrošinātu,
+tiks izmantota izolēta OS līmeņa virtuāzijas vide uz Docker\cite{docker-docs-engine} platformas.
 
-Tātad pēc iegūtājiem datiem (25,787s priekš C++ un 7,129s priekš Python) varētu secināt, ka
-Python ir ~3,6 reizes veiktspējīgāks nekā C++, kas sarežģītākos piemēros būtu nepiemērots apgalvojums.
-Līdz ar to, dotajam piemērēram kā vispārīgam dažādu valodu salīdzinājumam ir problēmas:
+Sistēmas stāvokļa neatkarību no CPU un OS kešošanas mehānismiem pavisam atdalīt nav iespējams, tāpēc pirms konkrētas programmas laidienu kopas mērīšanas,
+tiks veikts 'iesildošais' laidiens, kura rezultāti netiks ņemti vērā. Tādējādi, mazinot kešatmiņas trāpījumu vai ne-trāpījumu ietekmi uz mērījumiem.
+
+Kopumā definēts šādu uzstādījums, galvenokārt, ņemot vērā izstrādes laikā pieejamo aparatūru:
 \begin{itemize}
-    \item reālos programmēšanas scenārijos reti pārādīsies nepieciešamība risināt minēto problēmu, 
-    \item etalonuzdevums nesatur darbības ar sarežģītākām datu struktūrām un algoritmiem, kuras drīzāk parādītos netriviālās programmās
-    \item un iespējams vissvarīgāk - augsta līmeņa valoda kā Python abstraktē relatīvi sarežģītas darbības ar failiem, datu buferiem, standarta ievadi / izvadi, ieviešot optimizācijas
-        izpildes laikā, tāpēc dotos risinājumus nevar uzskatīt par ekvivalentiem.
+    \item 16GB RAM,
+    \item 6GB VRAM,
+    \item gpgpu kodola lokālais grupas izmērs - 256 elementi,
+    \item programma darbojas izolētā vidē - Docker konteinerī,
+    \item Docker saimnieka operētājsistēma neveic citus relatīvi resurs-intensīvus darbus
 \end{itemize}
 
-C++ risinājumā ieviešot pat ļoti vienkāršas optimizācijas konfigurācijā ar standarta ievadi, var iegūt krietni labāku rezultātu (skatīt izdruku \ref{lst:cpp_optimized} un \ref{lst:cpp_optimized_benchmark}).
+Priekš Nvidia CUDA un AMD HIP eksistē jau gatavi profilēšanas risinājumi, bet
+OpenCL gadījumā nākas pašam apieties ar pieejamajām API funkcijām, līdz ar to
+visām programmām jāsatur attiecīgie ekvivalentie GPU notikumu izsaukumi, kuri
+tiek vienādi apstrādāti un žurnalēti programmas izpildes laikā. Piemēram, ar
+platformu API funkcijām \textit{cudaEventRecord}, \textit{hipEventRecord},
+\textit{clGetEventProfilingInfo}.
 
-\begin{lstlisting}[caption={Optimizēta vienkārša faila apstrāde valodā C++ caur standarta ievadi },
-  label=lst:cpp_optimized,
+
+Datu struktūrām jābūt pietiekami ekvivalentām. To iespējams nodrošināt izmantojot, piemēram, ekvivalentus iebūvētos datu tipus.
+
+
+Docker konteinera konfigurācija:
+\begin{itemize}
+    \item Atmiņas ierobežojums - 16GB,
+    \item Atmiņas un \textit{swap} atmiņas ierobežojus - 16GB,
+    \item Apstrādes failu piekļuvei no OS montēts sējums (angļu val. \textit{volume}) konteinera /data direktorijā
+\end{itemize}
+
+
+\begin{lstlisting}[caption={Docker konteinera palaišana un konfigurācija},
+  label=lst:docker_konteinera_palaisanas piemers,
   captionpos=t
 ]
-#include <cstdio>
-#include <iostream>
-#include <string>
-
-int main()
-{
-    std::ios::sync_with_stdio(false); // nesinhronize C un C++ stdio 
-    std::cin.tie(nullptr); // neflusho cout, kad tiek lietots cin
-
-	std::string line;
-	size_t lineCount = 0;
-
-	while (std::getline(std::cin, line))
-	{
-		lineCount++;
-	}
-
-	printf("Fails satur %zu rindas\n", lineCount);
-
-	return 0;
-}
+$ docker run --rm --gpus all -v ./data/:/data <konteinera nosaukums> /data/<apstradajamais fails> /data/<izvada fails> <citas opcijas>
 \end{lstlisting}
 
 
-\begin{lstlisting}[caption={Optimizētā C++ etalonuzdevuma rezultāti failam ar 100 miljoniem rindu},
-  label=lst:cpp_optimized_benchmark,
+Tā kā programmas notikumu ilgumi dažādās konfigurācijās nāks no CPU, CUDA, HIP un OpenCL pusēm, tad lai būtu
+vienota un viegli apstrādājama datu kopa, notikumi tiks žurnalēti failā, izmantojot, spdlog\cite{spdlog-github}, C++ žurnalēšanas bibliotēku.
+
+Ērtai datu apstrādei, izmantojamais faila formāts ir CSV, un datu formāts skatāms izdrukā \ref{lst:benchmark_log_example}.
+
+\begin{lstlisting}[caption={Etalonuzdevuma žurnālfaila ieraksta formāts},
+  label=lst:benchmark_log_example,
   captionpos=t
 ]
-$ time ./cpp_test < 100mil.txt 
-File contains 100000000 lines
-
-real    0m2.002s
-user    0m1.690s
-sys     0m0.308s
+<Iekartas/platformas tips>,<Notikuma apraksts>,<Ilgums milisekundēs>
+OpenCL, Kodola izpildes laiks, 38971
+CUDA, Kodola izpildes laiks, 38971
+HIP, Kodola izpildes laiks, 38971
 \end{lstlisting}
 
+Notikuma ilgums norādāms milisekundēs, jo, galvenokārt, tādā mērvienībā
+notikumu ilgumu noklusēti atgriež gan CUDA, gan HIP profilēšanas funkcijas
+\textit{cudaEventElapsedTime}, \textit{hipEventElapsedTime}. OpenCL funkcija
+\textit{clGetEventProfilingInfo} atgriež notikuma ilgumu nanosekundēs, šajā
+gadījumā rezultāti tiks pārveidoti, lai nodrošinātu konsekvenci starp pārējām
+platformām.
+
+
+\begin{center}
+    \chapter{Uzdevumu definīcija un realizācija}
+\end{center}
+
+HIP risinājumiem par pamatu izmantots AMD ROCm izveidotais Docker fails \cite{hip-lib-docker}
+kas definē gatavu izstrādes vidi tālākam darbam ar ROCm vai CUDA.
 
 
 
-\textcolor{red}{varbūt jāmin ka kādu laiku atpakaļ soc tīklos bija populārs benchmarks apstrādāt 1 miljardu rindu garu failu - līdzīgs problemātisks benchmarks}
+Situācijās kad kāda attiecīga OpenCL API funkcija nepiedāvā profilēšanas informāciju, CPU pusē funkcijas izpildes laiks mērāms ar chrono - steady clock 
+Šādās situācijās arī CUDA un ROCm attiecīgās funkcijas izpildes laiks mērāms šādi, pat ja pieejama profilēšanas informācija, kas būtu precīzāka.
+Šādi darīts, lai lieku ietekmi uz rezultātiem neradītu chrono virsdarbe vai profilēšanas virsdarbe.
 
-Līdz ar to, darbojoties ar etalonuzdevumiem, jāņem vērā, ka var iegūt nepatiesu līdzvērtību
-
+GPGPU arhitektūra un programmēšana
 \begin{center}
 \chapter{GPGPU arhitektūra un programmēšana}
 \end{center}
@@ -864,462 +917,9 @@ ZLUDA, OpenCL
 \chapter*{Pielikumi}
 \addcontentsline{toc}{chapter}{Pielikumi}
 
-\begin{lstlisting}[caption={Paroļu lauzēja implementācija CUDA vidē},
-  label=lst:cuda_impl,
-  captionpos=t
-  ]
-
-// SHA 256 implementacija CUDA vide
-// https://en.wikipedia.org/wiki/SHA-2
-
-#include <cuda_runtime.h>
-#include <device_launch_parameters.h>
-#include <cuda/std/cstdint> // analogs C/C++ <cstdint>, bet nodrosina fiksetus datu tipu lielumus uz device
-#include <string>
-#include <vector>
-#include <stdio.h>
-#include <fstream>
-#include <iostream>
-#include <stdlib.h>
-#include <string.h>
-#include <sstream>
-#include <algorithm>
-#include <assert.h>
-#include <iomanip>
-#include <cstdint>
-
-// forward deklaracija funkcijam, lai nav intelisense warningi, ka tas nav definetas (ir pieejamas uz device bez header include)
-__device__ unsigned int __funnelshift_r(unsigned int lo,unsigned int hi,unsigned int shift);
-unsigned int atomicCAS(unsigned int* address,unsigned int compare,unsigned int val);
-
-// macro prieks katra cuda API izsaukuma rezultata parbaudes
-// nemts no https://stackoverflow.com/questions/14038589/what-is-the-canonical-way-to-check-for-errors-using-the-cuda-runtime-api
-#define CUDA_CHECK(ans) { gpuAssert((ans), __FILE__, __LINE__); }
-inline void gpuAssert(cudaError_t code, const char *file, int line, bool abort=true)
-{
-   if (code != cudaSuccess) 
-   {
-      fprintf(stderr,"GPU assert: %s %s %d\n", cudaGetErrorString(code), file, line);
-      if (abort) exit(code);
-   }
-}
-
-// ROTR(x,n) rote x-a bitus pa labi pa n pozicijam, izmantojam cuda iebuveto funnelshift funkciju:
-// https://docs.nvidia.com/cuda/cuda-math-api/cuda_math_api/group__CUDA__MATH__INTRINSIC__INT.html 
-// __device__ unsigned int __funnelshift_r(unsigned int lo, unsigned int hi, unsigned int shift)
-// Concatenate hi : lo , shift right by shift & 31 bits, return the least significant 32 bits. 
-// Ja konkatene x ar pasu sevi, tad pec nobides, mazakie 32 biti satures attiecigo ROTR no x
-#define ROTR(x, n) __funnelshift_r(x, x, n)
-
-// makro funkcijas attieciga sha bloka apstradei
-#define SS0(x) (ROTR(x, 7) ^ ROTR(x, 18) ^ (x >> 3))
-#define SS1(x) (ROTR(x, 17) ^ ROTR(x, 19) ^ (x >> 10))
-#define S0(x) (ROTR(x, 2) ^ ROTR(x, 13) ^ ROTR(x, 22))
-#define S1(x) (ROTR(x, 6) ^ ROTR(x, 11) ^ ROTR(x, 25))
-#define CH(x, y, z)  ((x & y) ^ (~x & z))
-#define MAJ(x, y, z) ((x & y) ^ (x & z) ^ (y & z))
-
-// pirmie 32 biti kv. saknei no pirmajiem 8 pirmskaitliem 2 - 19 (no dalas aiz komata)
-__device__ cuda::std::uint32_t h0 = 0x6a09e667;
-__device__ cuda::std::uint32_t h1 = 0xbb67ae85;
-__device__ cuda::std::uint32_t h2 = 0x3c6ef372;
-__device__ cuda::std::uint32_t h3 = 0xa54ff53a;
-__device__ cuda::std::uint32_t h4 = 0x510e527f;
-__device__ cuda::std::uint32_t h5 = 0x9b05688c;
-__device__ cuda::std::uint32_t h6 = 0x1f83d9ab;
-__device__ cuda::std::uint32_t h7 = 0x5be0cd19;
-
-// pirmie 32 biti no kubsaknem pirmajiem 64 pirmskaitliem 2 - 311
-__device__ __constant__ cuda::std::uint32_t k[] =
-{
-    0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,
-    0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,
-    0xe49b69c1,0xefbe4786,0x0fc19dc6,0x240ca1cc,0x2de92c6f,0x4a7484aa,0x5cb0a9dc,0x76f988da,
-    0x983e5152,0xa831c66d,0xb00327c8,0xbf597fc7,0xc6e00bf3,0xd5a79147,0x06ca6351,0x14292967,
-    0x27b70a85,0x2e1b2138,0x4d2c6dfc,0x53380d13,0x650a7354,0x766a0abb,0x81c2c92e,0x92722c85,
-    0xa2bfe8a1,0xa81a664b,0xc24b8b70,0xc76c51a3,0xd192e819,0xd6990624,0xf40e3585,0x106aa070,
-    0x19a4c116,0x1e376c08,0x2748774c,0x34b0bcb5,0x391c0cb3,0x4ed8aa4a,0x5b9cca4f,0x682e6ff3,
-    0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208,0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2
-};
-
-// apstrada vienu, konkretu 512 bitu bloku 
-// 'state' ir 8 skaitlu masivs, kuram apstrades sakuma jasatur h0-h7 konstantes, apstrades beigas satures hash vertibu
-// 'chunk' satur apstradajamo bitu bloku
-__device__ void sha256ProcessChunk(cuda::std::uint32_t *state, cuda::std::uint8_t *chunk)
-{
-    cuda::std::uint32_t w[64];
-
-    // iekope visus 512 bitus ieks w masiva (512/32 = 16 vertibas)
-    // baiti jaieliek ieks 32 bitu vardiem, lai pirmais baits butu pirmais (skatoties no kreisas uz labo pusi),
-    // tas japabida pa kreisi pa 24, nakamie pa 16, 8, 0
-    // attieciga soli nakamie 'mazaksvarigie' biti ir nulles, tapec baitus sos baitus var konkatenet ar OR (|) operatoru 
-    for(int i = 0; i < 16; i++)
-    {
-        w[i] = chunk[i * 4 + 0] << 24;
-        w[i] |= chunk[i * 4 + 1] << 16;
-        w[i] |= chunk[i * 4 + 2] << 8;
-        w[i] |= chunk[i * 4 + 3];
-    }
-
-    // aizpilda parejas 'w' vertibas
-    for(int i = 16; i < 64; i++)
-    {
-        w[i] = w[i-16] + SS0(w[i-15]) + w[i-7] + SS1(w[i-2]);
-    }
-
-    cuda::std::uint32_t a = state[0];
-    cuda::std::uint32_t b = state[1];
-    cuda::std::uint32_t c = state[2];
-    cuda::std::uint32_t d = state[3];
-    cuda::std::uint32_t e = state[4];
-    cuda::std::uint32_t f = state[5];
-    cuda::std::uint32_t g = state[6];
-    cuda::std::uint32_t h = state[7];
-
-    for(int i = 0; i < 64; i++)
-    {
-        cuda::std::uint32_t temp1 = h + S1(e) + CH(e,f,g) + k[i] + w[i];
-        cuda::std::uint32_t temp2 = S0(a) + MAJ(a,b,c);
-        h = g;
-        g = f;
-        f = e;
-        e = d + temp1;
-        d = c;
-        c = b;
-        b = a;
-        a = temp1 + temp2;
-    }
-
-    state[0] += a;
-    state[1] += b;
-    state[2] += c;
-    state[3] += d;
-    state[4] += e;
-    state[5] += f;
-    state[6] += g;
-    state[7] += h;
-}
-
-__device__ void sha256(const cuda::std::uint8_t *input, cuda::std::uint64_t length, cuda::std::uint8_t *output)
-{
-    // vienkarsibas pec apstradasim viena bloka ietvaros, tapec, nemot vera zinojuma garumu un padding,
-    // zinojuma garums nedrikst but lielaks par 440 bitiem, lai viss ietilpstu viena 512 bitu bloka
-    // https://crypto.stackexchange.com/questions/54852/what-happens-if-a-sha-256-input-is-too-long-longer-than-512-bits
-    bool lengthOk = length <= (440/8);
-    assert(lengthOk);
-
-    cuda::std::uint32_t state[8] = {
-        h0,h1,h2,h3,h4,h5,h6,h7
-    };
-
-    cuda::std::uint8_t chunk[64];
-
-    // sakuma nonullejam bloku
-    for(int i = 0; i < 64; i++) {
-        chunk[i] = 0;
-    }
-    
-    // ierakstam pasu zinojumu
-    for(int i = 0; i < length; i++) {
-        chunk[i] = input[i];
-    }
-    
-    // pec prasibam ir japieliek '1' bits, parejas baita vertibas attiecigi ir nulles, atbilstosi SHA mainiga 'K' prasibam
-    chunk[length] = 0b10000000;
-
-    // padding gala japieliek zinojuma garums ka 64 bitu big-endian skaitlis
-    for(int i = 1; i <= 8; i++)
-    {
-        chunk[64-i] = ((length * 8) >> ((i-1) * 8)) & 0xFF;
-    }
-
-    sha256ProcessChunk(state, chunk);
-
-    // sadalam 32 bitu vertibas 4as 8 bitu un ierakstam output masiva
-    for(int i = 0; i < 8; i++) {
-        cuda::std::uint32_t currentStateValue = state[i];
-
-        output[i * 4] = (cuda::std::uint8_t)(currentStateValue >> 24);
-        output[i * 4 + 1] = (cuda::std::uint8_t)(currentStateValue >> 16);
-        output[i * 4 + 2] = (cuda::std::uint8_t)(currentStateValue >> 8);
-        output[i * 4 + 3] = (cuda::std::uint8_t)(currentStateValue);
-    }
-}
-
-__device__ bool compareHashes(const cuda::std::uint8_t *h1, const cuda::std::uint8_t *h2)
-{
-    for(int i = 0; i < 32; i++)
-    {
-        if(h1[i] != h2[i])
-        {
-            return false;
-        }
-    }
-
-    return true;
-}
-
-__global__ void kernel(
-    const cuda::std::uint8_t *passwords,
-    const int *pwLengths,
-    int pwCount,
-    cuda::std::uint64_t maxPwLength,
-    const cuda::std::uint8_t *targetHash,
-    int *resultIndex
-)
-{
-    int idx = blockIdx.x * blockDim.x +threadIdx.x;
-
-    if(idx >= pwCount)
-    {
-        return;
-    }
-
-    const cuda::std::uint8_t *password = passwords + (idx * maxPwLength);
-    int pwLength = pwLengths[idx];
-
-    cuda::std::uint8_t hash[32];
-
-
-    sha256(password, pwLength, hash);
-
-    // ja hashi sakrit, tad ierakstam paroles indeksu ieks 'resultIndex',
-    // ta ka ta mainiga adrese atrodas device kopigaja atmina, jalieto atomiska funkcija
-    if(compareHashes(targetHash, hash))
-    {
-        // ja resultIndex glabajas vertiba -1, tad aizstaj to ar idx
-        // ar so tiek ari reize nodrosinats, ka ja kads pavediens velak tomer nonak lidz sim stavoklim,
-        // tad modifikacija netiks veikta, jo taja bridi jau 'resultIndex' != -1
-        atomicCAS((unsigned int*)resultIndex, -1, (unsigned int)idx);
-    }
-}
-
-static uint8_t parseHexByte(const std::string &hash, size_t offset)
-{
-    std::string byteString = hash.substr(offset, 2);
-    return static_cast<uint8_t>(std::stoi(byteString, nullptr, 16));
-}
-
-std::vector<uint8_t> hexStringToBytes(const std::string &hash)
-{
-    assert(hash.size() == 64); // 256 biti => 64 hex skaitli
-    
-    std::vector<uint8_t> result(32);
-
-    for(size_t i = 0; i < 32; i++)
-    {
-        result[i] =  parseHexByte(hash, i * 2);
-    }
-
-    return result;
-}
-
-
-std::string parseBytesToHexString(const uint8_t* data, size_t length)
-{
-    std::ostringstream ss;
-    
-    for(size_t i = 0; i < length; i++)
-    {
-        ss << std::hex << std::setw(2) << std::setfill('0') << (int)data[i];
-    }
-
-    return ss.str();
-}
-
-void hashCheck(std::vector<std::string>& passwords, std::vector<uint8_t>& hash, int *cracked_idx)
-{
-    assert(*cracked_idx == -1); // te sakuma jau jabut vertibai -1, padota no main
-
-    const int passwordCount = passwords.size();
-    const int maxPwLength = 55; // maksimalais zinojuma garums, lai tas ietilptu viena sha bloka
-    const size_t passwordsSize = passwordCount * maxPwLength; // ar pienemumu, ka viens simbols ir 1 baits
-
-    std::vector<uint8_t> pwBuffer(passwordsSize, 0);
-    std::vector<int> pwLengths(passwordCount);
-
-    for(size_t i = 0; i < passwordCount; i++) {
-        const std::string pw = passwords[i];
-        int pwLength = pw.size();
-
-        assert(pwLength <= maxPwLength);
-
-        pwLengths[i] = pwLength;
-        
-        for(size_t j = 0; j < pwLength; j++)
-        {
-            // ja parole ir isaka par maxPwLength, tad 'tuksie' masiva elementi bus aizpilditi ar nullem
-            pwBuffer[i * maxPwLength + j] = (uint8_t)pw[j]; 
-
-        }
-    }
-
-    cuda::std::uint8_t *d_passwords;
-    cuda::std::uint8_t *d_hash;
-    int *d_pwLengths;
-    int *d_cracked_idx;
-
-    *cracked_idx = -1;
-    
-    CUDA_CHECK(cudaSetDevice(0));
-
-    CUDA_CHECK(cudaMalloc(&d_passwords, pwBuffer.size() * sizeof(uint8_t)));
-    CUDA_CHECK(cudaMemcpy(d_passwords, pwBuffer.data(), pwBuffer.size() * sizeof(uint8_t), cudaMemcpyHostToDevice));
-
-    CUDA_CHECK(cudaMalloc(&d_hash, 32));
-    CUDA_CHECK(cudaMemcpy(d_hash,hash.data(), 32, cudaMemcpyHostToDevice));
-
-    CUDA_CHECK(cudaMalloc(&d_pwLengths, passwordCount * sizeof(int)));
-    CUDA_CHECK(cudaMemcpy(d_pwLengths, pwLengths.data(),passwordCount * sizeof(int), cudaMemcpyHostToDevice));
-
-    CUDA_CHECK(cudaMalloc(&d_cracked_idx, sizeof(int)));
-    CUDA_CHECK(cudaMemcpy(d_cracked_idx, cracked_idx, sizeof(int), cudaMemcpyHostToDevice));
-
-       
-    int numThreads = 256;
-    int numBlocks = (passwordCount + numThreads - 1 ) / numThreads;
-
-    kernel<<<numBlocks, numThreads>>>(d_passwords, d_pwLengths, passwordCount, maxPwLength, d_hash, d_cracked_idx);
-
-    CUDA_CHECK(cudaGetLastError());
-    CUDA_CHECK(cudaDeviceSynchronize());
-
-    CUDA_CHECK(cudaMemcpy(cracked_idx, d_cracked_idx, sizeof(int), cudaMemcpyDeviceToHost));
-
-    cudaFree(d_passwords);
-    cudaFree(d_hash);
-    cudaFree(d_cracked_idx);
-}
-
-
-void processFile(const std::string& fileName, std::vector<std::string>& buffer)
-{
-    std::ifstream file(fileName);
-
-    if(!file.is_open())
-    {
-        throw std::runtime_error("Error opening file\n");
-    }
-
-    std::string line;
-    unsigned int currentOffset = 0;
-    
-    while(std::getline(file,line))
-    {
-        buffer.push_back(line);
-    }
-
-    file.close();
-}
-
-// sha funkcijas testa device kodols
-__global__ void testKernel(
-    const cuda::std::uint8_t *input,
-    cuda::std::uint64_t length,
-    cuda::std::uint8_t *calculatedHash
-)
-{
-    // testam pietieks ar pirmo pavedienu
-    if(threadIdx.x != 0 || blockIdx.x != 0) {
-        return;
-    }
-
-    sha256(input,length,calculatedHash);
-}
-
-void testSha(const std::string &password,const std::string hexExpectedHash)
-{
-    std::vector<uint8_t> expectedHash = hexStringToBytes(hexExpectedHash);
-
-    size_t pwLength = password.size();
-    std::vector<uint8_t> passwordBytes(pwLength);
-
-    for(size_t i = 0; i < pwLength; i++)
-    {
-        passwordBytes[i] = password[i];
-    }
-
-    cuda::std::uint8_t *d_password;
-    cuda::std::uint8_t *d_hash;
-    cuda::std::uint8_t *d_calculatedHash;
-
-    CUDA_CHECK(cudaSetDevice(0));
-
-    CUDA_CHECK(cudaMalloc(&d_password,pwLength));
-    CUDA_CHECK(cudaMemcpy(d_password, passwordBytes.data(),pwLength,cudaMemcpyHostToDevice));
-    
-    CUDA_CHECK(cudaMalloc(&d_calculatedHash,32));
-    CUDA_CHECK(cudaMemcpy(d_calculatedHash, std::vector<uint8_t>(32,0).data(), 32, cudaMemcpyHostToDevice));
-
-
-    int numThreads = 1;
-    int numBlocks = 1;
-
-    testKernel<<<numBlocks, numThreads>>>(d_password,pwLength,d_calculatedHash);
-    
-    CUDA_CHECK(cudaGetLastError());
-    CUDA_CHECK(cudaDeviceSynchronize());
-
-    cuda::std::uint8_t h_calculatedHash[32];
-
-    CUDA_CHECK(cudaMemcpy(&h_calculatedHash, d_calculatedHash, 32, cudaMemcpyDeviceToHost));
-
-    cudaFree(d_password);
-    cudaFree(d_calculatedHash);
-
-    std::cout << "Expected:\t" << hexExpectedHash << "\nActual:\t\t" << parseBytesToHexString(h_calculatedHash,32) << '\n';
-}
-
-
-int main()
-{
-    std::cout << "SHA Tests\n";
-    
-    testSha("","e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855");
-    testSha("123456","8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92");
-
-
-    std::cout << "Hash Converison Tests\n";
-
-    std::string testHexHash = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92";
-    auto hexbytes = hexStringToBytes(testHexHash);
-    std::cout << "Original hash:\t\t" << testHexHash << "\nRoundtrip converted: \t" << parseBytesToHexString(hexbytes.data(),hexbytes.size()) << '\n';
-
-    std::cout << "Tests complete\n";
-
-    const std::string INPUT_FILE_NAME = "C:\\Users\\hazya\\Desktop\\10-million-password-list-top-1000000.txt";
-
-    std::vector<std::string> buffer;
-
-    processFile(INPUT_FILE_NAME, buffer);
-
-    std::string hexHash = "701402a369ed3107a22195f5d570ed29df71f39e2ce01123ea0c564bc8333270";
-
-    std::vector<uint8_t> hash = hexStringToBytes(hexHash);
-
-    int cracked_idx = -1;
-
-    hashCheck(buffer, hash, &cracked_idx);
-
-    if (cracked_idx != -1)
-    {
-        std::cout << "Yipeee! Found the password at index:" << cracked_idx << std::endl;
-        std::cout << buffer[cracked_idx] << std::endl;
-    }
-    else
-    {
-        std::cout << "No matching passwords" << std::endl;
-    }
-
-    CUDA_CHECK(cudaDeviceReset());
-
-    return 0; 
-}
-\end{lstlisting}
 
 Ja darbam nepieciešams, dažādus palīgmateriālus var ievietot pielikumā. Tajā
-parasti iekļauj aprēķinu starprezultātus, ilustrācijas, anketu paraugus, kartes, aparātu un ierīču
-aprakstus u. c.
+parasti iekļauj aprēķinu starprezultātus, ilustrācijas, anketu paraugus, kartes, aparātu un ierīču aprakstus u. c.
 
 
 %dokumentācijas lapa

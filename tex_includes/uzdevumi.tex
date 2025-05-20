@@ -1,0 +1,373 @@
+\begin{center}
+    \chapter{Uzdevumi}
+\end{center}
+
+\section{Uzdevumu izvēles pamatojums}
+
+Praktiskai saskarņu salīdzināšanai nepieciešams definēt programmēju problēmu,
+kuru iespējams izstrādāt uz abām saskarnēm.  Jāizvēlas tāds uzdevums, kuru
+iespējams 'augsti' paralelizēt, tas ir, sadalīt uzdevumu daudzos mazos un (it
+īpaši) neatkarīgos gabalos, lai būtu pievienotā vērtība (ātrdarbība) to pildīt
+uz GPU, ņemot vērā papildus darbu un nepieciešamās zināšanas, lai ieviestu GPU
+risinājumu.
+
+Tā kā uzdevuma risinājumu primārais mērķis ir izmantot etalonuzdevumā, tad
+tam ir jābūt tādam, ar kuru iespējams notestēt kādu biežu lietotu GPGPU
+platformu funkciju apakškopu.
+
+Par vienu uzdevumu tiks izmantots jau autora kursa darbā definētais un 
+izstrādatais uzdevums (uz CUDA un ROCm, bet ne OpenCL) - paroļu lauzējs,
+atkopējs priekš SHA-256 jauktām, šifrētām parolēm.\cite{kursa-darbs}
+
+Nobriedušāki paroļi lauzēji, jeb precīzāk - paroļu atkopēji kā
+"hashcat"\cite{hashcat} ir spējīgi ņemt vērā vairākas paroļu variācijas,
+maskas, faktus, ka parole, piemēram, iesākusies ar "123" un citas sarežģītākas
+potenciālo paroļu iegūšanas metodes. Demonstrācijas vajadzībām pietiktu
+izstrādāt pašu 'kodolu', kas, ar jau saņemtu iespējamo paroļu sarakstu, tās
+pārbaudīs, jeb tā sauktais 'vārdnīcas' tipa uzbrukums.\cite{hashcat_dict_atk}
+
+Šādā uzdevuma implementācijās būs nepieciešamība izmantot datu straumi parolēm,
+pie atbilstošas paroles atrašanas, jānodrošina atomiska datu ierakstīšana
+no attiecīgā veiksmīgā GPGPU pavediena.
+
+Šim uzdevumam, ņemot vērā definētu straumes bufera izmēru un apstrādājamo
+paroļu skaitu, ir fiksēts izpildāmo GPGPU kodolu un laidienu skaits. Daudzos
+praktiskos scenārijos GPU resursi tiek izmantoti ilgtermiņa darbībām, kur
+izpildāmo kodolu skaits varētu nebūt definēts, piemēram, mākslīgā intelekta
+mašīnmācīšanās modeļi, kuri tiek trenēti kamēr sasniegts kāds kvalitātes
+kritērijs.
+
+Noteiktajos etalonuzdevuma prasību ietvaros tomēr vajadzētu kādu statiski
+nosakāmu izpildes apjomu, tāpēc, lai notestētu šādu ilgtermiņa izpildi tiek
+noteikts otrs uzdevums - Džona Konveja dzīves spēles \cite{conway1970conway}
+realizācija, kurā izpildes apjoms definējams kā šūnu automāta darbības soļi.
+
+
+\section{Apkalpapojošās programmatūras, aparatūras uzstādījums}
+
+
+Etalonuzdevumu izpildei izmantots dators ar:
+\begin{itemize}
+    \item Arch Linux operētājsistēmu,
+    \item AMD Ryzen 5600H procesoru ar Radeon Graphics integrēto videokarti,
+    \item Nvidia GeForce RTX 3060 Laptop ārējo videokarti.
+\end{itemize}
+
+Programmu izstrādē izmantojamo platformu versijas:
+
+
+Lai nodrošinātu risinājumu izolāciju caur Docker, visu konteineru izveidē
+par bāzes Docker bildi tiks izmantota Ubuntu 24.04
+nvidia-devel
+amd something
+image from ... jo tur vairāki image essentially
+
+
+Par pamata Docker failu HIP risinājumam izmantots AMD izstrādatais
+ar sagatavotu vidi ROCm un CUDA platformām. \cite{amd_dockerfile}
+
+
+Pārējās izstrādei nepieciešamās programmatūras steks:
+Cmake versija
+Gcc
+Docker versija
+
+
+
+docker config, cmake config, citu izmantoto softu versijas
+
+žurnālfailu spdlog config, un csv izejas faila formāts
+
+
+
+
+\section{Paroļu atguvēja īstenojums}
+Tātad jāizstrādā programma, kura, ņemot vērā ieejas failu ar potenciālajām
+parolēm, no kādas paroles jaucējvērtības spētu noskaidrot pašu paroli. Uzdevumu
+būtu vērts risināt uz GPU, jo pie liela paroļu skaita, katrs GPU pavediens
+neatkarīgi no citiem varētu rēķināt savas paroles jaucējvērtību un pārbaudīt to
+pret uzlaužamo.
+
+Programma ir paredzēta kā komandrindas utilīta ar CLI argumentiem:
+\begin{itemize}
+    \item ievades faila ceļš,
+    \item paroles jaucējvērtība,
+    \item žurnālfaila ceļs
+\end{itemize}
+
+Apstrādājamais fails saturēs potenciālās paroles (piemēru skatīt izdrukā
+\ref{lst:pw_file_example}, katra savā rindā, kurām tiks izrēķināta
+jaucējvērtība un salīdzināta pret doto. Izmantojamais jaukšanas algoritms -
+SHA256. Jaucējvērtību rēķināšana un salīdzināšana jārealizē izpildei uz GPU.
+\cite{kursa-darbs}
+
+\begin{lstlisting}[caption={Paroļu ieejas faila piemērs ar nejauši ģenerētām parolēm}, label=lst:pw_file_example]
+5QW8ZywwXSQ8I
+YIqBz6PgEbDg3AK
+qs0xxkco3AYaX
+zRX5l1
+qyGgl8Dg
+cvJTiLCw7e
+ySBinJCvd
+7cDTl7RsdLFhD
+...
+\end{lstlisting}
+
+SHA256 izvēlēts tā tīri tā popularitātes un relatīvi ātrās izpildes dēļ,
+paroles uzlaušanas demonstrācijas vajadzībām ar šo pietiek, nepieciešamības
+gadījumā iespējams ieviest citu jaukšanas algoritmu un aizstāt ar esošo.
+
+Lai notestētu SHA-256 aprēķinu darbību pret zināmām jaucējvērtībām un to
+attiecīgajiem ziņojumiem, kā arī, lai pārbaudītu vispārīgu GPGPU kodola
+programmas darbību, platformas pieejamību uz šī datora apartūras, un veiktu
+galveno programmas izpildes, programma jādarbina no komandrinas, padodot
+atbilstošos argumentus (skatīt izdruku  \ref{lst:pwcracker_mains}). \cite{kursa-darbs}
+
+\begin{lstlisting}[caption={Programmas galvenā izpilde}, label=lst:pwcracker_mains]
+$ pwcracker <parolu faila cels> <paroles hash vertiba> <zurnalfaila cels>
+\end{lstlisting}
+
+Algoritmu skatīt izdrukās \ref{lst:sha256_pseido_alg}.
+\begin{lstlisting}[caption={Paroļu atguvēja CPU puses pseidokods}, label=lst:sha256_pseido_alg]
+passwords, offsets, count =  readPasswordFromFile(inputFile)
+log(fileLoadTime())
+
+passwordsPinnedMemory = mallocPinnedMemory(sizeof(passwords))
+offsetsPinnedMemory = mallocPinnedMemory(sizeof(offsets))
+
+devicePasswordsBuffer = deviceMalloc(sizeof(passwords))
+deviceOffsetsBuffer = deviceMalloc(sizeof(offsets))
+deviceHash = deviceMalloc(sizeof(32)) // sha 256 biti => 32 baiti
+deviceOutputIdx = deviceMalloc(sizeof(4)) // int izmers ieks C/C++
+log(bufferCreationTime())
+
+hostMemcpy(passwordsPinnedMemory, passwords)
+hostMemcpy(offsetsPinnedMemory, offsets)
+deviceMemcpy(devicePasswordsBuffer, passwordsPinnedMemory)
+deviceMemcpy(deviceOffsetsBuffer, offsetsPinnedMemory)
+deviceMemcpy(deviceHash, hash)
+deviceMemcpy(deviceOutputIdx, -1)
+log(hostToDeviceMemoryTransferTime())
+
+
+PwCracker(devicePasswordsBuffer, deviceOffsetsBuffer, passwords.count(), deviceHash, deviceOutputIdx)
+log(kernelExecTime())
+
+if outputIdx != -1
+    print(passwords[outputIdx])
+\end{lstlisting}
+
+
+\begin{lstlisting}[caption={Paroļu atguvēja GPGPU kodola pseidokods}, label=lst:sha256_pseido_alg_device]
+PwCracker(passwords, pwOffsets, count, hash, outputIdx):
+    i = blockIdx.x * blockDim.x + threadIdx.x
+
+    password = passwords + pwOffsets[i]
+    if i >= pwCount:
+        return
+
+    if sha256(password) == hash:
+        atomicStore(outputIdx, i)
+\end{lstlisting}
+
+\section{Dzīves spēles šūnu automāta īstenojums}
+
+Tāpat kā paroļu atguvējam, programma darbināma no komandrindas, padodot CLI
+argumentus:
+\begin{itemize}
+    \item ievades režģa faila ceļš,
+    \item izejas režģa faila ceļš,
+    \item šūnu automāta izpildāmo soļu skaits,
+    \item žurnālfaila ceļs. (skatīt izdruku \ref{lst:gol_mains}).
+\end{itemize}
+
+\begin{lstlisting}[caption={Programmas galvenā izpilde}, label=lst:gol_mains]
+$ gol <ieejas rezga faila cels> <izejas rezga faila cels> <automata solu skaits> <zurnalfaila cels> 
+\end{lstlisting}
+
+Ieejas un izejas režģu failiem jāsastāv no vieniniekiem un nullēm,
+reprezentējot faktu vai attiecīgā šūna ir dzīva (1) vai mirusi (0), izdruka
+\ref{lst:gol_file_examples}.
+
+\begin{lstlisting}[caption={Ieejas, izejas faila piemērs (ar tā saukto planiera rakstu)}, label=lst:gol_file_examples]
+// ieejas fails:
+0000000
+0001000
+0000100
+0011100
+0000000
+
+// izejas fails pec viena sola:
+0000000
+0000000
+0010100
+0001100
+0001000
+\end{lstlisting}
+
+Algoritma pseidokodu skatīt izdrukās \ref{lst:gol_pseido_alg} un  \ref{lst:gol_pseido_alg_device}.
+\begin{lstlisting}[caption={Dzīves spēles šūnu automāta CPU puses pseidokods}, label=lst:gol_pseido_alg]
+data, width, height = readGridFromFile(inputFile)
+log(gridReadTime())
+
+inputGridPinnedMemory = mallocPinnedMemory(sizeof(data))
+outputGridPinnedMemory = mallocPinnedMemory(sizeof(data))
+
+deviceInputBuffer = deviceMalloc(sizeof(data))
+deviceOutputBuffer = deviceMalloc(sizeof(data))
+log(bufferCreationTime())
+
+hostMemcpy(inputGridPinnedMemory, data)
+deviceMemcpy(deviceInputBuffer, inputGridPinnedMemory)
+log(hostToDeviceMemoryTransferTime())
+
+for i in range(0, gameSteps):
+    GameOfLife(deviceInputBuffer, deviceOutputBuffer, width, height)
+    log(kernelExecTime())
+
+    swap(deviceInputBuffer, deviceOutputBuffer)
+
+deviceMemcpyToHost(outputGridPinnedMemory, deviceInputBuffer)
+log(deviceToHostMemoryTransferTime())
+
+writeGridToFile(outputGridPinnedMemory, outputFile)
+log(gridWriteTime())
+\end{lstlisting}
+
+\begin{lstlisting}[caption={Dzīves spēles šūnu automāta GPGPU kodola pseidokods}, label=lst:gol_pseido_alg_device]
+GameOfLife(inputGrid, outputGrid, width, height):
+    x = blockIdx.x * blockDim.x + threadIdx.x
+    y = blockIdx.y * blockDim.y + threadIdx.y
+
+    if x >= width || y >= height:
+        return
+
+    neighbors = neighborCount(inputGrid[y][x])
+    
+    cell = 0
+
+    if input[y][x] == 1:
+		if neighbors == 2 || neighbors == 3:
+		    cell = 1
+	else if neighbors == 3:
+        ncell = 1;
+
+    outputGrid[y][x] = cell
+\end{lstlisting}
+
+\section{Risinājumu kopējie ierobežojumi un skaidrojumi}
+Abu programmu pseidokodi rakstīti pēc iespējas platform-neatkarīgi, bet, lai
+būtu lielāka skaidrība par implementācijas detaļām, tabulā
+\ref{tab:pseudocode_representations} minētas atbilstošās CUDA, HIP, OpenCL
+funkcijas.
+
+\begin{table}[h!]
+\caption{Pseidokodā minēto funkciju atbilstošās funkcijas katrā platformā}
+\label{tab:pseudocode_representations} 
+\begin{tabularx}{\textwidth}{
+  >{\raggedright\arraybackslash}p{0.225\textwidth}
+  >{\raggedright\arraybackslash}p{0.16\textwidth}
+  >{\raggedright\arraybackslash}p{0.15\textwidth}
+  >{\raggedright\arraybackslash}p{0.365\textwidth}
+}
+\hline
+\textbf{Pseidokoda funkcija} & \textbf{CUDA} & \textbf{ROCm HIP} & \textbf{OpenCL} \\ \hline
+mallocPinnedMemory & cudaMallocHost & hipHostMalloc & clCreateBuffer ar CL\_MEM\_READ\_WRITE, CL\_MEM\_ALLOC\_HOST\_PTR karogiem \\ \hline
+hostMemcpy & std::memcpy & std::memcpy & std::memcpy \\ \hline
+deviceMalloc & cudaMalloc & hipMalloc & clCreateBuffer ar CL\_MEM\_READ\_WRITE karogu \\ \hline
+deviceMemcpy & cudaMemcpy & hipMemcpy & clEnqueueWriteBuffer \\
+\hline
+\end{tabularx}
+\end{table}
+
+Mērāmie notikumu ilgumi kā pseidokodā norādīts ar, piemēram,
+\textit{bufferCreationTime}, \textit{deviceToHostMemoryTransferTime} u. tml.,
+realizējami ar prioritāri attiecīgajām GPGPU API notikumu profilēšanas
+funkcijām, ja kādā vai visās kādu notikumu nav iespējams izmērīt, vai tas
+neskaitās kā notikums, tad lietojama C++ standarta bibliotēkas datumu un laiku
+manipulācijas bibliotēka "chrono".\cite{std_chrono}
+
+\begin{lstlisting}[caption={"chrono" laika mērīšanas piemērs},
+    label=lst:chrono_example]
+auto start = std::chrono::steady_clock::now();
+// meramais koda gabals
+auto end = std::chrono::steady_clock::now();
+
+std::chrono::duration<double, std::milli> elapsedTime = end - start;
+\end{lstlisting}
+
+\begin{lstlisting}[caption={CUDA laika mērīšanas piemērs},
+    label=lst:cuda_example]
+cudaEvent_t start, stop;
+cudaEventCreate(&start);
+cudaEventCreate(&stop);
+
+cudaEventRecord(start);
+// CUDA API izsaukumi
+cudaEventRecord(stop);
+
+float elapsedTime = 0;
+cudaEventElapsedTime(&elapsedTime, start, stop);
+\end{lstlisting}
+
+\begin{lstlisting}[caption={ROCm HIP laika mērīšanas piemērs},
+    label=lst:hip_example]
+hipEvent_t start, stop;
+hipEventCreate(&start);
+hipEventCreate(&stop);
+
+hipEventRecord(start);
+// HIP API izsaukumi
+hipEventRecord(stop);
+
+float elapsedTime = 0;
+hipEventElapsedTime(&elapsedTime, start, end);
+\end{lstlisting}
+
+\begin{lstlisting}[caption={OpenCL laika mērīšanas piemērs},
+    label=lst:cl_example]
+cl_event event;
+
+clResult = clEnqueueNDRangeKernel(kernel, 1, nullptr, globalSize, localSize, 0, nullptr,
+
+clFunkcijaKuraSanemCl_EventParametru(/*...*/, &event);
+
+cl_ulong start;
+cl_ulong end;
+
+clGetEventProfilingInfo(event, CL_PROFILING_COMMAND_START, sizeof(start), &start, nullptr);
+clGetEventProfilingInfo(event, CL_PROFILING_COMMAND_COMPLETE, sizeof(end), &end, nullptr);
+
+float elapsedTime = static_cast<double>(end - start);
+\end{lstlisting}
+
+\section{Risinājumu repozitorijs, failu struktūra un kompilēšana}
+Bakalaura darba repozitorijs uzdevumu risinājumiem,
+ievadfailu ģenerēšanas un etalonuzdevuma Python skriptiem publicēts un pieejams
+GitHub.\cite{bak_github_repo} Projekta saknē atrodas 7 direktorijas (katra uzdevuma
+risinājumi katrā platformā un Python skripti).
+
+Attiecīgo projektu no tā direktorijas saknes iespējams kompilēt \textit{cmake}
+vai ar \textit{Docker} (skatīt izdrukas \ref{lst:sha_cuda_compile}
+
+\begin{lstlisting}[caption={Dzīves spēles risinājums priekš HIP}, label=lst:gol_hip_compile, language=bash]
+# Kompilesana 
+$ cmake -S . -B build # (prieks ROCm)
+$ cmake -S . -B build -D GPU_RUNTIME=CUDA # (prieks CUDA)
+$ cmake --build build
+
+# Uz Docker
+$ docker buildx build . --target cuda -t golhip:cuda #(prieks CUDA)
+$ docker buildx build . --target rocm -t golhip:rocm #(prieks ROCM)
+\end{lstlisting}
+
+
+Gan CUDA, gan HIP risinājumu pirmkods meklējams GitHub glabātuvē.\cite{kursa_darba_repo}
+No projekta saknes, atrodoties direktorijā './src', iespējams kompilēt CUDA programmu ar:
+\begin{lstlisting}[caption={Programmas kompilēšana uz CUDA}, label=lst:cuda_compile]
+$ nvcc -O2 kernel.cu sha256_cpu.cpp -o pwcracker
+\end{lstlisting}
+Līdzīgi HIP platformai:
+\begin{lstlisting}[caption={Programmas kompilēšana uz HIP}, label=lst:hip_compile]
+$ hipcc -O2 kernel.hip sha256_cpu.cpp -o pwcracker
+\end{lstlisting}
