@@ -527,11 +527,24 @@ Katra laidiena konfigurācija tiek darbināta vairākas reizes un operētājsist
 kešatmiņa tiek piespiedu kārtā iztīrīta pēc katra laidiena. Laidienu reižu
 skaits tiek padods caur komandrindu.
 
-
 \begin{lstlisting}[caption={Etalonuzdevumu darbināšanas Python skripta darbināšana},
     label=lst:bench_cli, language=bash]
 $ python3 benchmark.py <konfiguracijas darbinasanas skaits>
 \end{lstlisting}
+
+Lai atvieglotu tālāku žurnālfailu apstrādi, skriptā to failu nosaukumi tiek
+veidoti pēc aprakstoša šablona, saturot galveno informāciju par konkrēto
+laidienu (skatīt izdruku \ref{lst:log_pattern}).
+\begin{lstlisting}[caption={Žurnālfailu nosaukumu šabloni},
+    label=lst:log_pattern, language=bash]
+# Parolu atguvejs
+sha256_<parolu skaits>_<pozicija>_<platforma>_{laidiena nr}.log
+
+# Dzives spele
+gol_{platums}x{garums}_steps_{soli}_{platforma}_{laidiena nr}.log
+\end{lstlisting}
+
+
 
 
 \section{Risinājumu repozitorijs, failu struktūra, kompilēšana, darbināšana}
