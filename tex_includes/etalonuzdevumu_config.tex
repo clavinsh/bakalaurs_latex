@@ -1,7 +1,6 @@
 \begin{center}
     \chapter{Etalonuzdevumu izveides apsvērumi}
 \end{center}
-
 Etalonuzdevumu izveidē (programmatūras vai algoritmu salīdzināšanas vajadzībām)
 jābūt pārliecinātam, ka izveidotā programma, izmantotie profilēšanas rīki un
 jebkāda cita programmatūra, kas kopumā paredzēta mērījumu iegūšanai,
@@ -36,10 +35,9 @@ izpildei uz videokartes.
 Jāizvēlas tāds uzdevums, kuru iespējams 'augsti' paralelizēt, tas ir, sadalīt
 uzdevumu daudzos mazos un (it īpaši) neatkarīgos gabalos, lai būtu pievienotā
 vērtība (ātrdarbība) to pildīt uz GPU, ņemot vērā papildus darbu un
-nepieciešamās zināšanas, lai ieviestu GPU risinājumu.
-
-Autora kursa darbā\cite{kursa-darbs} tāds jau tika definēts, bet netika
-pievērsta papildus uzmanība etalonuzdevuma uzticamībai.
+nepieciešamās zināšanas, lai ieviestu GPU risinājumu. Autora kursa
+darbā\cite{kursa-darbs} tāds jau tika definēts, bet netika pievērsta papildus
+uzmanība etalonuzdevuma uzticamībai.
 
 Salīdzinot dažādus ietvarus ar it kā vienu un to pašu uzdevumu, jāņem vērā, ka
 ar naivu risinājumu ir grūti garantēt, ka attiecīgās izveidotās programmas ir
@@ -124,8 +122,9 @@ Tātad no iegūtajiem rezultātiem (25,787s ilgs izpildes laiks priekš C++ un
 nekā C++, kas sarežģītākos piemēros būtu nepiemērots apgalvojums. Līdz ar to,
 dotajam piemērēram kā vispārīgam dažādu valodu salīdzinājumam ir problēmas:
 augsta līmeņa valoda kā Python abstraktē relatīvi sarežģītas darbības ar
-failiem, datu buferiem, straumēm, standarta ievadi un izvadi, ieviešot optimizācijas
-izpildes laikā, tāpēc dotos risinājumus nevar uzskatīt par ekvivalentiem.
+failiem, datu buferiem, straumēm, standarta ievadi un izvadi, ieviešot
+optimizācijas izpildes laikā, tāpēc dotos risinājumus nevar uzskatīt par
+ekvivalentiem.
 
 C++ risinājumā ieviešot pat ļoti vienkāršas optimizācijas konfigurācijā ar
 standarta ievadi, var iegūt krietni labāku rezultātu (skatīt izdruku
@@ -171,8 +170,8 @@ user    0m1.690s
 sys     0m0.308s
 \end{lstlisting}
 
-Līdz ar to, izstrādājot etalonuzdevumus, jāņem vērā, ka var iegūt nepatiesu
-līdzvērtību starp risinājumiem dažādās valodās un neuzticamus datus,
+Līdz ar to, izstrādājot etalonuzdevumu programmas, jāņem vērā, ka var iegūt
+nepatiesu līdzvērtību starp risinājumiem dažādās valodās un neuzticamus datus,
 rezultātus.
 
 CUDA, ROCm HIP un OpenCL platformās šī problēma ir mazāk izteikta, jo ietvari
@@ -185,13 +184,14 @@ ierobežojumi:
         faktu, ka netiek lietota kāda potenciāla optimālāka  vai ērtāka
         funkcionalitāte, kura netiek lietota tīri salīdzināšanas vajadzībām, no
         OpenCL atmiņas iespējām tāpat nāktos daļēji atteikties tādu datu
-        apstrādē, kuri pārsniedz gan VRAM, gan RAM ierobežojumus.
+        apstrādē, kuri pārsniedz gan VRAM, gan RAM ierobežojumus,
+    \item Līdzīgu iemeslu dēļ netiek lietoti vairāki OpenCL konteksti,
+        kontekstu rindas,
     \item Starp visām platformām tiek lietoti līdzīgi vai ekvivalenti GPGPU
-        puses atmiņu tipi.
+        puses atmiņu tipi,
     \item Ieviestais algoritms un paštaisītās datu struktūras ir vienādas
         pseidokoda līmenī.
 \end{itemize}
-
 
 Konkrētas programmatūras etalonuzdevuma izpildē, jādefinē kā tiks mērīti
 resursi - laiks un atmiņa. Vienkāršākais risinājums laika mērīšanai ir mērīt
@@ -204,9 +204,15 @@ kursa darbā analizējot CUDA un ROCm HIP platformas\cite{kursa-darbs}). Tiks
 pieskaitīts laiks, kas iespējams nav tik svarīgs vai vispār saistīts ar
 konkrēto platformu, kādu tās API funckiju, piemēram, CPU puses faila apstrāde.
 
+Kā min viena publikācija \cite{reliable-benchmarking}, mērīt pilno programmas
+izpildes laiku var nebūt pietiekoši, piemēram, ar textit{time} utilītu, it
+īpaši vairākpavedienu scenārijos. Lai gan minētajā pētījumā etalonuzdevumu
+sastādīšana apspriesta tīri CPU izpildes kontekstā, vairākpavedienu izpildi un
+to ietekmi no I/O darbībām var attiecināt arī priekš GPU.
+
 Ja gala mērķis ir sasniegt etalonuzdevuma atdarināmību, tad faila apstrādes,
 datu sagatavošana un vispārīgi darbības ar disku var negatīvi ietekmēt
-rezultātus. Uzstādījumā var tikt izmantot neproprocionāli lēna datu
+rezultātus. Uzstādījumā var tikt izmantota neproprocionāli lēna datu
 uzglabāšanas iekārta attiecībā pret GPU.
 
 Lai izvairītos no šādām problēmām, uzstādījumā jādefinē plāšāks

@@ -1,9 +1,7 @@
 \begin{center}
     \chapter{Uzdevumi}
 \end{center}
-
 \section{Uzdevumu izvēles pamatojums}
-
 Praktiskai saskarņu salīdzināšanai nepieciešams definēt programmēju problēmu,
 kuru iespējams izstrādāt uz visām platformām.  Jāizvēlas tāds uzdevums, kuru
 iespējams 'augsti' paralelizēt, tas ir, sadalīt uzdevumu daudzos mazos un (it
@@ -11,15 +9,16 @@ iespējams 'augsti' paralelizēt, tas ir, sadalīt uzdevumu daudzos mazos un (it
 uz GPU, ņemot vērā papildus darbu un nepieciešamās zināšanas, lai ieviestu GPU
 risinājumu.
 
-Tā kā uzdevuma risinājumu primārais mērķis ir izmantot etalonuzdevumā, tad
+Tā kā uzdevuma risinājumu primārais mērķis ir tos izmantot etalonuzdevumā, tad
 tam ir jābūt tādam, ar kuru iespējams notestēt kādu biežu lietotu GPGPU
 platformu funkciju apakškopu.
 
 Viena uzdevuma ietvaros varētu rasties šaubas par etalonuzdevuma rezultātu
 ticamību, tas ir, iespējams radītie risinājumi, uzstādījums vai pats uzdevums
 radījis kādu īpašu situāciju, kurā kāda konkrēta platforma noteiktos mērījumos
-izvirzās vadībā, kas nebūtu tiesa citās reālās programmās ar pievienoto
-vērtību. Tāpēc tiek izvirzīta prasība pēc diviem dažādiem uzdevumiem.
+izvirzās vadībā vai tieši pretēji, kas nebūtu tiesa citās reālās programmās ar
+pievienoto vērtību. Tāpēc tiek izvirzīta prasība pēc vismaz diviem dažādiem
+uzdevumiem.
 
 Par vienu uzdevumu tiks izmantots jau autora kursa darbā definētais un 
 izstrādatais uzdevums (uz CUDA un ROCm, bet ne OpenCL) - paroļu lauzējs,
@@ -42,15 +41,16 @@ definēts, piemēram, mākslīgā intelekta mašīnmācīšanās modeļi, kuri t
 kamēr sasniegts kāds kvalitātes kritērijs.
 
 Noteiktajos etalonuzdevuma prasību ietvaros tomēr vajadzētu kādu statiski
-nosakāmu izpildes apjomu, tāpēc, lai notestētu šādu ilgtermiņa izpildi tiek
-noteikts otrs uzdevums - Džona Konveja dzīves spēles \cite{conway1970conway}
-realizācija, kurā izpildes apjoms definējams kā šūnu automāta darbības soļi.
+nosakāmu izpildes apjomu (cik reizes kodols tiks darbināts), tāpēc, lai
+notestētu šādu ilgtermiņa izpildi tiek noteikts otrs uzdevums - Džona Konveja
+dzīves spēles \cite{conway1970conway} realizācija, kurā izpildes apjoms
+definējams kā šūnu automāta darbības soļi.
 
-Šīs šūnu automāts ir viens no zināmākajiem tā vienkāršo noteikumu un
-iespējamās kompleksās šūnu mijiedarbības dēļ (ar to iespējams
-uzkonstruēt jebkuru Tjūringa mašīnu). Šūnas ir izkārtotas 2 dimensionālā režģī,
-virmsā. Katra šūna ir vai nu dzīva vai mirusi un nākamajā solī šūnas stāvoklis
-ir atkarīgs no tās tiešajiem 8 kaimiņiem\cite{conway1970conway}:
+Šīs šūnu automāts ir viens no zināmākajiem tā vienkāršo noteikumu un iespējamās
+kompleksās šūnu mijiedarbības dēļ (ar to iespējams uzkonstruēt jebkuru Tjūringa
+mašīnu).\cite{conway1970conway} Šūnas ir izkārtotas 2 dimensionālā režģī, virmsā. Katra šūna ir vai nu
+dzīva vai mirusi un nākamajā solī šūnas stāvoklis ir atkarīgs no tās tiešajiem
+8 kaimiņiem:
 \begin{itemize}
     \item ja šūna ir mirusi:
         \begin{itemize}
@@ -81,7 +81,6 @@ notikumi tiks žurnalēti failā, izmantojot, spdlog\cite{spdlog-github}, C++
 
 Ērtai datu apstrādei, izmantojamais faila formāts ir CSV, un datu formāts
 skatāms izdrukā \ref{lst:benchmark_log_example}.
-
 \begin{lstlisting}[caption={Etalonuzdevuma žurnālfaila ieraksta formāts},
   label=lst:benchmark_log_example,
   captionpos=t
