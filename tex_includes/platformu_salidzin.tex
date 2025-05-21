@@ -70,7 +70,8 @@ __global__ kernel() {/*...*/}
 Tā pat ir arī ar GPGPU kodola izsaukumiem, minimālas atšķirības atmiņas
 iedalīšanā un aizpildīšanā (skatīt izdruku \ref{lst:cuda_hip_mem}).
 
-\begin{lstlisting}[caption={CUDA un HIP kodola darbināšanas, atmiņas API izsaukumu salīdzinājums},
+\begin{lstlisting}[caption={CUDA un HIP kodola darbināšanas, atmiņas API
+    izsaukumu salīdzinājums},
   label=lst:cuda_hip_mem,
   captionpos=t
 ]
@@ -131,36 +132,109 @@ videokartēm. OpenCL GPGPU kodolus ir iespējams darbināt uz CPU, GPU,
 aparatūras paātrinātājiem kā FPGA (no angļu val. \textit{Field Programmable Gate
 Array}), ciparsignālu un mākslīgā intelekta AI procesoriem. \cite{opencl-spec}
 
-
 Atšķirībā no CUDA un HIP, kur kodolu definēšana notiek C++ kodā līdzās ar CPU
 puses kodu, OpenCL ir definēta sava C lietojumprogrammu saskarnes valoda, kura
 balstīta uz C99.\cite{opencl_c_lang_spec} Tā domāta tieši GPGPU kodolu
-definēšanai, un to iespējams kā teksta simbolu virkni apstrādāt CPU puses kodā.
+definēšanai, un to iespējams kā teksta simbolu virkni ielādēt un kompilēt CPU
+puses kodā. Noteiktās situācijas tas var būt mīnuss - programmai jāvelta laiks
+kompilējot kodolus, ieviešot ātrdarbības zudumus.
 
-CPU koda pusē OpenCL ir izmantojama kā C++ bibliotēka ar saskarnēm, kuras
-izmantojamas iekš C un C++. Līdz ar to ir iespējams izstrādāt platformu un pat
-iekārtu neatkarīgu OpenCL programmu, jo GPGPU kodola kods ir ielasāms izpildes
-laikā un pēc specifikācijas ir mērķa iekārtas agnostisks. \cite{opencl-spec}
+\begin{lstlisting}[caption={OpenCL GPGPU kodols un izsaukšana no C++},
+  label=lst:opencl_kernel_exec,
+  captionpos=t
+]
+// Kodols
+__kernel void saxpy(__private float alpha,
+                    __global const float *x,
+                    __global float *y,
+                    __private const unsigned int n)
+{
+    const int i = get_global_id(0);
+    if (i >= n)
+    {
+        return;
+    }
+    y[i] = alpha * x[i] + y[i];
+}
 
-Protams, ātrākai programmas darbībai ir iespējams atsevišķi kodolu kompilēt uz
-SPIR-V starp-posma reprezentācijas valodu (tā tiek lietota arī citos Khronos
-Group projektos kā Vulkan, SYCL). Bet ar šādu risinājumu SPIR-V fails ir
-kompilēts uz konkrētā datora un vairs netiek nodrošināta platform-neaktarīga.
+// CPU kods
 
+clGetPlatformIDs(1, &platform, &numPlatforms);
+clGetDeviceIDs(platform, CL_DEVICE_TYPE_GPU, 1, &device, &numDevices);
+context = clCreateContext(nullptr, 1, &device, nullptr, nullptr, &clResult);
+queue = clCreateCommandQueueWithProperties(context, device, properties, &clResult);
 
+std::string kernelSource = "kodola kods";
+const char *kernelSourceCstring = kernelSource.c_str();
+size_t kernelSize = kernelSource.length();
 
+cl_program program = clCreateProgramWithSource(context, 1, &kernelSourceCstring, &kernelSize, &clResult);
+clBuildProgram(program, 1, &device, "-cl-std=CL3.0", NULL, NULL);
+cl_kernel kernel = clCreateKernel(program, "saxpy", &clResult);
 
+unsigned int vector_size = VECTOR_SIZE;
+size_t global_size = VECTOR_SIZE;
+size_t local_size = 64;
 
+clSetKernelArg(kernel, 0, sizeof(float), &alpha);
+clSetKernelArg(kernel, 1, sizeof(cl_mem), &d_x);
+clSetKernelArg(kernel, 2, sizeof(cl_mem), &d_y);
+clSetKernelArg(kernel, 3, sizeof(unsigned int), &vector_size);
 
-Ja salīdzina pieejamo literatūru starp CUDA, ROCm un OpenCL, tad krietns
-pārsvars ir CUDA, ar OpenCL otrajā un ROCm trešajā vietā. Pēc akamēdisko darbu
-meklētāja Google Scholar pieejamajiem akadēmisko darbu datiem, meklējot visas
-trīs platformas, par CUDA pieejami 392000 raksti, par OpenCL 62400, bet par
-ROCm tikai 13,800. \cite{google_scholar} Līdzīgi 
+clEnqueueNDRangeKernel(queue, kernel, 1, NULL, &global_size, &local_size, 0, NULL, NULL);
+clEnqueueReadBuffer(queue, d_y, CL_TRUE, 0, VECTOR_SIZE * sizeof(float), h_y, 0, NULL, NULL);
+\end{lstlisting}
 
-hipificēšana nestrādā/strādā šādos gadījumos...
-te varētu konkrētu piemēru kurš uz CUDA kompilējas, bet ne uz HIP 
+Salīdzinot ar CUDA un HIP, OpenCL ir 'vārdīgāks' kodolu darbināšanā, jo no
+vienas puses kodola argumentu padošana CUDA un HIP ir vienkāršota caur
+\textit{<<<...>>>} makro funkciju, no otras puses OpenCL piedāvā plašākas
+iespējas iekārtas vai iekārtu, kodolu, atmiņas organizēšanā: \cite{opencl-spec}
+\begin{itemize}
+    \item Var vaicāt pēc OpenCL platformu, kura satur CPU un paralēlās izpildes
+        iekārtas,
+    \item Viena vai vairākas iekārtas, kuras var būt dažādu tipu,
+    \item Konteksts, kurš satur:
+    \begin{itemize}
+        \item Vienu vai vairākas iekārtas,
+        \item GPGPU kodola objektus jeb funkcijas, kuras izsauktas galvenajā
+            kodola funkcijā
+        \item Programmas objektus - GPGPU kodolu pirmkodu vai kompilētus kodola
+            bināros failus
+        \item Atmiņas objektus, kurus pārvalda saimnieka CPU un padod kodolu
+            funkcijām (iekārtas atmiņas norādes, kuras uzturētas saimnieka CPU
+            RAM)
+        \item Rindu - OpenCL kontekstam ir iespējams asinhroni nodot izpildei
+            daudzus kodolus ar dažādām prioritātēm, izpildes kārtība un tās stāvoklis
+            tiek pārvaldīts konteksta rindā
+    \end{itemize}
+    
+\end{itemize}
 
-visu platformu piedāvātie atmiņu tipi (pārsvarā jau ir diezgan līdzīgi)
+Rezultātā OpenCL programmēšanas modelis piedāvā jau gatavas struktūras un
+funkcionalitāti darbam ar vairākām iekārtām, vairākiem kontekstiem, vairākām
+kontekstu rindām un kodoliem, kuras noderīgas sarežģītās konveijerapstrādes
+tipa programmatūrās.
 
+Kodoli nav kompilējami tikai izpildes laikā, bet arī tā sauktajā bezsaistes
+režīmā uz SPIR-V starp-posma reprezentācijas valodu; tā tiek lietota arī citos
+Khronos Group projektos kā Vulkan, SYCL\cite{spirv-spec} (skatīt attēlu
+\ref{img:khronos_ecosystem}). Bet ar šādu risinājumu SPIR-V fails ir kompilēts
+uz konkrētā datora un vairs netiek nodrošināta platform-neaktarīga.
+OpenCL iekārtas puses kompilators līdz ar to ir pieejams divos režīmos:
+\begin{itemize}
+    \item Tiešsaistes kompilators ir pieejams saimnieka programmas izpildes
+        laikā,
+    \item Bezsaistes tiek izsaukts atsevišķi un saimnieka programmai tiek
+        nodots un ielādēts gatavs SPIR-V izpildāms fails .
+\end{itemize}
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{images/2024-spirv-language-ecosystem.jpg}
+    \caption{Khronos Group izstrādāto projektu ekosistēma\cite{spirv-ecosystem-image}}
+    \label{img:khronos_ecosystem}
+\end{figure}
+
+Tiešsaistes kodolu kompilēšana nodrošina lielāku savietojamību ar dažādām
+aparatūrām, jo OpenCL kompilēs kodu tiešai attiecīgajai aparatūrai, jo OpenCL
+nodrošina izpildes laika kompilēšanu visos gadījumos un API versijās.

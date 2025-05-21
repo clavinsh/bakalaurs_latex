@@ -372,21 +372,29 @@ kā iebūvētop
 \section{OpenCL platformas modelis - pieraksti pa taisno no dokumentācijas}
 Sastāv no saimnieka (CPU) ar vienu vai vairākām OpenCL iekārtām (GPU).
 
-OpenCL iekārta ir iedalīta vienā vai vairākās \textit{compute} vienībās (Compute Units), un tās ir iedalītas apstrādes elementos (processing elements)
+OpenCL iekārta ir iedalīta vienā vai vairākās \textit{compute} vienībās
+(Compute Units), un tās ir iedalītas apstrādes elementos (processing elements)
 
 Skaitļošana notiek šajos apstrādes elementos
 
 OpenCL programma sastāv no saimnieka koda un iekārtas koda. 
-Saimnieka koda daļa nodod kodola (kernel) kodu OpenCL iekārtai un iekārta to izpilda uz tās apstrādes elementiem.
+Saimnieka koda daļa nodod kodola (kernel) kodu OpenCL iekārtai un iekārta to
+izpilda uz tās apstrādes elementiem.
 
 
-Kad apstrādes elementi apstrādes vienībā izpilda to pašu secību ar priekšrakstiem (? varētu labāk izvārdod), tad vadības plūsma ir saucama par kopdarbīgu (converged)
+Kad apstrādes elementi apstrādes vienībā izpilda to pašu secību ar
+priekšrakstiem (? varētu labāk izvārdod), tad vadības plūsma ir saucama par
+kopdarbīgu (converged)
 
-Kopdarbīga vadības plūsma ir labi piemērota uz tādas aparatūrus kā GPU, kura ir specializēta vienas instrukciju kopas izpildei paralēli uz vairākiem apstrādes elementiem.
-Nav grūti izsecināt, ka uz šādas aparatūras noteiktas OpenCL programmas izpildīs konkrētus uzdevumus ātrāk par līdzīgu risinājumu uz saimnieka - CPU.
+Kopdarbīga vadības plūsma ir labi piemērota uz tādas aparatūrus kā GPU, kura ir
+specializēta vienas instrukciju kopas izpildei paralēli uz vairākiem apstrādes
+elementiem. Nav grūti izsecināt, ka uz šādas aparatūras noteiktas OpenCL
+programmas izpildīs konkrētus uzdevumus ātrāk par līdzīgu risinājumu uz
+saimnieka - CPU.
 
-Iekārtas kodola kodu ir iespējams sniegt kā OpenCL C99 pirmkoda simbolu virkni, SPIR-V starpvalodu vai bināru objektu.
-OpenCL piedāvā kompilatoru, kas spējīgs no minētajiem formātiem izveidot izpildāmo programmas objektu.
+Iekārtas kodola kodu ir iespējams sniegt kā OpenCL C99 pirmkoda simbolu virkni,
+SPIR-V starpvalodu vai bināru objektu. OpenCL piedāvā kompilatoru, kas spējīgs
+no minētajiem formātiem izveidot izpildāmo programmas objektu.
 
 Kompilators var būt 'tiešsaistes' vai 'bezsaistes' jeb
 \begin{itemize}
@@ -394,31 +402,47 @@ Kompilators var būt 'tiešsaistes' vai 'bezsaistes' jeb
     \item Bezsaistes tiek izsaukts atsevišķi un saimnieka programmai tiek nodots un ielādēts gatavs SPIR-V izpildāms fails 
 \end{itemize}
 
-\textcolor{red}{Izskatās, ka salīdzinot ar HIP un CUDA, te ir lielāka brīvība veidos kā realizē kodola programmas kompilēšana un palaišanu, bet derētu paskatīties vairāk par šo tajās platformās}
+\textcolor{red}{Izskatās, ka salīdzinot ar HIP un CUDA, te ir lielāka brīvība
+    veidos kā realizē kodola programmas kompilēšana un palaišanu, bet derētu
+paskatīties vairāk par šo tajās platformās}
 
-Tiešsaistes kodolu kompilēšana nodrošina lielāku savietojamību ar dažādām aparatūrām, jo OpenCL kompilēs kodu tiešai attiecīgajai aparatūrai,
-jo OpenCL nodrošina izpildes laika kompilēšanu visos gadījumos un API versijās.
+Tiešsaistes kodolu kompilēšana nodrošina lielāku savietojamību ar dažādām
+aparatūrām, jo OpenCL kompilēs kodu tiešai attiecīgajai aparatūrai, jo OpenCL
+nodrošina izpildes laika kompilēšanu visos gadījumos un API versijās.
 
-Turpretī, gatavie SPIR-V binārie faili nav atbalstīti uz jebkuras aparatūras, kā arī ne visas OpenCL versijas ir savietojamas ar visām SPIR-V versijām.
+Turpretī, gatavie SPIR-V binārie faili nav atbalstīti uz jebkuras aparatūras,
+kā arī ne visas OpenCL versijas ir savietojamas ar visām SPIR-V versijām.
 
-Tomēr izpildes laika kodolu kompilēšana ir ar savu mīnusu - programmai jāvelta laiks kompilējot kodolus, ieviešot ātrdarbības zudumus. \textcolor{red}{te varētu novērtēt šos zudumus}
+Tomēr izpildes laika kodolu kompilēšana ir ar savu mīnusu - programmai jāvelta
+laiks kompilējot kodolus, ieviešot ātrdarbības zudumus. \textcolor{red}{te
+varētu novērtēt šos zudumus}
 
-Ņemot vērā kā GPU arhitektūru apraksta Nvidia un AMD, šis OpenCL platformas modeļa abstrakcijas slānis ir raksturojams kā 'tuvu dzelžiem'.
-Tomēr kodola kompilatoram ir diezgan brīva izvēle optimizācijās starp faktiskajiem arhitektūras elementiem un kā tos reprezentē OpenCL.
+Ņemot vērā kā GPU arhitektūru apraksta Nvidia un AMD, šis OpenCL platformas
+modeļa abstrakcijas slānis ir raksturojams kā 'tuvu dzelžiem'. Tomēr kodola
+kompilatoram ir diezgan brīva izvēle optimizācijās starp faktiskajiem
+arhitektūras elementiem un kā tos reprezentē OpenCL.
 
-Piemērs, šim faktam ir situācijas, kur iekārtas kodola programma tiek kompilēta priekš CPU. Centrālais procesors arhitektūras līmenī var nesaturēt
-vairākus kodolus vai pavedienus, kurus programmētājs sagaida izstrādājot iekārtas kodolu.
+Piemērs, šim faktam ir situācijas, kur iekārtas kodola programma tiek kompilēta
+priekš CPU. Centrālais procesors arhitektūras līmenī var nesaturēt vairākus
+kodolus vai pavedienus, kurus programmētājs sagaida izstrādājot iekārtas
+kodolu.
 
-Vai arī, palaižot kodolu, tiek definēts pavedienu grupas izmērs (piemēram, izmērā 128), kas uz visām iekārtām nebūs pieejams tādā skaitā.
-Kompilators šo situāciju atrisinātu, izsaucot kodolu vairākās partijās, bet no pirmkoda puses tiek definēta viena partija. 
+Vai arī, palaižot kodolu, tiek definēts pavedienu grupas izmērs (piemēram,
+izmērā 128), kas uz visām iekārtām nebūs pieejams tādā skaitā. Kompilators šo
+situāciju atrisinātu, izsaucot kodolu vairākās partijās, bet no pirmkoda puses
+tiek definēta viena partija. 
 
 Izskatās, ka daudz plašāks iebūveto tipu saraksts un atbalsts
 
-\textcolor{red}{Te arī jāpārliecinās, bet man liekas, ka HIP un CUDA pie nederīga grupas/pavediena izmēra izmestu izpildes laika kļūdu, OpenCL dod lielāku brīvību}
+\textcolor{red}{Te arī jāpārliecinās, bet man liekas, ka HIP un CUDA pie
+    nederīga grupas/pavediena izmēra izmestu izpildes laika kļūdu, OpenCL dod
+lielāku brīvību}
 
 Ne-primitīvu datu struktūru izveide un apstrāde:
-Jāņem vērā, ka dinamiski mainīgas datu struktūras GPU kodā neiesaka lietot, kā arī OpenCL kontekstā, lietojamas tikai OpenCL standarta primitīvās datu struktūras,
-tāpēc, papildus potenciāla problēma var būt ne-konsekventa atmiņas izlīdzināšana starp host, kodola kodu: \ref{lst:opencl_struct}
+Jāņem vērā, ka dinamiski mainīgas datu struktūras GPU kodā neiesaka lietot, kā
+arī OpenCL kontekstā, lietojamas tikai OpenCL standarta primitīvās datu
+struktūras, tāpēc, papildus potenciāla problēma var būt ne-konsekventa atmiņas
+izlīdzināšana starp host, kodola kodu: \ref{lst:opencl_struct}
 
 \begin{lstlisting}[caption={Piemērs struktūras definēšanai, kura lietojama OpenCL kodolā},
   label=lst:opencl_struct,
