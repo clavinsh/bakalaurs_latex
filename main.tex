@@ -332,10 +332,11 @@ funkcijas, ātrdarbību un iespējamās priekšrocības, izvēloties vienu vai o
 \chapter{Pieraksti par OpenCL}
 \end{center}
 
-Izskatās, ka ir diezgan zems apjoms ar modernām OpenCL 3.0 pamācībām, izņemot tehniskās
-specifikācijas, kuras iesācējām varētu nebūtu piemērotas.
+Izskatās, ka ir diezgan zems apjoms ar modernām OpenCL 3.0 pamācībām, izņemot
+tehniskās specifikācijas, kuras iesācējām varētu nebūtu piemērotas.
 
-Jaunākā pamācības literatūra ir priekš opengl 2.0, iznāca 2015 gadā \cite{heterogeneous-computing-with-opencl-2-0}(debetable vai jaunākā, bet
+Jaunākā pamācības literatūra ir priekš opengl 2.0, iznāca 2015 gadā
+\cite{heterogeneous-computing-with-opencl-2-0}(debetable vai jaunākā, bet
 zināmākā)
 
 OpenCL nav beginner friendly, pārsvarā paredzēts izstrādātājiem, kuri jau labi spējīgi orientēti precīzi tehniskās specifikācijās,
@@ -343,8 +344,8 @@ lai rakstītu platform-neaktarīgas programmas priekš CPU, GPU u.c. hardware pa
 
 Nvidia izskatās, ka ir OpenCL atbalsts
 
-Izmanto SPIR starp-posma reprezentācijas (intermediate represenatation) valodu, kas izmantota arī citās Khronos Group
-valodās, ietvaros - Vulkan, SYCL
+Izmanto SPIR starp-posma reprezentācijas (intermediate represenatation) valodu,
+kas izmantota arī citās Khronos Group valodās, ietvaros - Vulkan, SYCL
 
 Labi atsaukties uz specifikāciju \cite{opencl-spec}
 
@@ -358,13 +359,15 @@ dažādos izpildes posmos, piemēram:
 \end{itemize}
 
 
-Kādas varētu būt atšķirības programmēšanas modelī starp CUDA, HIP, OpenCL? Idejiski jau mērķa arhitektūra ir
-apmēram vienāda, līdz ar to liekas, ka modelim ar tādam vajadzētu būt.
+Kādas varētu būt atšķirības programmēšanas modelī starp CUDA, HIP, OpenCL?
+Idejiski jau mērķa arhitektūra ir apmēram vienāda, līdz ar to liekas, ka
+modelim ar tādam vajadzētu būt.
 
-Kodola funkciju deklarācijā jāuzmanās no bool tipiem. Lai gan iekšēji OpenCl kodā ir atbalstīts bool tips,
-šim tipam nav tieša attiecība API definīcijā, saskaroties ar samnieka puses kodu.
-Plašāk skatoties, samnieka pusē ir, piemēram \textit{cl\_int} un OpenCL kodolā ir vienkārši \textit{int}.
-Šāda it kā iebūvētop
+Kodola funkciju deklarācijā jāuzmanās no bool tipiem. Lai gan iekšēji OpenCl
+kodā ir atbalstīts bool tips, šim tipam nav tieša attiecība API definīcijā,
+saskaroties ar samnieka puses kodu. Plašāk skatoties, samnieka pusē ir,
+piemēram \textit{cl\_int} un OpenCL kodolā ir vienkārši \textit{int}. Šāda it
+kā iebūvētop
 
 \section{OpenCL platformas modelis - pieraksti pa taisno no dokumentācijas}
 Sastāv no saimnieka (CPU) ar vienu vai vairākām OpenCL iekārtām (GPU).
@@ -463,12 +466,11 @@ failā, ar krietni lielākām pieejamās funkcionalitātes limitācijām, balsto
 uz to, ka šai funkcijai jāatbilst OpenCL C valodas standartam.
 
 \include{tex_includes/platformu_salidzin}
-
 \include{tex_includes/etalonuzdevumu_config}
-
 \include{tex_includes/uzdevumi}
-
 \include{tex_includes/rezultati_anal}
+\include{tex_includes/rezultati}
+\include{tex_includes/secinajumi}
 
 \begin{center}
     \chapter{Etalonuzdevuma rezultātu līdzvērtība}

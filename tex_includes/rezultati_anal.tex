@@ -76,7 +76,7 @@ neparedzami mainīgi.
 
 Apskatot histogrammu bildes \ref{img:gol_distrib}, \ref{img:sha_distrib},
 \ref{img:sha_distrib_cl}, var redzēt, ka mazākā izkliedētība ir CUDA
-platformai. Pieņemot, ka datu veido normālo sadalījumu, tabulās \ref{tab:kern},
+platformai. Pieņemot, ka dati veido normālo sadalījumu, tabulās \ref{tab:kern},
 \ref{tab:kernel_exec_time_variations_gol} redzamas atbilstošās Standartnovirzes
 un variācijas.
 
@@ -111,18 +111,14 @@ un variācijas.
 \end{table}
 
 
-Interesants novērojums ir fakts, ka abos uzdevumu risinājumos, HIP un
-OpenCL 
+Interesants novērojums ir fakts, ka abos uzdevumu risinājumos HIP un
+OpenCL izpildes laiku līknes satur divus pīķus ar diezgan līdzīgu
+relatīvo attālumu starp šo pīķu modu. Ar esošo datu kopu diemžēl nav
+iespējams pietiekami izskaidrot kāpēc šāda veidojas struktūra. Bet
+iespējama teorija ir GPU aparatūras droselēšana.
 
+Pie lielas noslodzes, kura laika ziņā ir palielināta HIP un OpenCL, varēja
+iestāties aparatūras takts frekvences samazināšana, lai limitētu sistēmas
+karšanu. Rezultātā veidojas divi pīķi - viens pie vienas takts frekvences un
+viens pie otras.
 
-viena kodola izpilde priekš sha un gol pie dažādiem izmēriem
-
-
-
-
-
-Rezultātu nodaļa!!! Vajag atsevišķā failā
-
-Dažādos griezumos apskatīti iegūti dati no žurnālfailiem.
-Kopsummā apstrādāti un analizēti 816 faili par CUDA, HIP, OpenCL
-dažādajiem GPGPU notikumu izpildes ilgumiem

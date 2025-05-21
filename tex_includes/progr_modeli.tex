@@ -1,0 +1,31 @@
+\begin{center}
+    \chapter{Platformu programmēšanas modeļi}
+\end{center}
+GPU ir dizainēti ar domu izpildīt tūkstošiem pavedienus (vienādus sarakstus ar
+procesorā izpildāmām darbībām) paralēli. Atšķirībā no CPU, kur viens pavediens
+šīs darbības izpildās ātrāk, GPU kopumā dos lielāku caurlaidību.
+
+Arhitektūras līmenī GPGPU kodoli satur SIMD (\textit{Single Instruction,
+Multiple Data}) elementus, kuri spējīgi veikt paralēlu datu apstrādi ar vienu
+instrukciju, katrs elements strādājot ar saviem teorētiski patvaļīgiem datiem
+(atmiņas adresēm).
+
+SIMD nav pieejami tiešā veidā caur instrukciju kopu, programmētājam ir
+jādarbojas ar pavedienu saskarnes SIMT (\textit{Single Instruction, Multiple
+Threads}) darbību izpildes modeli. \cite{GPGPU_gramata} Arhitektūrā tie ir
+ieviesti kā GPGPU kodoli un satur SIMT elementus. Līdz ar to SIMT kodols tiek
+saukt par priekšgalu (\textit{front-end}) un SIMD par aizmugursistēmu
+(\textit{back-end}).
+
+SIMT abstrakcija ļauj programmētājam neuztraukties par pavedienu
+implementācijas detaļām, un tos var uzskatīt par pilnībā neatkarīgiem - katrs
+pavediens izpildās paralēli un ir spējīgs izpildīt patvaļīgu instrukciju
+sarakstu.
+
+Rezultātā programmētājs uz GPU izpildāmo kodu, kuru nodod noteiktam skaitam
+pavedienu, saucamu par  GPGPU izpildāmo kodolu (\textit{device kernel}), ir
+spējīgs definēt kā MIMD (\textit{Multiple Instructions, Multiple Data}) modelim
+līdzīgu kodu, tāpēc funkciju definēšana ir praktiski identiska tam kā to darītu
+priekš CPU, ar noteiktiem specifiskiem saskarnes API izsaukumiem un kontekstu,
+ka šis pavediens izpildās paralēli. \cite{kursa-darbs}
+
