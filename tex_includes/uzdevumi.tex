@@ -2,84 +2,86 @@
     \chapter{Uzdevumi}
 \end{center}
 \section{Uzdevumu izvēles pamatojums}
-Praktiskai saskarņu salīdzināšanai nepieciešams definēt programmēju problēmu,
-kuru iespējams izstrādāt uz visām platformām.  Jāizvēlas tāds uzdevums, kuru
+
+Praktiskai saskarņu salīdzināšanai nepieciešams definēt programmējamu problēmu,
+kuru iespējams izstrādāt visās platformās.  Jāizvēlas tāds uzdevums, kuru
 iespējams 'augsti' paralelizēt, tas ir, sadalīt uzdevumu daudzos mazos un (it
 īpaši) neatkarīgos gabalos, lai būtu pievienotā vērtība (ātrdarbība) to pildīt
 uz GPU, ņemot vērā papildus darbu un nepieciešamās zināšanas, lai ieviestu GPU
 risinājumu.
 
 Tā kā uzdevuma risinājumu primārais mērķis ir tos izmantot etalonuzdevumā, tad
-tam ir jābūt tādam, ar kuru iespējams notestēt kādu biežu lietotu GPGPU
+tam ir jābūt tādam, ar kuru iespējams notestēt bieži lietotu GPGPU
 platformu funkciju apakškopu.
 
 Viena uzdevuma ietvaros varētu rasties šaubas par etalonuzdevuma rezultātu
-ticamību, tas ir, iespējams radītie risinājumi, uzstādījums vai pats uzdevums
-radījis kādu īpašu situāciju, kurā kāda konkrēta platforma noteiktos mērījumos
-izvirzās vadībā vai tieši pretēji, kas nebūtu tiesa citās reālās programmās ar
-pievienoto vērtību. Tāpēc tiek izvirzīta prasība pēc vismaz diviem dažādiem
+ticamību, iespējams, ka radītie risinājumi, uzstādījums vai pats uzdevums
+radījis kādu īpašu situāciju, kurā konkrēta platforma noteiktos mērījumos
+izvirzās vadībā (vai tieši pretēji - neizvirzās), kas nebūtu tiesa citās reālās
+programmās ar pievienoto vērtību. Tāpēc tiek izvirzīta prasība pēc vismaz
+diviem dažādiem
 uzdevumiem.
 
 Par vienu uzdevumu tiks izmantots jau autora kursa darbā definētais un 
-izstrādatais uzdevums (uz CUDA un ROCm, bet ne OpenCL) - paroļu lauzējs,
-atguvējs priekš SHA-256 jauktām, šifrētām parolēm.\cite{kursa-darbs}
+izstrādatais uzdevums (ar CUDA un ROCm, bet ne OpenCL) - paroļu lauzējs,
+atguvējs ar SHA-256 jaucējalgoritmu jauktām, šifrētām parolēm.\cite{kursa-darbs}
 
-Nobriedušāki paroļi lauzēji, jeb precīzāk - paroļu atkopēji kā
-"hashcat"\cite{hashcat} ir spējīgi ņemt vērā vairākas paroļu variācijas,
-maskas, faktus, ka parole, piemēram, iesākusies ar "123" un citas sarežģītākas
+Nobriedušāki paroļi lauzēji (paroļu atguvēji), kā "hashcat"\cite{hashcat} ir
+spējīgi ņemt vērā vairākas paroļu variācijas, maskas un citas sarežģītākas
 potenciālo paroļu iegūšanas metodes. Demonstrācijas vajadzībām pietiktu
-izstrādāt pašu 'kodolu', kas, ar jau saņemtu iespējamo paroļu sarakstu, tās
-pārbaudīs, jeb tā sauktais 'vārdnīcas' tipa uzbrukums.\cite{hashcat_dict_atk}
+izstrādāt pašu 'kodolu', kas ar iepriekš definēto paroļu sarakstu tās
+pārbaudīs pret mērķa jaucējvērtību jeb tā saukto 'vārdnīcas' tipa
+uzbrukumu.\cite{hashcat_dict_atk} "hashcat" programma ir arī praktisks
+pierādījums OpenCL, jo tā izstrādāta šajā
+platformā. \cite{hashcat}
 
-Šādā uzdevuma implementācijās būs nepieciešamība izmantot datu straumi parolēm,
-pie atbilstošas paroles atrašanas, jānodrošina atomiska datu ierakstīšana no
-attiecīgā veiksmīgā GPGPU pavediena. Kā arī šim uzdevumam, ņemot vērā definētu
+Šāda uzdevuma implementācijās būs nepieciešamība izmantot datu straumi parolēm.
+Pie atbilstošas paroles atrašanas jānodrošina atomiska datu ierakstīšana no
+attiecīgā veiksmīgā GPGPU pavediena. Šim uzdevumam, ņemot vērā definētu
 straumes bufera izmēru un apstrādājamo paroļu skaitu, ir fiksēts izpildāmo
 GPGPU kodolu un laidienu skaits. Daudzos praktiskos scenārijos GPU resursi tiek
 izmantoti ilgtermiņa darbībām, kur izpildāmo kodolu skaits varētu nebūt
-definēts, piemēram, mākslīgā intelekta mašīnmācīšanās modeļi, kuri tiek trenēti
+definēts, piemēram, mākslīgā intelekta mašīnmācīšanās modeļi, kuri tiek trenēti,
 kamēr sasniegts kāds kvalitātes kritērijs.
 
 Noteiktajos etalonuzdevuma prasību ietvaros tomēr vajadzētu kādu statiski
-nosakāmu izpildes apjomu (cik reizes kodols tiks darbināts), tāpēc, lai
-notestētu šādu ilgtermiņa izpildi tiek noteikts otrs uzdevums - Džona Konveja
-dzīves spēles \cite{conway1970conway} realizācija, kurā izpildes apjoms
-definējams kā šūnu automāta darbības soļi.
-
-Šīs šūnu automāts ir viens no zināmākajiem tā vienkāršo noteikumu un iespējamās
+nosakāmu izpildes apjomu (cik reizes kodols tiks darbināts). Lai notestētu šādu
+ilgtermiņa izpildi, tiek noteikts otrs uzdevums - Džona Konveja "Dzīves spēles"
+\cite{conway1970conway} realizācija, kurā izpildes apjoms definējams kā šūnu
+automāta darbības soļi. Šis šūnu automāts ir viens no zināmākajiem tā vienkāršo noteikumu un iespējamās
 kompleksās šūnu mijiedarbības dēļ (ar to iespējams uzkonstruēt jebkuru Tjūringa
-mašīnu).\cite{conway1970conway} Šūnas ir izkārtotas 2 dimensionālā režģī, virmsā. Katra šūna ir vai nu
+mašīnu).\cite{conway1970conway} Šūnas ir izkārtotas 2 dimensiju režģī, virsmā. Katra šūna ir vai nu
 dzīva vai mirusi un nākamajā solī šūnas stāvoklis ir atkarīgs no tās tiešajiem
 8 kaimiņiem:
 \begin{itemize}
     \item ja šūna ir mirusi:
         \begin{itemize}
             \item ja tai ir precīzi 3 kaimiņi, tā nākamajā solī būs dzīva,
-            \item jebkurā citā situācijā tā paliks mirusi.
+            \item jebkurā citā situācijā tā paliks mirusi;
         \end{itemize}
     \item ja šūna ir dzīva:
         \begin{itemize}
             \item ja tai ir 2 vai trīs kaimiņi, tā paliks dzīva,
-            \item ja tai vai nu mazāk par 2 vai vairāk par 3 kaimiņiem,
-                tā nākamajā solī nomirs (it kā vai nu no nepietiekamas
+            \item ja tai ir mazāk par 2 vai vairāk par 3 kaimiņiem,
+                tā nākamajā solī nomirs (it kā no nepietiekamas
                 apdzīvotības vai pārapdzīvotības).
         \end{itemize}
 \end{itemize}
 
-Uzdevumu ir vērts pildīt uz GPU, jo katru automāta šūnu iespējams apstrādāt
+Uzdevumu ir vērts pildīt ar GPU, jo katru automāta šūnu iespējams apstrādāt
 savā pavedienā gandrīz vai kā 2D bildi, kur katrs pikselis atbilst katrai
 automāta šūnai. Papildus sarežģītība un iespējamās platformu ātrdarbības
 atšķirības meklējamas GPU atmiņas datu izveidē un apmaiņā pie liela spēles soļu
-skaita, jo ar katru soli nākas mainīt ieejas datus, izejas datus.
+skaita, jo ar katru soli nākas mainīt ieejas un izejas datus.
 
 
 \section{Programmatūras, aparatūras uzstādījums}
 Tā kā programmas notikumu ilgumi dažādās konfigurācijās nāks no CPU, CUDA, HIP
-un OpenCL pusēm, tad lai būtu vienota un viegli apstrādājama datu kopa,
-notikumi tiks žurnalēti failā, izmantojot, spdlog\cite{spdlog-github}, C++
+un OpenCL pusēm, tad, lai būtu vienota un viegli apstrādājama datu kopa,
+notikumi tiks žurnalēti failā, izmantojot spdlog\cite{spdlog-github}, C++
 žurnalēšanas bibliotēku.
 
-Ērtai datu apstrādei, izmantojamais faila formāts ir CSV, un datu formāts
+Ērtai datu apstrādei izmantojamais faila formāts ir CSV, un datu formāts
 skatāms izdrukā \ref{lst:benchmark_log_example}.
 \begin{lstlisting}[caption={Etalonuzdevuma žurnālfaila ieraksta formāts},
   label=lst:benchmark_log_example,
@@ -91,8 +93,8 @@ CUDA, Datu parraide uz GPU, 1.83927
 HIP, Atminas malloc uz GPU, 6.42058
 \end{lstlisting}
 
-Notikuma ilgums norādāms milisekundēs, jo, galvenokārt, tādā mērvienībā
-notikumu ilgumu noklusēti atgriež gan CUDA, gan HIP profilēšanas funkcijas
+Notikuma ilgums norādāms milisekundēs, jo ar tādu noklusēto mērvienību tas tiek
+atgriezts gan CUDA, gan HIP profilēšanas funkcijās
 \textit{cudaEventElapsedTime}, \textit{hipEventElapsedTime}. OpenCL funkcija
 \textit{clGetEventProfilingInfo} atgriež notikuma ilgumu nanosekundēs, šajā
 gadījumā rezultāti tiks pārveidoti, lai nodrošinātu konsekvenci starp pārējām
@@ -100,12 +102,12 @@ platformām.
 
 Uzdevumu izstrādei, testēšanai un etalonuzdevumu izpildei izmantots dators ar:
 \begin{itemize}
-    \item Arch Linux operētājsistēmu ar Linux 6.14.5-arch1-1 OS kodolu
+    \item Arch Linux operētājsistēmu ar Linux 6.14.5-arch1-1 OS kodolu,
     \item AMD Ryzen 5600H procesoru ar Radeon Graphics integrēto videokarti,
     \item Nvidia GeForce RTX 3060 Laptop ārējo videokarti.
 \end{itemize}
 
-Lai nodrošinātu risinājumu izolāciju caur Docker, visu konteineru izveidē par
+Lai nodrošinātu risinājumu izolāciju ar Docker, visu konteineru izveidē par
 bāzes Docker bildi izmantota Ubuntu 24.04. Par pamata Docker failu HIP
 risinājumam izmantots AMD izstrādatais \cite{amd_dockerfile} ar sagatavotu vidi
 ROCm un CUDA platformām. Līdzīgi priekš CUDA izmantota Nvidia

@@ -3,9 +3,9 @@
     saskarne}
 \end{center}
 
-GPU ir dizainēti ar domu izpildīt tūkstošiem pavedienus (vienādus sarakstus ar
+GPU ir dizainēti ar domu izpildīt tūkstošiem pavedienu (vienādus sarakstus ar
 procesorā izpildāmām darbībām) paralēli. Atšķirībā no CPU, kur viens pavediens
-šīs darbības izpildās ātrāk, GPU kopumā dos lielāku caurlaidību.
+šīs darbības izpildīs ātrāk, GPU kopumā dos lielāku caurlaidību.
 
 Arhitektūras līmenī GPGPU kodoli satur SIMD (\textit{Single Instruction,
 Multiple Data}) elementus, kuri spējīgi veikt paralēlu datu apstrādi ar vienu
@@ -27,29 +27,29 @@ sarakstu.
 Rezultātā programmētājs uz GPU izpildāmo kodu, kuru nodod noteiktam skaitam
 pavedienu, saucamu par  GPGPU izpildāmo kodolu (\textit{device kernel}), ir
 spējīgs definēt kā MIMD (\textit{Multiple Instructions, Multiple Data}) modelim
-līdzīgu kodu, tāpēc funkciju definēšana ir praktiski identiska tam kā to darītu
-priekš CPU, ar noteiktiem specifiskiem saskarnes API izsaukumiem un kontekstu,
+līdzīgu kodu, tāpēc funkciju definēšana ir praktiski identiska tam, kā to darītu
+priekš CPU ar noteiktiem specifiskiem saskarnes API izsaukumiem un kontekstu,
 ka šis pavediens izpildās paralēli. \cite{kursa-darbs}
 
-Kursa darbā jau tika apskatītas galvenās atšķīrības un kopējais starp CUDA un
+Kursa darbā jau tika apskatītas galvenās atšķirības un kopējais starp CUDA un
 ROCm.\cite{kursa-darbs} AMD jau no sākuma dizainēja ROCm, lai tā līdzinātos
-CUDA. Protams, abas platformas ir paradzētas GPU programmēšanai un apakšējā
-videokaršu arhitektūra nebūs tik atšķirīga. Galvenā atšķirība, neskaitot
-platformu mērķa grafiskos procesorus, ir fakts, ka atšķirībā no CUDA, kura ir
-slēgtā, ROCm ir atklātā pirmkoda programmatūra, līdz ar to, ja nepieciešams,
-visu programmatūras saturu var izpētīt, modificiēt, kompilēt pats, kā arī dot
-savu pienesumu gan dokumentācijā, gan kodā.\cite{what_is_ROCM}
+CUDA. Protams, abas platformas ir paradzētas GPU programmēšanai, un apakšējā
+videokaršu arhitektūra nebūs tik atšķirīga. Neskaitot platformu mērķa grafiskos
+procesorus, ir fakts, ka atšķirībā no CUDA, kura ir slēgtā, ROCm ir atklātā
+pirmkoda programmatūra, līdz ar to, ja nepieciešams, visu programmatūras saturu
+var izpētīt, modificiēt, kompilēt pats, kā arī dot savu pienesumu gan
+dokumentācijā, gan kodā.\cite{what_is_ROCM}
 
 ROCm satur vairākas programmas, bibliotēkas un ietvarus dažādiem darbiem ar
-augstas veiktspējas, paralelizācijas skaitļošanu, bet konkrētais C++ API priekš
-GPU programēšanas ir HIP (no angļu val. \textit{Heterogeneous-computing
+augstas veiktspējas, paralelizācijas skaitļošanu, bet konkrētais C++ API 
+GPU programēšanai ir HIP (no angļu val. \textit{Heterogeneous-computing
 Interface for Portability}).\cite{HIP_docs} CUDA gadījumā viss pieejamais
-programmatūras steks tiek palikts zem jau minētā, plašā termina - CUDA.
+programmatūras steks tiek likts zem jau minētā, plašā termina - CUDA.
 
 Pats programmēšanas modelis ir diezgan līdzīgs un vietām pat identisks ar
-CUDA. Noteiktas HIP dizaina izvēles ir tieši aizņemtas no CUDA, lai CUDA vidē
+CUDA. Noteiktas HIP dizaina izvēles ir tieši aizņemtas no CUDA, lai šajā vidē
 pieredzējušajiem izstrādātājiem pāriet uz ROCm būtu vieglāk. Piemēram, C++
-dekoratori, kuri norāda vai funkcija ir CPU vai GPU, ir vienādi (skatīt 
+dekoratori, kuri norāda, vai funkcija ir CPU vai GPU, ir vienādi (skatīt 
 izdruku \ref{lst:cuda_hip_fn_decorators}).
 
 \begin{lstlisting}[caption={CUDA un HIP funkciju definīciju salīdzinājums},
@@ -67,7 +67,7 @@ __device__ myGpuFunction() {/*...*/}
 __global__ kernel() {/*...*/}
 \end{lstlisting}
 
-Tā pat ir arī ar GPGPU kodola izsaukumiem, minimālas atšķirības atmiņas
+Tāpat ir arī ar GPGPU kodola izsaukumiem - minimālas atšķirības atmiņas
 iedalīšanā un aizpildīšanā (skatīt izdruku \ref{lst:cuda_hip_mem}).
 
 \begin{lstlisting}[caption={CUDA un HIP kodola darbināšanas, atmiņas API
@@ -96,24 +96,27 @@ kernel<<<(size + 256 - 1)/256, 256>>>(device_dati, device_rezulats);
 hipMemcpy(host_rezultats, d_rezultats, hipMemcpyDeviceToHost);
 \end{lstlisting}
 
-Ņemot vērā šīs minimālās atšķirības, var secināt, ka vienkāršām situācijām portēt no vienas saskarnes
-uz otru nebūtu pārāk sarežģīti. Darba atvieglošanai, ROCm ietver portēšanas rīku "HIPIFY" 
-\cite{HIPIFY_github} no CUDA uz HIP,
-kas spējīgs arī sarežģītākām situācijām analizēt doto CUDA pirmkodu un aizstāt attiecīgos CUDA
-header failus, funkciju izsaukumus, dekoratorus ar HIP atbilstošajiem.
+Ņemot vērā šīs minimālās atšķirības, var secināt, ka vienkāršām situācijām
+portēt pirmkodu no vienas saskarnes uz otru nebūtu pārāk sarežģīti. Darba
+atvieglošanai ROCm ietver portēšanas rīku "HIPIFY"  \cite{HIPIFY_github} no
+CUDA uz HIP, kas spējīgs arī sarežģītākām situācijām analizēt doto CUDA
+pirmkodu un aizstāt attiecīgos CUDA galvenes failus, funkciju izsaukumus,
+dekoratorus ar HIP atbilstošajiem.
 
-HIP ir atbalsts ne tikai AMD videokartēm, bet arī Nvidia. Tas iespējams tāpēc, ka 
-daudzas HIP saskarnes ir CUDA savietojamas, piemēram, GPU matemātisko funckiju API, tās saturošās funkcijas
-ir tieši atbilstošas CUDA funkcijām un bieži vien pat ar vienādu funkcijas nosaukumu.
+HIP ir atbalsts ne tikai AMD videokartēm, bet arī Nvidia. Tas iespējams tāpēc,
+ka  daudzas HIP saskarnes ir ar CUDA savietojamas, piemēram, ar GPU matemātisko
+funckiju API, tās saturošās funkcijas ir tieši atbilstošas CUDA funkcijām un
+bieži vien pat ar vienādiem funkciju nosaukumiem.
 \cite{HIP_math_API,CUDA_math_API}
 
-Kompilēšanas līmenī šāds atbalsts ir iespējams, jo HIP izmanto kompilatoru draiveri 'hipcc', kurš,
-atkarībā no platformas, veiks pirms-apstrādi un izsauks attiecīgo kompilatoru -
-AMD videokartes gadījumā 'amdclang++' un Nvidia CUDA - 'nvcc'. \cite{HIP_compilers}.
+Kompilēšanas līmenī šāds atbalsts ir iespējams, jo HIP izmanto kompilatoru
+draiveri "hipcc", kurš, atkarībā no platformas, veiks priekšapstrādi un izsauks
+attiecīgo kompilatoru - AMD videokartes gadījumā 'amdclang++' un Nvidia CUDA -
+'nvcc'. \cite{HIP_compilers}.
 
-Tā kā varētu interpretēt, ka CUDA ir tieša apakškopa ROCM un HIP platformai, bet tomēr pilnīgs atbalsts
+Varētu interpretēt, ka CUDA ir tieša apakškopa ROCM un HIP platformai, tomēr pilnīgs atbalsts
 visām CUDA funkcijām nav pieejams. Ir funkcijas, kuras HIP nav implementējusi, piemēram,
-'cyl\_bessel\_i0f' \cite{HIP_math_API}. Papildus nianses ir specifiskām funkcijām kā 'nextafterf', kura CUDA
+'cyl\_bessel\_i0f' \cite{HIP_math_API}. Papildus nianses ir specifiskām funkcijām, kā 'nextafterf', kura CUDA
 ir pieejama gan CPU, gan GPU kodā, bet HIP gadījumā tikai uz CPU. \cite{HIP_math_API}
 
 GPGPU izpildāmais kodols tiek 'nodots' no CPU caur saskarņu API izsaukumiem,
@@ -129,15 +132,15 @@ parametros definējot:
 Khronos Group definētā un izstrādātā paralēlās programmēšanas platforma un
 ietvars - OpenCL ir paredzēta plašākam iekārtu klāstam, fokuss nav tieši uz
 videokartēm. OpenCL GPGPU kodolus ir iespējams darbināt uz CPU, GPU,
-aparatūras paātrinātājiem kā FPGA (no angļu val. \textit{Field Programmable Gate
+aparatūras paātrinātājiem, kā FPGA (no angļu val. \textit{Field Programmable Gate
 Array}), ciparsignālu un mākslīgā intelekta AI procesoriem. \cite{opencl-spec}
 
 Atšķirībā no CUDA un HIP, kur kodolu definēšana notiek C++ kodā līdzās ar CPU
 puses kodu, OpenCL ir definēta sava C lietojumprogrammu saskarnes valoda, kura
 balstīta uz C99.\cite{opencl_c_lang_spec} Tā domāta tieši GPGPU kodolu
 definēšanai, un to iespējams kā teksta simbolu virkni ielādēt un kompilēt CPU
-puses kodā. Noteiktās situācijas tas var būt mīnuss - programmai jāvelta laiks
-kompilējot kodolus, ieviešot ātrdarbības zudumus.
+puses kodā. Noteiktās situācijas tas var būt mīnuss - programmai jāvelta laiks,
+kompilējot kodolus, tās darbības laikā ieviešot ātrdarbības zudumus.
 
 \begin{lstlisting}[caption={OpenCL GPGPU kodols un izsaukšana no C++},
   label=lst:opencl_kernel_exec,
@@ -185,29 +188,27 @@ clEnqueueNDRangeKernel(queue, kernel, 1, NULL, &global_size, &local_size, 0, NUL
 clEnqueueReadBuffer(queue, d_y, CL_TRUE, 0, VECTOR_SIZE * sizeof(float), h_y, 0, NULL, NULL);
 \end{lstlisting}
 
-Salīdzinot ar CUDA un HIP, OpenCL ir 'vārdīgāks' kodolu darbināšanā, jo no
-vienas puses kodola argumentu padošana CUDA un HIP ir vienkāršota caur
-\textit{<<<...>>>} makro funkciju, no otras puses OpenCL piedāvā plašākas
-iespējas iekārtas vai iekārtu, kodolu, atmiņas organizēšanā: \cite{opencl-spec}
+Salīdzinot ar CUDA un HIP, OpenCL ir 'vārdīgāks' kodolu darbināšanā, jo, no
+vienas puses, kodola argumentu padošana CUDA un HIP ir vienkāršota caur
+\textit{<<<...>>>} makro funkciju, no otras puses, OpenCL piedāvā plašākas
+iespējas vienas vai vairāku iekārtu, kodolu un atmiņas organizēšanā: \cite{opencl-spec}
 \begin{itemize}
-    \item Var vaicāt pēc OpenCL platformu, kura satur CPU un paralēlās izpildes
+    \item var vaicāt pēc OpenCL platformas, kura satur CPU un paralēlās izpildes
         iekārtas,
-    \item Viena vai vairākas iekārtas, kuras var būt dažādu tipu,
-    \item Konteksts, kurš satur:
+    \item konteksts, kurš satur:
     \begin{itemize}
-        \item Vienu vai vairākas iekārtas,
+        \item vienu vai vairākas dažādu tipu iekārtas,
         \item GPGPU kodola objektus jeb funkcijas, kuras izsauktas galvenajā
-            kodola funkcijā
-        \item Programmas objektus - GPGPU kodolu pirmkodu vai kompilētus kodola
-            bināros failus
-        \item Atmiņas objektus, kurus pārvalda saimnieka CPU un padod kodolu
+            kodola funkcijā,
+        \item programmas objektus - GPGPU kodolu pirmkodu vai kompilētus kodola
+            bināros failus,
+        \item atmiņas objektus, kurus pārvalda saimnieka CPU un padod kodolu
             funkcijām (iekārtas atmiņas norādes, kuras uzturētas saimnieka CPU
-            RAM)
-        \item Rindu - OpenCL kontekstam ir iespējams asinhroni nodot izpildei
+            RAM),
+        \item rindu - OpenCL kontekstam ir iespējams asinhroni nodot izpildei
             daudzus kodolus ar dažādām prioritātēm, izpildes kārtība un tās stāvoklis
-            tiek pārvaldīts konteksta rindā
+            tiek pārvaldīts konteksta rindā.
     \end{itemize}
-    
 \end{itemize}
 
 Rezultātā OpenCL programmēšanas modelis piedāvā jau gatavas struktūras un
@@ -217,15 +218,15 @@ tipa programmatūrās.
 
 Kodoli nav kompilējami tikai izpildes laikā, bet arī tā sauktajā bezsaistes
 režīmā uz SPIR-V starp-posma reprezentācijas valodu; tā tiek lietota arī citos
-Khronos Group projektos kā Vulkan, SYCL\cite{spirv-spec} (skatīt attēlu
+Khronos Group projektos, kā Vulkan, SYCL\cite{spirv-spec} (skatīt attēlu
 \ref{img:khronos_ecosystem}). Bet ar šādu risinājumu SPIR-V fails ir kompilēts
-uz konkrētā datora un vairs netiek nodrošināta platform-neaktarīga.
+uz konkrētā datora un vairs netiek nodrošināta platform-neatkarība.
 OpenCL iekārtas puses kompilators līdz ar to ir pieejams divos režīmos:
 \begin{itemize}
-    \item Tiešsaistes kompilators ir pieejams saimnieka programmas izpildes
+    \item tiešsaistes režīmā kompilators ir pieejams saimnieka programmas izpildes
         laikā,
-    \item Bezsaistes tiek izsaukts atsevišķi un saimnieka programmai tiek
-        nodots un ielādēts gatavs SPIR-V izpildāms fails .
+        \item bezsaistes režīmā kompilators tiek izsaukts atsevišķi, saimnieka programmai tiek
+        nodots un ielādēts gatavs SPIR-V izpildāms fails.
 \end{itemize}
 
 \begin{figure}[H]
@@ -236,5 +237,5 @@ OpenCL iekārtas puses kompilators līdz ar to ir pieejams divos režīmos:
 \end{figure}
 
 Tiešsaistes kodolu kompilēšana nodrošina lielāku savietojamību ar dažādām
-aparatūrām, jo OpenCL kompilēs kodu tiešai attiecīgajai aparatūrai, jo OpenCL
-nodrošina izpildes laika kompilēšanu visos gadījumos un API versijās.
+aparatūrām, jo OpenCL kompilēs kodu konkrētajai aparatūrai, jo OpenCL nodrošina
+izpildes laika kompilēšanu visos gadījumos un API versijās.

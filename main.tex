@@ -249,10 +249,10 @@ Nvidia videokartes, CUDA ir pasaulē vadošais risinājums augstas veiktspējas 
 paralēlās skaitļošanas vajadzībām. Darbā ar CUDA platformu salīdzinātas AMD
 izstrādātā ROCm un Khronos OpenCL, kuras piedāvā līdzīgu vai pat plašāku
 funkcionalitāti. Analizētas platformu programmatūras iespējas un ierobežojumi
-atbalstītajā aparatūrā. Apsvērti nosacījumi labai etalonuzdevumu izstrādei un
+atbalstītajā aparatūrā. Apsvērti nosacījumi labai etalonuzdevumu izstrādei, un
 tie ieviesti ar diviem dažādiem programmu risinājumiem katrā platformā.
 Izmērīti dažādi veiktspējas rādītāji, kā rezultātā noskaidrots, ka CUDA ir par
-2\% - 3\% efektīvāka nekā ROCm un par 7\% - 30\% nekā OpenCL.
+2\% - 3\% efektīvāka nekā ROCm un par 7\% - 30\% nekā OpenCL. 
 
 \vspace{4mm}
 \noindent \textbf{Atslēgas vārdi}: GPGPU, Nvidia, AMD, CUDA, ROCm, OpenCL
@@ -287,9 +287,9 @@ OpenCL.
 \nomenclature[N]{CUDA}{\textit{Compute Unified Device Architecture} ir Nvidia ieviests API, kas ļauj
 programmatūrai izmantot NVIDIA ražotos GPU}
 \nomenclature[N]{GPGPU}{\textit{General-purpose computing on graphics processing units} - plašlietojama
-skaitļošana uz grafiskajiem procesoriem, mūsdienās ņem vērā un ievieš procesora arhitektūras līmenī}
+skaitļošana ar grafiskajiem procesoriem, mūsdienās ņem vērā un ievieš procesora arhitektūras līmenī}
 \nomenclature[N]{ROCm}{AMD izstrādātā atvērtā pirmkoda platforma priekš HPC un AI darbiem ar videokartēm}
-\nomenclature[N]{HIP}{ROCm sastāvdaļa, C++ API programmu izstrādei uz AMD un Nvidia videokartēm
+\nomenclature[N]{HIP}{ROCm sastāvdaļa, C++ API programmu izstrādei ar AMD un Nvidia videokartēm
 (no angļu val. \textit{Heterogeneous-computing Interface for Portability})}
 \nomenclature[N]{AI}{Mākslīgais intelekts (no angļu val. \textit{Artifical Intelligence})}
 \nomenclature[N]{API}{Lietojumprogrammu saskarne}
@@ -299,34 +299,33 @@ skaitļošanas platforma aparatūras paātrinātājiem}
 \printnomenclature
 
 \chapter{Ievads}
-Grafiskais procesors vai nu kā atsevisķa vai centrālajā procesorā integrēta
+Grafiskais procesors vai nu kā atsevišķa vai centrālajā procesorā integrēta
 komponente ir sastopama gandrīz visos modernajos datoros. Vēsturiski izmantota
 tikai grafisko elementu apstrādei, kur paralēli veicami daudzi līdzīgi darbi,
 piemēram, teksta renderēšana, pikseļu aizpildīšana uz ekrāna, 3D ēnotāju
 funkcijas.
 
-Kļuva skaidrs, ka GPU augstās paralelizācijas iespējas varētu izmantot citos
-uzdevumos, kuri klasiski pildāmi uz CPU. Rezultātā tos būtu daudz efektīvāk
+Industrijā kļuva skaidrs, ka GPU augstās paralelizācijas iespējas varētu izmantot citos
+uzdevumos, kuri klasiski pildāmi ar CPU. Rezultātā tos būtu daudz efektīvāk
 pildīt uz GPU, palielinot programmu ātrdarbību.
 
 Pirms moderniem ietvariem, saskarnēm un arhitektūras atbalsta, ar kuru
-palīdzību uz GPU iespējams skaitļot principā jebko, programmētājiem vajadzēja
+palīdzību ar GPU iespējams skaitļot principā jebko, programmētājiem vajadzēja
 atrast 'nestandarta' risinājumus, lai pildītu ne-grafiskas problēmas. Piemēram,
-2003. gadā radās risinājums kā skaitļot vispārējus lineārās algebras
-vienādojumus, pārveidojot matricu datus kā tekstūras un uz tām izpildot
+2003. gadā radās risinājums, kā skaitļot vispārējus lineārās algebras
+vienādojumus, pārveidojot matricu datus kā tekstūras un ar tām izpildot
 ēnotājus. \cite{10.1145/882262.882363}
 
-Līdz ar to radās pieprasījums pēc plašlietojamas skaitļošanas uz grafiskajiem
+Līdz ar to radās pieprasījums pēc plašlietojamas skaitļošanas ar grafiskajiem
 procesoriem. GPU ražotāji to sāka ņemt vērā un 2006. gadā Nvidia ieviesa CUDA
 API platformu ar tiešu tās atbalstu uz Nvidia  videokartēm, sākot ar "Tesla"
 GPU mikroarhitektūru.\cite{nvidia_tesla_p100}
 
 Pie līdzīga secinājuma nonāca ASV kompānija Apple 2009. gadā, izstrādājot pirmo
-OpenCL versiju. Vēlāk to sniedzot Khronos darba grupā kopā ar citām IT
+OpenCL versiju, vēlāk to sniedzot Khronos darba grupā kopā ar citām IT
 kompānijām, tai skaitā AMD un Nvidia. \cite{khronos_proposal} AMD pie sava 
-risinājuma modernā risinājuma nonāca 2016. gada, apvienojot iepriekšējos
-kompānijas GPU projektus, tika izveidota ROCm platforma kā tieša konkurente
-CUDA platformai.
+modernā risinājuma nonāca 2016. gadā. Apvienojot iepriekšējos kompānijas GPU
+projektus, tika izveidota ROCm platforma kā tieša konkurente CUDA platformai.
 
 Ņemot vērā, ka šie trīs projekti ir paredzēti līdzīgiem mērķiem, to pieejamās
 funkcionalitātes līdzinās viena otrai, šī darba mērķis ir salīdzināt visas trīs
@@ -334,7 +333,7 @@ platformas, to pieejamās salīdzināmās funkcijas, ātrdarbību un iespējamā
 priekšrocības, izvēloties kādu no tām.
 
 Lai to sasniegtu vajadzēs iepazīties ar visu platformu programmēšanas modeļiem,
-GPGPU programām atbilstošu etalonuzdevumu izveidi, un beigās izstrādāt un
+GPGPU programām atbilstošu etalonuzdevumu izveidi un beigās izstrādāt un
 analizēt no etalonuzdevumiem izmērītos datus.
 
 \input{tex_includes/platformu_salidzin}
