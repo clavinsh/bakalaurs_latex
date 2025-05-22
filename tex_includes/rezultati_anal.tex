@@ -35,10 +35,10 @@ saistībā ar CUDA un ROCm HIP - ROCm HIP ir neliela virsdarbe, salīdzinot ar
 CUDA.\cite{kursa-darbs} Saistībā ar OpenCL platformu, katrs notikums ir,
 relatīvi runājot, ar daudz lielāku virsdarbi.
 
-Pēc jaunajiem etalonuzdevumiem var secināt, ka vidēji paroles
-atgūšanas uzdevumā OpenCL ir par \(30.18\%\) lēnāks nekā CUDA un Dzīves
-spēles uzdevumā par \(7.71\%\) lēnāks. Bet, salīdzinot HIP ar CUDA,
-AMD platforma ir par \(2.25\%\) un \(2.47\%\) lēnāka.
+Pēc jaunajiem etalonuzdevumiem var secināt, ka vidēji paroles atgūšanas
+uzdevumā OpenCL ir par \(30.18\%\) lēnāks nekā CUDA un Dzīves spēles uzdevumā
+par \(7.71\%\) lēnāks. Bet, salīdzinot HIP ar CUDA, AMD izstrādātā platforma ir
+attiecīgi par \(2.25\%\) un \(2.47\%\) lēnāka.
 
 Jāņem vērā, ka šie procenti iekļauj tikai kodolu izpildes laikus abos uzdevumu
 gadījumos. Lai gan Dzīves spēlē lielākā uzdevuma daļa nodarbojas tieši tikai ar
@@ -260,7 +260,7 @@ to, pirms katras kodola izpildes tiek sūtīti dati uz VRAM.
 Lai gan izskatās, ka izmērītie laiki ir diezgan haotiski un ar lielu amplitūdi
 visās trīs platformās, jāņem vērā visās trīs diagrammās Y laika ass solis ir
 10\si{\micro\second}, turpretī, kodola izpildē tās ir 50\si{\micro\second}.
-Tabulā \ref{tab:amplitudas} redzams abu mērijūmu amplitūdu salīdzinājums.
+Tabulā \ref{tab:amplitudas} redzams abu mērījumu amplitūdu salīdzinājums.
 Pēc to datiem var secināt, ka OpenCL un HIP atmiņas apstrādes laika variācijai
 ir mazāka kopējā ietekme uz kodola izpildes laiku, jo kodola izpildes laika
 variācija ir lielāka. Bet CUDA gadījumā ir redzams pretējais - atmiņas apstrādes
@@ -272,7 +272,7 @@ variācijai tomēr ir lielāka ietekme.
     pārsūtīšanas amplitūdu salīdzinājums}
 \label{tab:amplitudas}
 \begin{tabular}{rrrr}
-    Platforma & Kodola izpildes amplitūda & Atmiņas amplitūda & \% \\ \hline
+    Platforma & Kodola izpildes amplitūda, ms & Atmiņas amplitūda, ms& \% \\ \hline
 OpenCL & 0.1147 & 0.0558 & 48.65\% \\
 CUDA & 0.0212 & 0.0376 & 177.36\% \\
 ROCm HIP & 0.1911 & 0.0453 & 23.70\% \\

@@ -51,7 +51,7 @@ caur standarta ievadi, aprēķinot cik rindas satur dotais fails (skatīt izdruk
 
 \begin{lstlisting}[caption={Vienkārša faila apstrāde valodā C++ caur standarta ievadi},
   label=lst:cpp_file_stdin,
-  captionpos=t
+  captionpos=b
 ]
 #include <cstdio>
 #include <iostream>
@@ -76,7 +76,7 @@ int main()
 
 \begin{lstlisting}[caption={Vienkārša faila apstrāde valodā Python caur standarta ievadi},
   label=lst:py_file_stdin,
-  captionpos=t
+  captionpos=b
 ]
 import sys 
 
@@ -100,7 +100,7 @@ izdrukā \ref{lst:example_benchmark_result}.
 
 \begin{lstlisting}[caption={Etalonuzdevuma rezultāti failam ar 100 miljoniem rindu},
   label=lst:example_benchmark_result,
-  captionpos=t
+  captionpos=b
 ]
 $ time ./cpp_benchmark < 100mil.txt 
 Fails satur 100000000 rindas
@@ -132,7 +132,7 @@ standarta ievadi, var iegūt krietni labāku rezultātu (skatīt izdruku
 
 \begin{lstlisting}[caption={Optimizēta vienkārša faila apstrāde valodā C++ caur standarta ievadi },
   label=lst:cpp_optimized,
-  captionpos=t
+  captionpos=b
 ]
 #include <cstdio>
 #include <iostream>
@@ -160,7 +160,7 @@ int main()
 
 \begin{lstlisting}[caption={Optimizētā C++ etalonuzdevuma rezultāti failam ar 100 miljoniem rindu},
   label=lst:cpp_optimized_benchmark,
-  captionpos=t
+  captionpos=b
 ]
 $ time ./cpp_test < 100mil.txt 
 Fails satur 100000000 rindas 
@@ -281,7 +281,9 @@ funkcijas. Maksimālais RAM apjoms piešķirts ar Docker (skatīt izdruku
 \ref{lst:docker_container_ram}) un laika ierobežojumu apstrādās etalonuzdevuma
 Python skripts.
 \begin{lstlisting}[caption={Docker konteinera palaišana, piešķirot tam konkrēti
-    12GiB RAM}, label=lst:docker_container_ram]
+    12GiB RAM},
+  captionpos=b,
+label=lst:docker_container_ram]
 $ docker run --memory="12g" ...
 \end{lstlisting}
 
@@ -293,7 +295,7 @@ jāapstādina laidienā mērāmā programma.
 Ar Docker tiek iedots konkrēts kodols ar komndarindas opciju (skatīt izdruku
 \ref{lst:docker_container_cpu}).
 \begin{lstlisting}[caption={Docker konteinera palaišana, piešķirot tam konkrēti
-    pirmo CPU kodolu}, label=lst:docker_container_cpu]
+    pirmo CPU kodolu}, captionpos=b label=lst:docker_container_cpu]
 $ docker run --cpuset-cpus="0" ...
 \end{lstlisting}
 
@@ -305,7 +307,9 @@ izmantotā aparatūra satur tikai vienu CPU, par šo problēmu nav jāuztraucas.
 \section{Jāizvairās no mijmaiņas}
 Lai nodrošinātu mijmaiņas neizmantošanu Linux operētājsistēmā var īslaicīgi
 izslēgt mijmaiņas krātuvi (skatīt izdruku \ref{lst:swapoff_linux}).
-\begin{lstlisting}[caption={Mijmaiņas krātuves izlēgšana uz Linux}, label=lst:swapoff_linux]
+\begin{lstlisting}[caption={Mijmaiņas krātuves izlēgšana uz Linux},
+  captionpos=b,
+    label=lst:swapoff_linux]
 $ swapoff -a
 \end{lstlisting}
 
@@ -314,7 +318,9 @@ Docker dzinējs veiks vai neveiks mijmaiņu ar konkrētu Docker konteineri (skat
 izdruku \ref{lst:swapoff_docker}).
 
 \begin{lstlisting}[caption={Mijmaiņas krātuves izlēgšana Docker konteinerim},
-    label=lst:swapoff_docker]
+    label=lst:swapoff_docker,
+  captionpos=b
+    ]
 $ docker run --memory="12g" --memory-swap="12g" --memory-swappiness=0 ...
 \end{lstlisting}
 

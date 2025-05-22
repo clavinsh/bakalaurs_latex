@@ -54,7 +54,7 @@ izdruku \ref{lst:cuda_hip_fn_decorators}).
 
 \begin{lstlisting}[caption={CUDA un HIP funkciju definīciju salīdzinājums},
   label=lst:cuda_hip_fn_decorators,
-  captionpos=t
+  captionpos=b
 ]
 // CUDA:
 __host__ myCpuFunction() {/*...*/}
@@ -73,7 +73,7 @@ iedalīšanā un aizpildīšanā (skatīt izdruku \ref{lst:cuda_hip_mem}).
 \begin{lstlisting}[caption={CUDA un HIP kodola darbināšanas, atmiņas API
     izsaukumu salīdzinājums},
   label=lst:cuda_hip_mem,
-  captionpos=t
+  captionpos=b
 ]
 int *host_dati; // pienemam, ka ir aizpilditi ar datiem
 int *host_rezultats;
@@ -141,7 +141,7 @@ kompilējot kodolus, ieviešot ātrdarbības zudumus.
 
 \begin{lstlisting}[caption={OpenCL GPGPU kodols un izsaukšana no C++},
   label=lst:opencl_kernel_exec,
-  captionpos=t
+  captionpos=b
 ]
 // Kodols
 __kernel void saxpy(__private float alpha,

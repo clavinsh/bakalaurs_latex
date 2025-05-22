@@ -83,7 +83,7 @@ notikumi tiks žurnalēti failā, izmantojot, spdlog\cite{spdlog-github}, C++
 skatāms izdrukā \ref{lst:benchmark_log_example}.
 \begin{lstlisting}[caption={Etalonuzdevuma žurnālfaila ieraksta formāts},
   label=lst:benchmark_log_example,
-  captionpos=t
+  captionpos=b
 ]
 <Platformas tips>,<Notikuma apraksts>,<Ilgums, ms>
 OpenCL, Kodola izpildes laiks, 2.0736
@@ -168,7 +168,8 @@ jaucējvērtība un salīdzināta pret doto. Izmantojamais jaukšanas algoritms 
 SHA256. Jaucējvērtību rēķināšana un salīdzināšana jārealizē izpildei uz GPU.
 \cite{kursa-darbs}
 
-\begin{lstlisting}[caption={Paroļu ieejas faila piemērs ar nejauši ģenerētām parolēm}, label=lst:pw_file_example]
+\begin{lstlisting}[caption={Paroļu ieejas faila piemērs ar nejauši ģenerētām
+    parolēm}, captionpos=b, label=lst:pw_file_example]
 5QW8ZywwXSQ8I
 YIqBz6PgEbDg3AK
 qs0xxkco3AYaX
@@ -190,12 +191,15 @@ programmas darbību, platformas pieejamību uz šī datora apartūras, un veiktu
 galveno programmas izpildes, programma jādarbina no komandrinas, padodot
 atbilstošos argumentus (skatīt izdruku  \ref{lst:pwcracker_mains}). \cite{kursa-darbs}
 
-\begin{lstlisting}[caption={Programmas galvenā izpilde}, label=lst:pwcracker_mains]
+\begin{lstlisting}[caption={Programmas galvenā izpilde}, captionpos=b, 
+    label=lst:pwcracker_mains]
 $ pwcracker <parolu faila cels> <paroles hash vertiba> <zurnalfaila cels>
 \end{lstlisting}
 
 Algoritmu skatīt izdrukās \ref{lst:sha256_pseido_alg}.
-\begin{lstlisting}[caption={Paroļu atguvēja CPU puses pseidokods}, label=lst:sha256_pseido_alg]
+\begin{lstlisting}[caption={Paroļu atguvēja CPU puses pseidokods},
+captionpos=b,
+    label=lst:sha256_pseido_alg]
 passwords, offsets, count =  readPasswordFromFile(inputFile)
 log(fileLoadTime())
 
@@ -225,7 +229,9 @@ if outputIdx != -1
 \end{lstlisting}
 
 
-\begin{lstlisting}[caption={Paroļu atguvēja GPGPU kodola pseidokods}, label=lst:sha256_pseido_alg_device]
+\begin{lstlisting}[caption={Paroļu atguvēja GPGPU kodola pseidokods},
+    captionpos=b,
+    label=lst:sha256_pseido_alg_device]
 PwCracker(passwords, pwOffsets, count, hash, outputIdx):
     i = blockIdx.x * blockDim.x + threadIdx.x
 
@@ -248,7 +254,9 @@ argumentus:
     \item žurnālfaila ceļs. (skatīt izdruku \ref{lst:gol_mains}).
 \end{itemize}
 
-\begin{lstlisting}[caption={Programmas galvenā izpilde}, label=lst:gol_mains]
+\begin{lstlisting}[caption={Programmas galvenā izpilde},
+    captionpos=b,
+    label=lst:gol_mains]
 $ gol <ieejas rezga faila cels> <izejas rezga faila cels> <automata solu skaits> <zurnalfaila cels> 
 \end{lstlisting}
 
@@ -256,7 +264,9 @@ Ieejas un izejas režģu failiem jāsastāv no vieniniekiem un nullēm,
 reprezentējot faktu vai attiecīgā šūna ir dzīva (1) vai mirusi (0), izdruka
 \ref{lst:gol_file_examples}.
 
-\begin{lstlisting}[caption={Ieejas, izejas faila piemērs (ar tā saukto planiera rakstu)}, label=lst:gol_file_examples]
+\begin{lstlisting}[caption={Ieejas, izejas faila piemērs (ar tā saukto planiera rakstu)},
+    captionpos=b,
+    label=lst:gol_file_examples]
 // ieejas fails:
 0000000
 0001000
@@ -273,7 +283,9 @@ reprezentējot faktu vai attiecīgā šūna ir dzīva (1) vai mirusi (0), izdruk
 \end{lstlisting}
 
 Algoritma pseidokodu skatīt izdrukās \ref{lst:gol_pseido_alg} un  \ref{lst:gol_pseido_alg_device}.
-\begin{lstlisting}[caption={Dzīves spēles šūnu automāta CPU puses pseidokods}, label=lst:gol_pseido_alg]
+\begin{lstlisting}[caption={Dzīves spēles šūnu automāta CPU puses pseidokods},
+    captionpos=b,
+    label=lst:gol_pseido_alg]
 data, width, height = readGridFromFile(inputFile)
 log(gridReadTime())
 
@@ -301,7 +313,9 @@ writeGridToFile(outputGridPinnedMemory, outputFile)
 log(gridWriteTime())
 \end{lstlisting}
 
-\begin{lstlisting}[caption={Dzīves spēles šūnu automāta GPGPU kodola pseidokods}, label=lst:gol_pseido_alg_device]
+\begin{lstlisting}[caption={Dzīves spēles šūnu automāta GPGPU kodola pseidokods},
+    captionpos=b,
+    label=lst:gol_pseido_alg_device]
 GameOfLife(inputGrid, outputGrid, width, height):
     x = blockIdx.x * blockDim.x + threadIdx.x
     y = blockIdx.y * blockDim.y + threadIdx.y
@@ -355,6 +369,7 @@ neskaitās kā notikums, tad lietojama C++ standarta bibliotēkas datumu un laik
 manipulācijas bibliotēka "chrono".\cite{std_chrono}
 
 \begin{lstlisting}[caption={"chrono" laika mērīšanas piemērs},
+    captionpos=b,
     label=lst:chrono_example]
 auto start = std::chrono::steady_clock::now();
 // meramais koda gabals
@@ -364,6 +379,7 @@ std::chrono::duration<double, std::milli> elapsedTime = end - start;
 \end{lstlisting}
 
 \begin{lstlisting}[caption={CUDA laika mērīšanas piemērs},
+    captionpos=b,
     label=lst:cuda_example]
 cudaEvent_t start, stop;
 cudaEventCreate(&start);
@@ -378,6 +394,7 @@ cudaEventElapsedTime(&elapsedTime, start, stop);
 \end{lstlisting}
 
 \begin{lstlisting}[caption={ROCm HIP laika mērīšanas piemērs},
+    captionpos=b,
     label=lst:hip_example]
 hipEvent_t start, stop;
 hipEventCreate(&start);
@@ -392,6 +409,7 @@ hipEventElapsedTime(&elapsedTime, start, end);
 \end{lstlisting}
 
 \begin{lstlisting}[caption={OpenCL laika mērīšanas piemērs},
+    captionpos=b,
     label=lst:cl_example]
 cl_event event;
 
@@ -424,6 +442,7 @@ simbolus, un tās  tiek rakstītas dotajā simbolu diapazonā.
 Skripts darbināms caur komandrindu, padodot CLI argumentus paroļu skaitam
 un faila nosaukumam, ceļam (skatīt izdruku \ref{lst:pwgen_cli}).
 \begin{lstlisting}[caption={Paroļu faila ģenerēšanas skripta darbināšana},
+    captionpos=b,
     label=lst:pwgen_cli, language=bash]
 $ python3 ./pwgen.py <parolu skaits> <izejas faila cels>
 \end{lstlisting}
@@ -434,6 +453,7 @@ padodot CLI arguments režģa platumam un garumam, faila nosaukumam (skatīt
 izdruku \ref{lst:gridgen_cli}).
 
 \begin{lstlisting}[caption={Režģa failaģenerēšanas skripta darbināšana},
+    captionpos=b,
     label=lst:gridgen_cli, language=bash]
 $ python3 ./gridfile_gen.py <platums jeb x> <garums jeb y> <izejas faila cels>
 \end{lstlisting}
@@ -527,6 +547,7 @@ kešatmiņa tiek piespiedu kārtā iztīrīta pēc katra laidiena. Laidienu rei�
 skaits tiek padods caur komandrindu.
 
 \begin{lstlisting}[caption={Etalonuzdevumu darbināšanas Python skripta darbināšana},
+    captionpos=b,
     label=lst:bench_cli, language=bash]
 $ python3 benchmark.py <konfiguracijas darbinasanas skaits>
 \end{lstlisting}
@@ -535,6 +556,7 @@ Lai atvieglotu tālāku žurnālfailu apstrādi, skriptā to failu nosaukumi tie
 veidoti pēc aprakstoša šablona, saturot galveno informāciju par konkrēto
 laidienu (skatīt izdruku \ref{lst:log_pattern}).
 \begin{lstlisting}[caption={Žurnālfailu nosaukumu šabloni},
+    captionpos=b,
     label=lst:log_pattern, language=bash]
 # Parolu atguvejs
 sha256_<parolu skaits>_<pozicija>_<platforma>_{laidiena nr}.log
@@ -556,6 +578,7 @@ Attiecīgo projektu no tā direktorijas saknes iespējams kompilēt ar \textit{c
 vai ar \textit{Docker} (skatīt izdrukas \ref{lst:gol_cl_compile} un \ref{lst:gol_hip_compile}).
 
 \begin{lstlisting}[caption={OpenCL un CUDA risinājumu kompilēšana},
+    captionpos=b,
     label=lst:gol_cl_compile, language=bash]
 # Kompilesana
 
@@ -567,7 +590,9 @@ $ cmake --build build
 $ docker buildx build . -t golcl
 \end{lstlisting}
 
-\begin{lstlisting}[caption={ROCm HIP risinājumu kompilēšana}, label=lst:gol_hip_compile, language=bash]
+\begin{lstlisting}[caption={ROCm HIP risinājumu kompilēšana},
+    captionpos=b,
+    label=lst:gol_hip_compile, language=bash]
 # Kompilesana 
 $ cmake -S . -B build # (prieks ROCm)
 $ cmake -S . -B build -D GPU_RUNTIME=CUDA # (prieks CUDA)
@@ -587,7 +612,7 @@ Docker sējums ievaddatiem un izvaddatiem (skatīt izdruku
 
 \begin{lstlisting}[caption={Docker konteinera darbināšanas konfigurācija},
   label=lst:docker_konteinera_run,
-  captionpos=t,
+  captionpos=b,
   language=bash
 ]
 $ docker run --rm --gpus all -v <datu direktorija>/:/data <konteinera nosaukums> /data/<apstradajamais fails> /data/<izvada fails> <citas opcijas ...>

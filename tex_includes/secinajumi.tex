@@ -2,8 +2,39 @@
     \chapter{Secinājumi}
 \end{center}
 
-Darbā tika gan teorētiski, gan praktiski apskatītas trīs GPU programmēšanas
-vides
+Bakalaura darba mērķis bija teorētiski salīdzināt CUDA, ROCm un OpenCL
+programmēšanas modeļus, valodu un piedāvāto bibliotēku funkcijas, bet lielāks
+uzsvars likts uz  praktisko - izmērīt un analizēt platformu veiktspēju pēc
+dažādiem to parametriem, nonākt pie secinājuma par to, kādiem darbiem kura
+platforma paredzēta.
 
+Ņemot vērā, ka visas trīs ir domātas paralēlas izpildes iekārtām, tad augstā
+abstrakcijas līmenī tās ir diezgan līdzīgas - programmas CPU puse pārvalda par
+iekārtas atmiņas iedalīšanu, datu izsūtīšanu un saņemšanu, kodolu darbināšanu.
+Atšķirības, protams, ir detaļās - programmēšanas modelis, valodu specifikācija,
+programmēšanas pieejamās C/C++ saskarņu funkcijas un to nianses, atbalstītās
+iekārtas.
 
-Rezultātā no iegūtājam mērījumu datiem,
+Praktiskai rīku salīdzināšanai, lai iegūtu uzticamus skaitliskus mērījumus, 
+bija nepieciešamība iepazīties ar labās prakses etalonuzdevumu izveidi.
+Rezultātā izveidotais ietvars tika lietots etalonuzdevumu skriptu, tā arī pašu
+mērāmo programmu izstrādei.
+
+Pēc iegūtajiem etalonuzdevumu datiem secināts, ka uz Nvidia videokartes
+stabilākā un veiktspējīgākā izvēle bez pārsteigumiem ir CUDA, bet, ja mērķis ir
+migrēties prom no CUDA ekosistēmas, tad, izmantojot AMD izstrādāto CUDA
+savietojamo platformu un migrācijas rīkus, ar 2\%-\%3 ātrdarbības zudumiem ir
+iespējams lietot ROCM HIP platformu.
+
+Ja mērķis ir vēl lielāks atbalstīto aparatūras paātrinātāju klāsts, kas
+neaprobežojas ar Nvidia vai AMD videokartēm, bet arī citu firmu, tad ar
+7\%-30\% ātrdarbības zudumiem var izmantot OpenCL. Palielinātais iekārtu
+atbalsts iekļauj arī citus paātrinātājus kā FPGA (\textit{Field Programmable
+Gate Array}, ciparsignālu un māklsīgā intelekta procesorus, kā arī pašu
+centrālo procesoru.
+
+Līdz ar to OpenCL ir kompromiss starp ātrdarbību un iekārtu atbalstu. Vienu un
+to pašu GPGPU kodola kodu ir iespējams programmas izpildes laikā kompilēt un
+darbināt uz dažādiem aparatūras paātrinātājiemm, kā arī pat uz tā paša centrālā
+procesora, ja tādi paātrinātāji attiecīgajam datoram nav pieejami.
+

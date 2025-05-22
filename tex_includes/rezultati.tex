@@ -2,6 +2,56 @@
     \chapter{Rezultāti}
 \end{center}
 
-Dažādos griezumos apskatīti iegūtie dati no žurnālfailiem.
-Kopsummā apstrādāti un analizēti 816 faili par CUDA, HIP, OpenCL
-dažādajiem GPGPU notikumu izpildes ilgumiem
+Praktiskai platformu salīdzināšanai tika izstrādāts etalonuzdevumu ietvars, tā
+lai šie uzdevumi būtu pēc iespējas viegli atkārtojami citos uzstādījumos, tas
+ir, ar citu aparatūru. No 2 definētajiem uzdevumiem un 3 pētamajām GPU
+programmēšanas platformām tika izveidoti 8 Docker konteineri ar komandrindas
+programmām, un praktiski notestēti 6 uz Nvidia RTX 3060 Laptop videokartes:
+\begin{itemize}
+    \setlength\itemsep{0pt}
+    \item golcuda - Dzīves spēles uzdevuma konteineris uz CUDA,
+    \item golcl - Dzīves spēles uzdevuma konteineris uz OpenCL,
+    \item golhip:cuda - Dzīves spēles uzdevuma konteineris uz ROCm HIP ar CUDA aizmuguri,
+    \item golhip:rocm - Dzīves spēles uzdevuma konteineris uz ROCm HIP ar ROCm aizmuguri,
+    \item sha256cuda - Paroļu atgūšanas uzdevuma konteineris uz CUDA,
+    \item sha256cl - Paroļu atgūšanas uzdevuma konteineris uz OpenCL,
+    \item sha256hip:cuda - Paroļu atgūšanas uzdevuma konteineris uz ROCm HIP ar CUDA aizmuguri,
+    \item sha256hip:rocm - Paroļu atgūšanas uzdevuma konteineris uz ROCm HIP ar ROCm aizmuguri.
+\end{itemize}
+
+Konteineri tika darbināti automatizēti ar Python skriptiem, kuri sagatavoja
+programmām ievaddatus un dažādās to darbināšanas konfigurācijās, visās
+permutācijās. Dažādos griezumos apskatīti iegūtie dati no žurnālfailiem un
+kopsummā apstrādāti un analizēti 810 žurnālfaili par CUDA, HIP, OpenCL
+dažādajiem GPGPU notikumu izpildes ilgumiem.
+
+Noskaidrots, ka paroļu atguvēja uzdevumā OpenCL darbojās par 30,18\% lenāk nekā
+CUDA un ROCm HIP platforma par 2,25\%.
+Dzīves spēles uzdevumā rezultāti sarindojās tieši tāpat, lai gan OpenCL nebija
+lēnāks par tik lielu starpību kā pirmajā uzdevumā, - OpenCL lēnāks par 7,71\% un
+ROCm HIP par 2,47\%.
+
+Aptuveni šāds sniegums bija gaidāms, jo CUDA un ROCm ir gandrīz identiskas
+platformas, turpretī OpenCL konvejerapstrādes modelis, SPIR-V starp-posmu
+valodas tulkošana un citas ieviestās abstrakcijas rada papildus virsdarbi. ROCm
+virsdarbe ir minimāla, jo uz Nvidia videokartēm tiek atbalstīta CUDA
+kompilatora aizmugursistēma HIP rakstītām programmām. Tāpēc praktiski
+visos rādītājos CUDA bija ātrākā, ROCm HIP bija otrajā vietā, OpenCL - trešajā.
+
+Uz visām trīs platformām abos uzdevumos bija manāmas rimstošas svārstības
+kodolu izpildes laikos, bet papildus tika novērotas konsekventas variācijas un
+nestabilitāte kodolu izpildē uz OpenCL un ROCm platformām, kur šīs svārstības
+aptuveni 80\% gadījumos nerimst. Pats periods arī nav vienmērīgs un visos
+gadījumos vērojama lielāka nosliece mazākām vērtībām. Tāpēc, apskatot
+kodolu izpildes laikus kā histogrammas pēc biežumiem, CUDA risinājums veido
+vienu pīķi, bet OpenCL un ROCm divus.
+
+Bet šīs svārstības nav salīdzinoši lielas, ar amplitūdu no 0,0212\si{\ms} līdz
+0,1147\si{\ms} kodoliem, kuru vidējais izpildes laiks ir no 0,6446\si{\ms} līdz
+2.001\si{\ms}.
+
+Līdzīgi tika apskatīta GPU atmiņas izveide un datu pārsūtīšana, bet šajos
+mērījumos iepriekšminētās svārstības netika novērotas nevienā platformā.
+Datu buferi priekš \(2^{20}\) parolēm, jeb aptuveni 33.55MiB tiek nosūtīti
+vidēji no 2.7472\si{\ms} līdz 6.4135\si{\ms} ar amplitūdu no 0.03764\si{\ms} 
+līdz 0.0558\si{\ms}
