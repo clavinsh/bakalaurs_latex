@@ -427,7 +427,6 @@ float elapsedTime = static_cast<double>(end - start);
 \end{lstlisting}
 
 \section{Ievaddatu ģenerēšana un etalonuzdevuma darbināšana}
-\subsection{Ģenerēšanas}
 Paroļu atguvēja programmām, lai iegūtu nepieciešamos paroļu failus, izmantots
 Python skripts\cite{kursa-darbs}, kas:
 \begin{itemize}
@@ -452,7 +451,7 @@ katru šūnu nejauši aizpilda ar 1 vai 0. Skripts darbināms caur komandrindu,
 padodot CLI arguments režģa platumam un garumam, faila nosaukumam (skatīt
 izdruku \ref{lst:gridgen_cli}).
 
-\begin{lstlisting}[caption={Režģa failaģenerēšanas skripta darbināšana},
+\begin{lstlisting}[caption={Režģa faila ģenerēšanas skripta darbināšana},
     captionpos=b,
     label=lst:gridgen_cli, language=bash]
 $ python3 ./gridfile_gen.py <platums jeb x> <garums jeb y> <izejas faila cels>
@@ -538,7 +537,7 @@ saknes ir šāda:
 \end{itemize}
 Tālāk katram paroļu failam pēc atbilstošajām pozīcijām tiek atrastas un
 nošifrētas meklējamās paroles, katrai laidiena konfigurāciju permutācijai
-sagatavota komandrindas teksta virkne, ar kuru tiks palaists atbilstošais
+sagatavota komandrindas teksta virkne, ar kuru tiks darbināts atbilstošais
 Docker konteineris, ar atbilstošo ievadfailu, žurnālfailu un izejas failu vai
 paroles jaucējvērtību.
 

@@ -41,7 +41,7 @@
 % \fancyhf{}
 % \fancyfoot[C]{\thepage}
 % \fancyhead[L]{\changefont \leftmark}
-
+\usepackage{fontspec} % Required for XeLaTeX
 \usepackage{polyglossia}
 \setdefaultlanguage{latvian}
 \usepackage{lipsum}
@@ -170,7 +170,7 @@ chaptertitle=false,%
 %%%--------- Aizpildīt titullapu---------- 
 %% Šis aizpildīs template titullapu ar jūsu informāciju
 % Darba tips, i.e. bakalaura vai maģistra
-\def\degree{Kursa darbs}
+\def\degree{Bakalaura darbs}
 % Fakultātes nosaukums
 \def\faculty{Eksakto zinātņu un tehnoloģiju fakultāte}
 % Nodaļa iekš fakultātes
@@ -179,7 +179,7 @@ chaptertitle=false,%
 \def\university{Latvijas Universitāte}
 % Universitātes logo
 \def\crest{\includegraphics[width = 0.5\textwidth]{LU_logo_LV_horiz.png}}%ja ieliekat attēlu kādā mapē, tad jāsauc attēls no šīs mapes, citādi neparādīsies tas titullapā.
-\def\vietlaiks{Rīga, 2024}
+\def\vietlaiks{Rīga, 2025}
 \def\supervisor{Darba vadītājs: profesors, Dr. dat. Leo Seļāvo}
 \def\studaplieciba{ak21373}
 \author{Artūrs Kļaviņš}
@@ -243,23 +243,38 @@ chaptertitle=false,%
 \thispagestyle{empty}
 \noindent \textbf{Anotācija}
 
-\noindent Darbā gan teorētiski, gan praktiski tiks apskatītas CUDA, ROCm un OpenCL GPU
-programmēšanas saskarnes. Tiks salīdzināta saskarņu dokumentācija, piedāvātās
-programmatūras iespējas un ierobežojumi atbalstītajā aparatūrā. Praktiski tiks ieviesta
-paroļu uzlaušanas un Džona Konveja dzīves spēles programmas katrā saskarnē,
-apskatīti īstenošanas apsvērumi un analizēta ātrdarbība uz vienas un tās pašas
-aparatūras.
+\noindent Bakalaura darbā gan teorētiski, gan praktiski apskatītas CUDA, ROCm
+un OpenCL  plašlietojuma skaitļošanas platformas grafiskajiem procesoriem.
+Nvidia videokartes, CUDA ir pasaulē vadošais risinājums augstas veiktspējas un
+paralēlās skaitļošanas vajadzībām. Darbā ar CUDA platformu salīdzinātas AMD
+izstrādātā ROCm un Khronos OpenCL, kuras piedāvā līdzīgu vai pat plašāku
+funkcionalitāti. Analizētas platformu programmatūras iespējas un ierobežojumi
+atbalstītajā aparatūrā. Apsvērti nosacījumi labai etalonuzdevumu izstrādei un
+tie ieviesti ar diviem dažādiem programmu risinājumiem katrā platformā.
+Izmērīti dažādi veiktspējas rādītāji, kā rezultātā noskaidrots, ka CUDA ir par
+2\% - 3\% efektīvāka nekā ROCm un par 7\% - 30\% nekā OpenCL.
 
 \vspace{4mm}
-\noindent \textbf{Atslēgas vārdi}: GPU, Nvidia, AMD, CUDA, ROCm, OpenCL
+\noindent \textbf{Atslēgas vārdi}: GPGPU, Nvidia, AMD, CUDA, ROCm, OpenCL
 
 \vspace{20mm}
 \noindent \textbf{Abstract}
 
-\noindent Abstract body
+\noindent Comparison of GPU Programming in CUDA, ROCm, and OpenCL Interfaces
+\newline
+In this bachelor's thesis the general-purpose GPU programming platforms CUDA,
+ROCM, and OpenCL are explored both theoretically and practically. Nvidia's GPUs
+and CUDA are the leading solution for high-performance and parallel computing
+tasks. This paper compares the CUDA platform against AMD's ROCm and Khronos
+Group's OpenCL, both of which offer similar or even broader functionality. Each
+platform's software capabilites and restrictions are analyzed. The best
+practices of GPU benchmarking are discussed and implemented in two programs,
+from  which multiple different performance metrics are measured. In result,
+CUDA is found to be  2\% - 3\% more efficient than ROCm and 7\% - 30\% than
+OpenCL.
 
 \vspace{4mm}
-\noindent \textbf{Keywords}: GPU, Nvidia, AMD, CUDA, ROCm
+\noindent \textbf{Keywords}: GPGPU, Nvidia, AMD, CUDA, ROCm, OpenCL
 
 \newpage
 \tableofcontents
@@ -273,20 +288,13 @@ aparatūras.
 programmatūrai izmantot NVIDIA ražotos GPU}
 \nomenclature[N]{GPGPU}{\textit{General-purpose computing on graphics processing units} - plašlietojama
 skaitļošana uz grafiskajiem procesoriem, mūsdienās ņem vērā un ievieš procesora arhitektūras līmenī}
-\nomenclature[N]{Ēnotājs}{Datorgrafikas programma, kura apstrādā tekstūru, 3D objektu un ainu gaismas
-līmeņus un krāsas}
-\nomenclature[N]{HPC}{Augstas veiktspējas skaitļošana (no angļu val. \textit{High-performance Computing})
-ir datoru klāsteru izmantošana, lai ar lielu paralelitātes pakāpi risinātu kādu problēmu, apstrādātu milzīga
-apjoma datus}
 \nomenclature[N]{ROCm}{AMD izstrādātā atvērtā pirmkoda platforma priekš HPC un AI darbiem ar videokartēm}
 \nomenclature[N]{HIP}{ROCm sastāvdaļa, C++ API programmu izstrādei uz AMD un Nvidia videokartēm
 (no angļu val. \textit{Heterogeneous-computing Interface for Portability})}
 \nomenclature[N]{AI}{Mākslīgais intelekts (no angļu val. \textit{Artifical Intelligence})}
-
-% jaunie (iepriekšminētajiem derētu pārskatīt atbilstību)
-
-\nomenclature[N]{Saimnieks}{}
-\nomenclature[N]{Ierīce}{}
+\nomenclature[N]{API}{Lietojumprogrammu saskarne}
+\nomenclature[N]{OpenCL}{Khronos Group izstrādātā plašlietojuma, neviendabīgās
+skaitļošanas platforma aparatūras paātrinātājiem}
 
 \printnomenclature
 
@@ -321,10 +329,14 @@ kompānijas GPU projektus, tika izveidota ROCm platforma kā tieša konkurente
 CUDA platformai.
 
 Ņemot vērā, ka šie trīs projekti ir paredzēti līdzīgiem mērķiem, to pieejamās
-funkcionalitātes līdzinās viena otrai, CUDA un OpenCL ir iesaistītas vairākos
-lielos atvērta pirmkoda projektos, šī darba mērķis ir salīdzināt visas trīs
+funkcionalitātes līdzinās viena otrai, šī darba mērķis ir salīdzināt visas trīs
 platformas, to pieejamās salīdzināmās funkcijas, ātrdarbību un iespējamās
 priekšrocības, izvēloties kādu no tām.
+
+Lai to sasniegtu vajadzēs iepazīties ar visu platformu programmēšanas modeļiem,
+GPGPU programām atbilstošu etalonuzdevumu izveidi, un beigās izstrādāt un
+analizēt no etalonuzdevumiem izmērītos datus.
+
 \input{tex_includes/platformu_salidzin}
 \input{tex_includes/etalonuzdevumu_config}
 \input{tex_includes/uzdevumi}
