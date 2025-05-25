@@ -1,0 +1,226 @@
+\documentclass[12pt]{report}% Šablona Kristiāns Kacars 2022. Last updated 08.02.2023
+
+%\usepackage[utf8]{inputenc} neizmanto XeLatex, tad jāatkomentē.
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\geometry{
+ a4paper,
+ left=30mm,
+ top=20mm,
+ right=20mm,
+ bottom=20mm,
+ includefoot
+ }
+
+
+\usepackage{xcolor}
+\usepackage[]{graphicx}
+\usepackage{setspace}
+%\onehalfspacing %rindstarpas 1.5 vienības
+\linespread{1.5}
+\usepackage{placeins}%ērti izmantot \FloatBarrier, lai neļauti attēliem aiziet pārāk tālu no vajadzīgās vietas.
+\usepackage{titlesec}%izveido atstarpes starp chapter un section nosaukumu
+\usepackage{indentfirst}%pirmai rindkopai sekcijas sākumā nav atkāpe, ar šo tā tiek uzlikta
+\titleformat{\chapter}
+  {\normalfont\fontsize{16}{18}\bfseries\raggedright}{\thechapter.}{0pt}{\MakeUppercase}{}
+  
+\titleformat{\section}
+  {\normalfont\fontsize{14}{16}\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}
+  {\normalfont\fontsize{12}{16}\bfseries}{\thesubsection}{1em}{}  
+
+\titlespacing*{\chapter}{0pt}{0pt}{10pt}
+\titlespacing*{\section}{0pt}{5pt}{5pt}
+
+
+% \usepackage{fancyhdr}%šis izveido header, lai tur ir līnija ar section nosaukumu
+% \newcommand{\changefont}{%
+%     \fontsize{9}{11}\selectfont
+% }
+% \pagestyle{fancy}
+% \fancyhf{}
+% \fancyfoot[C]{\thepage}
+% \fancyhead[L]{\changefont \leftmark}
+\usepackage{fontspec} % Required for XeLaTeX
+\usepackage{polyglossia}
+\setdefaultlanguage{latvian}
+\usepackage{lipsum}
+\setlength{\parskip}{1.5pt}%atstarpe starp rindkopām
+
+%matematikas paketes
+\usepackage{amsmath} 
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{bm}%ērts priekš treknraksta matemātiskajā vidē
+\usepackage{esint}%integrāļu zīmes, kas nav parastajās ams paketēs
+
+%--pašizveidotās matemātikas komandas
+\newcommand{\bra}{\langle}
+\newcommand{\ket}{\rangle}
+%--
+
+\selectfont
+\newtheorem{theorem}{Teorēma}
+\theoremstyle{definition}
+\newtheorem{definition}{Definīcija}
+
+\usepackage{siunitx}%mērvienībām
+
+
+%Algoritmu atspoguļošanai
+\usepackage[ruled, vlined, linesnumbered, algochapter]{algorithm2e}
+\renewcommand{\algorithmcfname}{Algoritms}% nomaina nosaukumu uz latviešu variantu
+\usepackage[labelfont={bf}]{caption}%attēlu un tabulu nosaukumu fonts
+\usepackage[hyphens]{url}
+\usepackage[style=phys,%der arī citi, piem., chem-angew(bibliogrāfijā pie article nav links)
+articletitle=false,
+biblabel=brackets,%
+chaptertitle=false,%
+    sorting=none,%kārto pēc citēšanas secības
+    date=short]{biblatex}
+\addbibresource{biblio.bib}
+
+% normalizēts formatējums atsaucēm
+\DeclareFieldFormat*{title}{\textnormal{#1}}
+\DeclareFieldFormat*{journaltitle}{\textnormal{#1}}
+\DeclareFieldFormat*{booktitle}{\textnormal{#1}}
+\DeclareFieldFormat{url}{\textnormal{\url{#1}}}
+\AtEveryBibitem{\normalfont}
+
+\usepackage{hyperref}%Izveido spiežamus linkus saturam, bibliogrāfijām uc.
+\hypersetup{
+    colorlinks,
+    citecolor=blue,
+    filecolor=black,
+    linkcolor=black,
+    urlcolor=black
+}
+
+
+\newcommand*{\SavedEqref}{}%Dod krāsainus un spiežamus vienādojumu linkus
+\let\SavedEqref\eqref
+\renewcommand*{\eqref}[1]{%
+  \begingroup
+    \hypersetup{
+      linkcolor=blue,
+      linkbordercolor=black,
+    }%
+    \SavedEqref{#1}%
+  \endgroup
+}%vienādojumiem
+
+
+\usepackage{chngcntr}%figure numeration
+\counterwithin{figure}{chapter}
+\counterwithin{table}{chapter}
+\counterwithin{equation}{chapter}%vienadojumu numerācija veidojas pa nodaļām
+
+
+
+%Pakete izveido apzīmējumu sarakstu
+\usepackage{nomencl}
+\makenomenclature
+\renewcommand{\nomname}{Apzīmējumu saraksts}
+%% Sadala grupās apzīmējumus
+%Ja gribat pievienot papildu kategoriju, nokopējat-->
+%   \ifstrequal{#1}{F}{Fizikas konstantes}{%
+% tikai pēdējā rindiņā( kur ir Lielumu apzīmējumi) ieliekat papildu "}"
+% -----------------------------------------
+\usepackage{etoolbox}
+\renewcommand\nomgroup[1]{%
+  \item[\bfseries
+  \ifstrequal{#1}{N}{}
+]}
+
+% pakete priekš koda formatēšanas
+\usepackage{listings}
+\renewcommand{\lstlistingname}{Att.}
+\lstset{
+  language=C++,
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{blue},
+  stringstyle=\color{red},
+  commentstyle=\color{green!50!black},
+  numbers=left,
+  numberstyle=\tiny\color{gray},
+  stepnumber=1,
+  frame=single,
+  tabsize=2,
+  breaklines=true,
+  showstringspaces=false,
+  aboveskip=1mm, % Reduce space above the listing
+  belowskip=1mm, % Reduce space below the listing
+  lineskip=-1pt, % Adjust line spacing between lines
+}
+
+\usepackage{tabularx}
+\usepackage{tikz}
+\usepackage{float}
+
+
+
+
+% --------------------------------------------
+% ------- beidzas package izsaukšana un stila veidošana
+
+
+
+
+
+
+%%%--------- Aizpildīt titullapu---------- 
+%% Šis aizpildīs template titullapu ar jūsu informāciju
+% Darba tips, i.e. bakalaura vai maģistra
+\def\degree{Bakalaura darbs}
+% Fakultātes nosaukums
+\def\faculty{Eksakto zinātņu un tehnoloģiju fakultāte}
+% Nodaļa iekš fakultātes
+\def\department{Datorikas nodaļa}
+% Universitātes nosaukums
+\def\university{Latvijas Universitāte}
+% Universitātes logo
+\def\crest{\includegraphics[width = 0.5\textwidth]{LU_logo_LV_horiz.png}}%ja ieliekat attēlu kādā mapē, tad jāsauc attēls no šīs mapes, citādi neparādīsies tas titullapā.
+\def\vietlaiks{Rīga, 2025}
+\def\supervisor{Darba vadītājs: Dr. dat. Leo Seļāvo}
+\def\studaplieciba{ak21373}
+\author{Artūrs Kļaviņš}
+\title{GPU programmēšanas salīdzinājums CUDA, ROCm un OpenCL saskarnēs}
+\date{Maijs 2025}
+\newcommand{\thedate}[0]{26.05.2025}%iesniegšanas datums
+%%%---------- Beidz aizpildīt titullapu----------- 
+\begin{document}
+\newpage
+\thispagestyle{empty}
+\makeatletter
+{\setstretch{2.0}
+\setlength{\parindent}{1cm}
+\linespread{1.5}
+\selectfont
+~\\
+\newline
+
+\degree \ \quotedblbase\textit{\@title}\textquotedblright \space izstrādāts LU Eksakto zinātņu un tehnoloģiju fakultātē
+Datorikas nodaļā.
+\newline
+
+Ar savu parakstu (drošs elektroniskais paraksts) apliecinu, ka pētījums veikts
+patstāvīgi un izmantoti tikai tajā norādītie informācijas avoti. test
+\newline
+
+Autors: (drošs elektroniskais paraksts) \@author \space (stud. apl. Nr. ak21373)
+\newline
+\newline
+\newline
+\newline
+Darba vadītājs: (drošs elektroniskais paraksts) profesors, Dr. dat. Leo Seļāvo
+\newline
+\newline
+Recenzents: \textit{pasniedzējs, M. dat. Ilvars Mizniks}
+\newline
+\newline
+
+Darbs augšupielādēts LUIS’ā \qquad \thedate
+
+}
+\makeatother
+\end{document}

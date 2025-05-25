@@ -58,7 +58,7 @@
 \newcommand{\bra}{\langle}
 \newcommand{\ket}{\rangle}
 %--
-
+\selectfont
 \newtheorem{theorem}{Teorēma}
 \theoremstyle{definition}
 \newtheorem{definition}{Definīcija}
@@ -70,7 +70,7 @@
 \usepackage[ruled, vlined, linesnumbered, algochapter]{algorithm2e}
 \renewcommand{\algorithmcfname}{Algoritms}% nomaina nosaukumu uz latviešu variantu
 \usepackage[labelfont={bf}]{caption}%attēlu un tabulu nosaukumu fonts
-
+\usepackage[hyphens]{url}
 \usepackage[style=phys,%der arī citi, piem., chem-angew(bibliogrāfijā pie article nav links)
 articletitle=false,
 biblabel=brackets,%
@@ -180,12 +180,12 @@ chaptertitle=false,%
 % Universitātes logo
 \def\crest{\includegraphics[width = 0.5\textwidth]{LU_logo_LV_horiz.png}}%ja ieliekat attēlu kādā mapē, tad jāsauc attēls no šīs mapes, citādi neparādīsies tas titullapā.
 \def\vietlaiks{Rīga, 2025}
-\def\supervisor{Darba vadītājs: profesors, Dr. dat. Leo Seļāvo}
+\def\supervisor{Darba vadītājs: Dr. dat. Leo Seļāvo}
 \def\studaplieciba{ak21373}
 \author{Artūrs Kļaviņš}
 \title{GPU programmēšanas salīdzinājums CUDA, ROCm un OpenCL saskarnēs}
 \date{Maijs 2025}
-\newcommand{\thedate}[0]{01.05.2025}%iesniegšanas datums
+\newcommand{\thedate}[0]{26.05.2025}%iesniegšanas datums
 %%%---------- Beidz aizpildīt titullapu----------- 
 
 
@@ -363,49 +363,34 @@ analizēt no etalonuzdevumiem izmērītos datus.
 \thispagestyle{empty}
 \makeatletter
 {\setstretch{2.0}
-\noindent
-\degree \ "\@title" izstrādāts LU Eksakto zinātņu un tehnoloģiju fakultātē Datorikas nodaļā.
+\setlength{\parindent}{1cm}
+\linespread{1.5}
+\selectfont
+~\\
 \newline
+
+\degree \ \quotedblbase\textit{\@title}\textquotedblright \space izstrādāts LU Eksakto zinātņu un tehnoloģiju fakultātē
+Datorikas nodaļā.
 \newline
-\noindent
-Ar savu parakstu apliecinu, ka pētījums veikts patstāvīgi, izmantoti tikai tajā norādītie informācijas avoti.
+
+Ar savu parakstu (drošs elektroniskais paraksts) apliecinu, ka pētījums veikts
+patstāvīgi un izmantoti tikai tajā norādītie informācijas avoti. test
 \newline
-\newline
-\noindent
-Autors: \@author \space \rule{30mm}{0.2mm}
-\newline
-\newline
-\newline
-\noindent
-Rekomendēju/nerekomendēju darbu aizstāvēšanai (nevajadzīgo izsvītrot)
-\newline
-\newline
-\noindent 
-\supervisor \space \rule{30mm}{0.2mm}
+
+Autors: (drošs elektroniskais paraksts) \@author \space (stud. apl. Nr. ak21373)
 \newline
 \newline
 \newline
 \newline
-\newline
-\noindent 
-Darbs iesniegts Eksakto zinātņu un tehnoloģiju fakultātē Datorikas nodaļā
+Darba vadītājs: (drošs elektroniskais paraksts) profesors, Dr. dat. Leo Seļāvo
 \newline
 \newline
-\noindent 
-Dekāna pilnvarotā persona:
+Recenzents: \textit{pasniedzējs, M. dat. Ilvars Mizniks}
 \newline
 \newline
-\newline
-\newline
-\noindent 
-Darbs aizstāvēts kursa darbu komisijas sēdē
-\newline
-\newline
-\newline
-\newline
-\newline
-\noindent 
-Komisija:
+
+Darbs augšupielādēts LUIS’ā \qquad \thedate
+
 }
 \makeatother
 
