@@ -14,7 +14,7 @@ instrukciju, katrs elements strādājot ar saviem teorētiski patvaļīgiem dati
 
 SIMD nav pieejami tiešā veidā caur instrukciju kopu, programmētājam ir
 jādarbojas ar pavedienu saskarnes SIMT (\textit{Single Instruction, Multiple
-Threads}) darbību izpildes modeli. \cite{GPGPU_gramata} Arhitektūrā tie ir
+Threads}) darbību izpildes modeli \cite{GPGPU_gramata}. Arhitektūrā tie ir
 ieviesti kā GPGPU kodoli un satur SIMT elementus. Līdz ar to SIMT kodols tiek
 saukt par priekšgalu (\textit{front-end}) un SIMD par aizmugursistēmu
 (\textit{back-end}).
@@ -29,21 +29,21 @@ pavedienu, saucamu par  GPGPU izpildāmo kodolu (\textit{device kernel}), ir
 spējīgs definēt kā MIMD (\textit{Multiple Instructions, Multiple Data}) modelim
 līdzīgu kodu, tāpēc funkciju definēšana ir praktiski identiska tam, kā to darītu
 priekš CPU ar noteiktiem specifiskiem saskarnes API izsaukumiem un kontekstu,
-ka šis pavediens izpildās paralēli. \cite{kursa-darbs}
+ka šis pavediens izpildās paralēli \cite{kursa-darbs}.
 
 Kursa darbā jau tika apskatītas galvenās atšķirības un kopējais starp CUDA un
-ROCm.\cite{kursa-darbs} AMD jau no sākuma dizainēja ROCm, lai tā līdzinātos
+ROCm \cite{kursa-darbs}. AMD jau no sākuma dizainēja ROCm, lai tā līdzinātos
 CUDA. Protams, abas platformas ir paradzētas GPU programmēšanai, un apakšējā
 videokaršu arhitektūra nebūs tik atšķirīga. Neskaitot platformu mērķa grafiskos
 procesorus, ir fakts, ka atšķirībā no CUDA, kura ir slēgtā, ROCm ir atklātā
 pirmkoda programmatūra, līdz ar to, ja nepieciešams, visu programmatūras saturu
 var izpētīt, modificiēt, kompilēt pats, kā arī dot savu pienesumu gan
-dokumentācijā, gan kodā.\cite{what_is_ROCM}
+dokumentācijā, gan kodā \cite{what_is_ROCM}.
 
 ROCm satur vairākas programmas, bibliotēkas un ietvarus dažādiem darbiem ar
 augstas veiktspējas, paralelizācijas skaitļošanu, bet konkrētais C++ API 
 GPU programēšanai ir HIP (no angļu val. \textit{Heterogeneous-computing
-Interface for Portability}).\cite{HIP_docs} CUDA gadījumā viss pieejamais
+Interface for Portability}) \cite{HIP_docs}. CUDA gadījumā viss pieejamais
 programmatūras steks tiek likts zem jau minētā, plašā termina - CUDA.
 
 Pats programmēšanas modelis ir diezgan līdzīgs un vietām pat identisks ar
@@ -106,18 +106,18 @@ dekoratorus ar HIP atbilstošajiem.
 HIP ir atbalsts ne tikai AMD videokartēm, bet arī Nvidia. Tas iespējams tāpēc,
 ka  daudzas HIP saskarnes ir ar CUDA savietojamas, piemēram, ar GPU matemātisko
 funckiju API, tās saturošās funkcijas ir tieši atbilstošas CUDA funkcijām un
-bieži vien pat ar vienādiem funkciju nosaukumiem.
-\cite{HIP_math_API,CUDA_math_API}
+bieži vien pat ar vienādiem funkciju nosaukumiem 
+\cite{HIP_math_API,CUDA_math_API}.
 
 Kompilēšanas līmenī šāds atbalsts ir iespējams, jo HIP izmanto kompilatoru
 draiveri "hipcc", kurš, atkarībā no platformas, veiks priekšapstrādi un izsauks
 attiecīgo kompilatoru - AMD videokartes gadījumā 'amdclang++' un Nvidia CUDA -
-'nvcc'. \cite{HIP_compilers}.
+'nvcc' \cite{HIP_compilers}.
 
 Varētu interpretēt, ka CUDA ir tieša apakškopa ROCM un HIP platformai, tomēr pilnīgs atbalsts
 visām CUDA funkcijām nav pieejams. Ir funkcijas, kuras HIP nav implementējusi, piemēram,
 'cyl\_bessel\_i0f' \cite{HIP_math_API}. Papildus nianses ir specifiskām funkcijām, kā 'nextafterf', kura CUDA
-ir pieejama gan CPU, gan GPU kodā, bet HIP gadījumā tikai uz CPU. \cite{HIP_math_API}
+ir pieejama gan CPU, gan GPU kodā, bet HIP gadījumā tikai uz CPU \cite{HIP_math_API}.
 
 GPGPU izpildāmais kodols tiek 'nodots' no CPU caur saskarņu API izsaukumiem,
 parametros definējot:
@@ -125,7 +125,7 @@ parametros definējot:
     \item pavedienu skaitu blokā,
     \item bloku skaitu,
     \item kodola funkcijas argumentus (visbiežāk tās būs apstrādājamo datu
-        atmiņas adreses - rādītāji). \cite{GPGPU_gramata}
+        atmiņas adreses - rādītāji) \cite{GPGPU_gramata}.
 \end{itemize}
 
 
@@ -133,11 +133,11 @@ Khronos Group definētā un izstrādātā paralēlās programmēšanas platforma
 ietvars - OpenCL ir paredzēta plašākam iekārtu klāstam, fokuss nav tieši uz
 videokartēm. OpenCL GPGPU kodolus ir iespējams darbināt uz CPU, GPU,
 aparatūras paātrinātājiem, kā FPGA (no angļu val. \textit{Field Programmable Gate
-Array}), ciparsignālu un mākslīgā intelekta AI procesoriem. \cite{opencl-spec}
+Array}), ciparsignālu un mākslīgā intelekta AI procesoriem \cite{opencl-spec}.
 
 Atšķirībā no CUDA un HIP, kur kodolu definēšana notiek C++ kodā līdzās ar CPU
 puses kodu, OpenCL ir definēta sava C lietojumprogrammu saskarnes valoda, kura
-balstīta uz C99.\cite{opencl_c_lang_spec} Tā domāta tieši GPGPU kodolu
+balstīta uz C99 \cite{opencl_c_lang_spec}. Tā domāta tieši GPGPU kodolu
 definēšanai, un to iespējams kā teksta simbolu virkni ielādēt un kompilēt CPU
 puses kodā. Noteiktās situācijas tas var būt mīnuss - programmai jāvelta laiks,
 kompilējot kodolus, tās darbības laikā ieviešot ātrdarbības zudumus.
@@ -232,7 +232,7 @@ OpenCL iekārtas puses kompilators līdz ar to ir pieejams divos režīmos:
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{images/2024-spirv-language-ecosystem.jpg}
-    \caption{Khronos Group izstrādāto projektu ekosistēma\cite{spirv-ecosystem-image}}
+    \caption{Khronos Group izstrādāto projektu ekosistēma \cite{spirv-ecosystem-image}}
     \label{img:khronos_ecosystem}
 \end{figure}
 

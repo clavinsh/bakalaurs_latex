@@ -24,16 +24,16 @@ uzdevumiem.
 
 Par vienu uzdevumu tiks izmantots jau autora kursa darbā definētais un 
 izstrādatais uzdevums (ar CUDA un ROCm, bet ne OpenCL) - paroļu lauzējs,
-atguvējs ar SHA-256 jaucējalgoritmu jauktām, šifrētām parolēm.\cite{kursa-darbs}
+atguvējs ar SHA-256 jaucējalgoritmu jauktām, šifrētām parolēm \cite{kursa-darbs}.
 
-Nobriedušāki paroļi lauzēji (paroļu atguvēji), kā "hashcat"\cite{hashcat} ir
+Nobriedušāki paroļi lauzēji (paroļu atguvēji), kā "hashcat" \cite{hashcat} ir
 spējīgi ņemt vērā vairākas paroļu variācijas, maskas un citas sarežģītākas
 potenciālo paroļu iegūšanas metodes. Demonstrācijas vajadzībām pietiktu
 izstrādāt pašu 'kodolu', kas ar iepriekš definēto paroļu sarakstu tās
 pārbaudīs pret mērķa jaucējvērtību jeb tā saukto 'vārdnīcas' tipa
-uzbrukumu.\cite{hashcat_dict_atk} "hashcat" programma ir arī praktisks
+uzbrukumu \cite{hashcat_dict_atk}. "hashcat" programma ir arī praktisks
 pierādījums OpenCL, jo tā izstrādāta šajā
-platformā. \cite{hashcat}
+platformā \cite{hashcat}.
 
 Šāda uzdevuma implementācijās būs nepieciešamība izmantot datu straumi parolēm.
 Pie atbilstošas paroles atrašanas jānodrošina atomiska datu ierakstīšana no
@@ -50,7 +50,7 @@ ilgtermiņa izpildi, tiek noteikts otrs uzdevums - Džona Konveja "Dzīves spēl
 \cite{conway1970conway} realizācija, kurā izpildes apjoms definējams kā šūnu
 automāta darbības soļi. Šis šūnu automāts ir viens no zināmākajiem tā vienkāršo noteikumu un iespējamās
 kompleksās šūnu mijiedarbības dēļ (ar to iespējams uzkonstruēt jebkuru Tjūringa
-mašīnu).\cite{conway1970conway} Šūnas ir izkārtotas 2 dimensiju režģī, virsmā. Katra šūna ir vai nu
+mašīnu) \cite{conway1970conway}. Šūnas ir izkārtotas 2 dimensiju režģī, virsmā. Katra šūna ir vai nu
 dzīva vai mirusi un nākamajā solī šūnas stāvoklis ir atkarīgs no tās tiešajiem
 8 kaimiņiem:
 \begin{itemize}
@@ -78,7 +78,7 @@ skaita, jo ar katru soli nākas mainīt ieejas un izejas datus.
 \section{Programmatūras, aparatūras uzstādījums}
 Tā kā programmas notikumu ilgumi dažādās konfigurācijās nāks no CPU, CUDA, HIP
 un OpenCL pusēm, tad, lai būtu vienota un viegli apstrādājama datu kopa,
-notikumi tiks žurnalēti failā, izmantojot spdlog\cite{spdlog-github}, C++
+notikumi tiks žurnalēti failā, izmantojot spdlog \cite{spdlog-github}, C++
 žurnalēšanas bibliotēku.
 
 Ērtai datu apstrādei izmantojamais faila formāts ir CSV, un datu formāts
@@ -111,7 +111,7 @@ Lai nodrošinātu risinājumu izolāciju ar Docker, visu konteineru izveidē par
 bāzes Docker attēlu izmantots Ubuntu 24.04. Par pamata Docker failu HIP
 risinājumam izmantots AMD izstrādatais \cite{amd_dockerfile} ar sagatavotu vidi
 ROCm un CUDA platformām. Līdzīgi priekš CUDA izmantots Nvidia
-sagatavotais attēls\cite{nvidia_dockerfile}, kuram pamatā ir Ubuntu (pilnās
+sagatavotais attēls \cite{nvidia_dockerfile}, kuram pamatā ir Ubuntu (pilnās
 Docker attēlu atkarības skatīt attēlā \ref{fig:directed-graph}).
 
 \begin{figure}[h]
@@ -167,8 +167,8 @@ Programma ir paredzēta kā komandrindas utilīta ar sekojošiem CLI argumentiem
 Apstrādājamais fails saturēs potenciālās paroles ar katru paroli savā rindā
 (piemēru skatīt izdrukā \ref{lst:pw_file_example}), kurām tiks izrēķināta
 jaucējvērtība un salīdzināta ar doto. Izmantojamais jaukšanas algoritms -
-SHA256. Jaucējvērtību rēķināšana un salīdzināšana jārealizē izpildei ar GPU.
-\cite{kursa-darbs}
+SHA256. Jaucējvērtību rēķināšana un salīdzināšana jārealizē izpildei ar GPU
+\cite{kursa-darbs}.
 
 \begin{lstlisting}[caption={Paroļu ieejas faila piemērs ar nejauši ģenerētām
     parolēm}, captionpos=b, label=lst:pw_file_example]
@@ -187,7 +187,7 @@ Lai notestētu SHA-256 aprēķinu darbību pret zināmām jaucējvērtībām un 
 attiecīgajiem ziņojumiem, kā arī, lai pārbaudītu vispārīgu GPGPU kodola
 programmas darbību, platformas pieejamību uz datora apartūras un veiktu
 galveno programmas izpildi, programma jādarbina no komandrinas, padodot
-atbilstošos argumentus (skatīt izdruku  \ref{lst:pwcracker_mains}). \cite{kursa-darbs}
+atbilstošos argumentus (skatīt izdruku  \ref{lst:pwcracker_mains}) \cite{kursa-darbs}.
 
 \begin{lstlisting}[caption={Programmas galvenā izpilde}, captionpos=b, 
     label=lst:pwcracker_mains]
@@ -366,7 +366,7 @@ Mērāmie notikumu ilgumi, kā pseidokodā norādīts, piemēram, ar
 funkcijām, realizējami vispirms ar attiecīgajām GPGPU API notikumu profilēšanas
 funkcijām. Bet, ja kādā vai visās platformās notikumu nav iespējams izmērīt GPU
 pusē vai tas neskaitās kā notikums, tad lietojama C++ standarta bibliotēkas
-datumu un laiku manipulācijas bibliotēka "chrono".\cite{std_chrono}
+datumu un laiku manipulācijas bibliotēka "chrono" \cite{std_chrono}.
 
 \begin{lstlisting}[caption={"chrono" laika mērīšanas piemērs},
     captionpos=b,
@@ -428,15 +428,15 @@ float elapsedTime = static_cast<double>(end - start);
 
 \section{Ievaddatu ģenerēšana un etalonuzdevuma darbināšana}
 Paroļu atguvēja programmām, lai iegūtu nepieciešamos paroļu failus, izmantots
-Python skripts\cite{kursa-darbs}, kurš: 
+Python skripts \cite{kursa-darbs}, kurš: 
 \begin{itemize}
     \item nejauši ģenerē paroles pēc lietotāja ievadītā paroļu skaita,
     \item katru paroli nosaka 6 - 16 ASCII simbolu garumā.
 \end{itemize}
 
 Izvēlētas šādas prasības, jo paroles pārsvarā tiek veidotas, izmantojot ASCII
-simbolus, un tās  tiek rakstītas dotajā simbolu diapazonā.
-\cite{pw_user_practice}
+simbolus, un tās  tiek rakstītas dotajā simbolu diapazonā
+\cite{pw_user_practice}.
 
 Skripts darbināms ar komandrindu, padodot CLI argumentus paroļu skaitam
 un faila ceļam (skatīt izdruku \ref{lst:pwgen_cli}).
@@ -570,7 +570,7 @@ gol_{platums}x{garums}_steps_{soli}_{platforma}_{laidiena nr}.log
 \section{Risinājumu repozitorijs, failu struktūra, kompilēšana, darbināšana}
 Bakalaura darba repozitorijs uzdevumu risinājumiem, ievadfailu ģenerēšanas un
 etalonuzdevuma Python skriptiem publicēts un pieejams
-GitHub.\cite{bak_github_repo} Projekta saknē iekļautas 7 direktorijas (abu
+GitHub \cite{bak_github_repo}. Projekta saknē iekļautas 7 direktorijas (abu
 uzdevumu risinājumi katrā platformā un Python skripti).
 
 Attiecīgo projektu no tā direktorijas saknes iespējams kompilēt ar \textit{cmake}

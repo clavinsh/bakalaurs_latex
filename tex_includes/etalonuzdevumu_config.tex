@@ -37,7 +37,7 @@ Jāizvēlas tāds uzdevums, kuru iespējams 'augsti' paralelizēt, tas ir, sadal
 uzdevumu daudzos mazos un (it īpaši) neatkarīgos gabalos, lai būtu pievienotā
 vērtība (ātrdarbība) pildīšanai ar GPU, ņemot vērā papildus darbu un
 nepieciešamās zināšanas, lai ieviestu GPU risinājumu. Autora kursa
-darbā\cite{kursa-darbs} tāds jau tika definēts, bet netika pievērsta papildus
+darbā \cite{kursa-darbs} tāds jau tika definēts, bet netika pievērsta papildus
 uzmanība etalonuzdevuma uzticamībai.
 
 Salīdzinot dažādus ietvarus ar it kā vienu un to pašu uzdevumu, jāņem vērā, ka
@@ -94,7 +94,7 @@ if __name__ == "__main__":
 \end{lstlisting}
 
 Pārbaudot izpildes laikus, piemēram, ar failu, kas satur 100 miljonus rindu,
-izmantojot time\cite{time_man_page} utilītu, var iegūt rezultātus, kuri skatāmi
+izmantojot time \cite{time_man_page} utilītu, var iegūt rezultātus, kuri skatāmi
 izdrukā \ref{lst:example_benchmark_result}.
 
 \begin{lstlisting}[caption={Etalonuzdevuma rezultāti failam ar 100 miljoniem rindu},
@@ -199,7 +199,7 @@ piemēram, ar jau iepriekš minēto \textit{time} utilītu.
 
 Tā kā mērķis ir analizēt GPGPU platformas un to konkrētu funkcionalitāšu
 ātrdarbību, tad tikai ar kopējo CPU laiku nepietiks (kā tas tika darīts autora
-kursa darbā, analizējot CUDA un ROCm HIP platformas\cite{kursa-darbs}). Tiks
+kursa darbā, analizējot CUDA un ROCm HIP platformas \cite{kursa-darbs}). Tiks
 pieskaitīts laiks, kas, iespējams, nav tik svarīgs vai vispār saistīts ar
 konkrēto platformu, kādu tās API funckiju, piemēram, CPU puses faila apstrādi.
 
@@ -224,7 +224,7 @@ platformas stiprās un vājās puses, tiek noteikts, ka individuāli jāmēra:
 
 Uzticamam etalonuzdevumam jānodrošina konsekventa (ideālā gadījumā) 
 deterministiska vide un programmas izpilde. Kā minēts Dirk Beyer, Stefan Löwe
-un Philipp Wendler darbā "Reliable benchmarking: requirements and solutions"
+un Philipp Wendler darbā "Reliable benchmarking: requirements and solutions" 
 \cite{reliable-benchmarking}, ir vairāki parametri (aparatūras arhitektūra, I/O
 darbības, laika mērīšanas rīku nianses, atmiņas iedalīšana), kuri var pēc
 nejaušības principa ietekmēt rezultātus.
@@ -244,17 +244,17 @@ uzticamākiem etalonuzdevumiem: \cite{reliable-benchmarking}
 Izstrādātās prasības ir domātas, galvenokārt, CPU izpildes analīzei. GPU
 patēriņa mērīšana ir sarežģītāka tādēļ, ka nav pieejama vienota
 arhitektūras saskarne, līdz ar to ārpus daudzu etalonuzdevumu un profilēšanas
-rīku tvēruma. \cite{reliable-benchmarking}
+rīku tvēruma \cite{reliable-benchmarking}.
 
 Risinājums - lietot konkrēto videokaršu izstrādātāju piedāvātos rīkus 
-(Nvidia Nsights Systems\cite{nvidia-nsights} un AMD ROCm Systems
-Profiler\cite{rocm-profiler}), bet, analizējot OpenCL programmas ar tiem
+(Nvidia Nsights Systems \cite{nvidia-nsights} un AMD ROCm Systems
+Profiler \cite{rocm-profiler}), bet, analizējot OpenCL programmas ar tiem
 tiks iegūta tikai zemā līmeņa informācija par to, ko OpenCL ir "nodevis" GPU.
 
 Diemžēl ar Nvidia Nsights un AMD ROCm Systems Profiler nav iespējams iegūt
 konkrētu informāciju (kaut vai par GPGPU kodolu izpildes ilgumu) no OpenCL
 programmām, šāds atbalsts vispār netiek
-sniegts.\cite{rocm_sys_profiler_use_case} OpenCL gadījumā ārējie profilēšanas
+sniegts \cite{rocm_sys_profiler_use_case}. OpenCL gadījumā ārējie profilēšanas
 rīki nav pieejami, nākas pašam lietot pieejamajās API funkcijas.
 
 Lai nodrošinātu uz attiecīgajām platformām izstrādāto
@@ -269,8 +269,8 @@ Lai ievērotu 6 iepriekšminētās prasības, tiek piedāvāti risinājumi, izma
 noteiktas operētājsistēmas funkcijas un izstrāddarbināšanas rīkus.
 
 \section{Jāizolē individuāli laidieni}
-Izolācijai tiks izmantots programmatūras virtualizācijas rīks - Docker.
-\cite{docker-docs-engine}
+Izolācijai tiks izmantots programmatūras virtualizācijas rīks - Docker
+\cite{docker-docs-engine}.
 
 \section{Precīzi jāmēra un jāierobežo resursi}
 Mērīšanai tiks izmantotas attiecīgo platformu GPGPU notikumu profilēšanas
