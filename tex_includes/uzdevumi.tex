@@ -69,7 +69,7 @@ dzīva vai mirusi un nākamajā solī šūnas stāvoklis ir atkarīgs no tās ti
 \end{itemize}
 
 Uzdevumu ir vērts pildīt ar GPU, jo katru automāta šūnu iespējams apstrādāt
-savā pavedienā gandrīz vai kā 2D bildi, kur katrs pikselis atbilst katrai
+savā pavedienā gandrīz vai kā 2D attēlu, kur katrs pikselis atbilst katrai
 automāta šūnai. Papildus sarežģītība un iespējamās platformu ātrdarbības
 atšķirības meklējamas GPU atmiņas datu izveidē un apmaiņā pie liela spēles soļu
 skaita, jo ar katru soli nākas mainīt ieejas un izejas datus.
@@ -241,8 +241,8 @@ PwCracker(passwords, pwOffsets, count, hash, outputIdx):
         atomicStore(outputIdx, i)
 \end{lstlisting}
 
-\section{Dzīves spēles šūnu automāta īstenojums} \label{gol_section}
-Dzīves spēles šūnu automāta programma līdzīgi paroļu atguvējam izstrādājama kā
+\section{"Dzīves spēles" šūnu automāta īstenojums} \label{gol_section}
+"Dzīves spēles" šūnu automāta programma līdzīgi paroļu atguvējam izstrādājama kā
 komandrindas utilīta. Tā kā izejas datu apjoms ir vienāds ar ieejas datiem
 (vienāda izmēra režģis, tikai ar citu saturu), tad šos datus nebūtu prātīgi
 izvadīt caur standarda izeju, bet gan ar izejas failu. Līdz ar to
@@ -283,7 +283,7 @@ faktu, vai attiecīgā šūna ir dzīva (1) vai mirusi (0), izdruka
 \end{lstlisting}
 
 Algoritma pseidokodu skatīt izdrukās \ref{lst:gol_pseido_alg} un  \ref{lst:gol_pseido_alg_device}.
-\begin{lstlisting}[caption={Dzīves spēles šūnu automāta CPU puses pseidokods},
+\begin{lstlisting}[caption={"Dzīves spēles" šūnu automāta CPU puses pseidokods},
     captionpos=b,
     label=lst:gol_pseido_alg]
 data, width, height = readGridFromFile(inputFile)
@@ -313,7 +313,7 @@ writeGridToFile(outputGridPinnedMemory, outputFile)
 log(gridWriteTime())
 \end{lstlisting}
 
-\begin{lstlisting}[caption={Dzīves spēles šūnu automāta GPGPU kodola pseidokods},
+\begin{lstlisting}[caption={"Dzīves spēles" šūnu automāta GPGPU kodola pseidokods},
     captionpos=b,
     label=lst:gol_pseido_alg_device]
 GameOfLife(inputGrid, outputGrid, width, height):
