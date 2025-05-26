@@ -91,6 +91,8 @@
     year = {2024},
 }
 
+
+
 @misc{tensorflow_github,
     author = {{TensorFlow komūna}},
     howpublished = {\url{https://github.com/tensorflow/tensorflow}},
@@ -212,6 +214,15 @@
     addendum = {(Piekļūts: 02.04.2025)},
     year = {2025},
 }
+
+@online{nvidia-smi,
+    author = {{Nvidia}},
+    url = "https://docs.nvidia.com/deploy/nvidia-smi/index.html",
+    title = {nvidia-smi - NVIDIA System Management Interface program},
+    addendum = {(Piekļūts: 17.05.2025)},
+    year = {2025},
+}
+
 
 @online{spirv-spec,
     author = {{The Khronos SPIR\texttrademark Working Group}},
@@ -454,6 +465,16 @@ url={https://doi.org/10.1007/BF01025868}
 }
 
 
+@online{primo,
+  title={LU PRIMO},
+  author={{Latvijas Universitāte}},
+  url = "https://primolatvija.hosted.exlibrisgroup.com/",
+  addendum = "(Piekļūts: 23.05.2025)"
+}
+
+
+
+
 @online{khronos_proposal,
   title={Khronos Launches Heterogeneous Computing Initiative},
   author={{The Khronos\texttrademark Group}},
@@ -464,3 +485,88 @@ url={https://doi.org/10.1007/BF01025868}
   addendum = "(Piekļūts: 21.05.2025)"
 }
 
+@inproceedings{gpu-dvfs,
+author = {Tang, Zhenheng and Wang, Yuxin and Wang, Qiang and Chu, Xiaowen},
+title = {The Impact of GPU DVFS on the Energy and Performance of Deep Learning: an Empirical Study},
+year = {2019},
+isbn = {9781450366717},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3307772.3328315},
+doi = {10.1145/3307772.3328315},
+abstract = {Over the past years, great progress has been made in improving the computing power of general-purpose graphics processing units (GPGPUs), which facilitates the prosperity of deep neural networks (DNNs) in multiple fields like computer vision and natural language processing. A typical DNN training process repeatedly updates tens of millions of parameters, which not only requires huge computing resources but also consumes significant energy. In order to train DNNs in a more energy-efficient way, we empirically investigate the impact of GPU Dynamic Voltage and Frequency Scaling (DVFS) on the energy consumption and performance of deep learning. Our experiments cover a wide range of GPU architectures, DVFS settings, and DNN configurations. We observe that, compared to the default core frequency settings of three tested GPUs, the optimal core frequency can help conserve 8.7\%~23.1\% energy consumption for different DNN training cases. Regarding the inference, the benefits vary from 19.6\%~26.4\%. Our findings suggest that GPU DVFS has great potentials to help develop energy efficient DNN training/inference schemes.},
+booktitle = {Proceedings of the Tenth ACM International Conference on Future Energy Systems},
+pages = {315–325},
+numpages = {11},
+keywords = {Graphics Processing Units, Dynamic Voltage and Frequency Scaling, Deep Convolutional Neural Network},
+location = {Phoenix, AZ, USA},
+series = {e-Energy '19}
+}
+
+@article{MEI201789,
+title = {A survey and measurement study of GPU DVFS on energy conservation},
+journal = {Digital Communications and Networks},
+volume = {3},
+number = {2},
+pages = {89-100},
+year = {2017},
+issn = {2352-8648},
+doi = {https://doi.org/10.1016/j.dcan.2016.10.001},
+url = {https://www.sciencedirect.com/science/article/pii/S2352864816300736},
+author = {Xinxin Mei and Qiang Wang and Xiaowen Chu},
+keywords = {Graphics processing unit, Dynamic voltage and frequency scaling, Energy efficiency},
+abstract = {Energy efficiency has become one of the top design criteria for current computing systems. The dynamic voltage and frequency scaling (DVFS) has been widely adopted by laptop computers, servers, and mobile devices to conserve energy, while the GPU DVFS is still at a certain early age. This paper aims at exploring the impact of GPU DVFS on the application performance and power consumption, and furthermore, on energy conservation. We survey the state-of-the-art GPU DVFS characterizations, and then summarize recent research works on GPU power and performance models. We also conduct real GPU DVFS experiments on NVIDIA Fermi and Maxwell GPUs. According to our experimental results, GPU DVFS has significant potential for energy saving. The effect of scaling core voltage/frequency and memory voltage/frequency depends on not only the GPU architectures, but also the characteristic of GPU applications.}
+}
+
+@article{GUERREIRO201993,
+title = {DVFS-aware application classification to improve GPGPUs energy efficiency},
+journal = {Parallel Computing},
+volume = {83},
+pages = {93-117},
+year = {2019},
+issn = {0167-8191},
+doi = {https://doi.org/10.1016/j.parco.2018.02.001},
+url = {https://www.sciencedirect.com/science/article/pii/S0167819118300243},
+author = {Jo{\~a}o Guerreiro and Aleksandar Ilic and Nuno Roma and Pedro Tom{\'a}s},
+keywords = {GPGPU, Application classification, DVFS, Optimal frequency, Energy savings}
+}
+
+@inproceedings{10.1145/3529538.3529980,
+author = {Breyer, Marcel and Van Craen, Alexander and Pfl\"{u}ger, Dirk},
+title = {A Comparison of SYCL, OpenCL, CUDA, and OpenMP for Massively Parallel Support Vector Machine Classification on Multi-Vendor Hardware},
+year = {2022},
+isbn = {9781450396585},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3529538.3529980},
+doi = {10.1145/3529538.3529980},
+abstract = {In scientific computing and Artificial Intelligence (AI), which both rely on massively parallel tasks, frameworks like the Compute Unified Device Architecture (CUDA) and the Open Computing Language (OpenCL) are widely used to harvest the computational power of accelerator cards, in particular of Graphics Processing Units (GPUs). A few years ago, GPUs from NVIDIA were used almost exclusively for these tasks but meanwhile, AMD and Intel are increasing their shares of the GPUs market. This introduces many new challenges for code development, as the prevailing CUDA code can only run on NVIDIA hardware and must be adapted or even completely rewritten to run on GPUs from AMD or Intel. In this paper, we compare the different competing programming frameworks OpenMP, CUDA, OpenCL, and SYCL, paying special attention to the two SYCL implementations hipSYCL and DPC++. Thereby, we investigate the different frameworks with respect to their usability, performance, and performance portability on a variety of hardware platforms from different vendors, i.e., GPUs from NVIDIA, AMD, and Intel and Central Processing Units (CPUs) from AMD and Intel. Besides discussing the runtimes of these frameworks on the different hardware platforms, we also focus our comparison on the differences between the nd_range kernel formulation and the SYCL specific hierarchical kernels. Our Parallel Least Squares Support Vector Machine (PLSSVM) library implements backends for the four previously mentioned programming frameworks for a Least Squares Support Vector Machines (LS-SVMs). At its example, we show which of the frameworks is best suited for a standard workload that is frequently employed in scientific computing and AI, depending on the target hardware: The most computationally intensive part of our PLSSVM library is solving a system of linear equations using the Conjugate Gradient (CG) method. Specifically, we parallelize the implicit matrix-vector multiplication inside the CG method, a workload common in many scientific codes. The PLSSVM code, utility scripts, and documentation are all available on GitHub: https://github.com/SC-SGS/PLSSVM.},
+booktitle = {Proceedings of the 10th International Workshop on OpenCL},
+articleno = {2},
+numpages = {12},
+keywords = {CPU, CUDA, GPU, Machine Learning, OpenCL, OpenMP, Performance Evaluation, Performance Portability, SVM, SYCL},
+location = {Bristol, United Kingdom, United Kingdom},
+series = {IWOCL '22}
+}
+
+@INPROCEEDINGS{6047190,
+  author={Fang, Jianbin and Varbanescu, Ana Lucia and Sips, Henk},
+  booktitle={2011 International Conference on Parallel Processing}, 
+  title={A Comprehensive Performance Comparison of CUDA and OpenCL}, 
+  year={2011},
+  volume={},
+  number={},
+  pages={216-225},
+  keywords={Graphics processing unit;Benchmark testing;Programming;Performance evaluation;Computational modeling;Kernel;Performance Comparison;CUDA;OpenCL},
+  doi={10.1109/ICPP.2011.45}
+}
+
+@misc{memeti2017benchmarkingopenclopenaccopenmp,
+  title={Benchmarking OpenCL, OpenACC, OpenMP, and CUDA: programming productivity, performance, and energy consumption}, 
+  author={Suejb Memeti and Lu Li and Sabri Pllana and Joanna Kolodziej and Christoph Kessler},
+  year={2017},
+  eprint={1704.05316},
+  archivePrefix={arXiv},
+  primaryClass={cs.DC},
+  url={https://arxiv.org/abs/1704.05316}, 
+}

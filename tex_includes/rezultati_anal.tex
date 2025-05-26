@@ -149,11 +149,12 @@ mazināšanu. Tā kā uzdevumi un darbināmie kodoli ir pietiekami ekvivalenti, 
 palielinātais noslogojums pie pietiekami ekvivalentiem uzdevumiem,
 salīdzinājumā ar CUDA, nosaka palielinātu neefektivitāti.
 
-Tālakajā analīzē tika secināts, ka hipotēze ir aplama, jo atkārtotā manuālā
-etalonuzdevumu palaišanā netika novērota frekvences mazināšanās, un videokartes
-temperatūra nepalielinājās līdz nedrošai robežai. Īstais iemesls tika
-atklāts, apskatot secīgus individuālo laidienu kodolu izpildes laikus (skatīt
-attēlus \ref{img:consecutive_kernel_exec_gol_cl},
+Tālakajā analīzē tika secināts, ka šī situācija ir nedaudz sarežģītāka nekā
+pilnīga aparatūras droselēšana, jo, ar atkārtotu manuālu etalonuzdevumu
+darbināšanu netika novērota takts frekvences mazināšanās, un videokartes
+temperatūra nepalielinājās līdz nedrošai robežai. Īstais iemesls tika atklāts,
+apskatot secīgus individuālo laidienu kodolu izpildes laikus (skatīt attēlus
+\ref{img:consecutive_kernel_exec_gol_cl},
 \ref{img:consecutive_kernel_exec_gol_cuda},
 \ref{img:consecutive_kernel_exec_gol_hip}).
 
@@ -225,6 +226,11 @@ izteikta nepārtraukta svārstība, kas nav raksturīga CUDA (skatīt attēlus
     \label{img:sha_exec_hip}
 \end{figure}
 
+Iemesls šīm svārstībām, kuras parādās individuālo kodolu līmenī (līdz ar to
+ietekme izpildē konstatējama dažu milisekunžu laikā), ir visdrīzāk skaidrojams
+ar moderno GPU aparatūras dinamisko sprieguma un frekvences mērogošanu (no
+angļu val. \textit{Dynamic voltage and frequency scaling}). Šis paņēmiens
+lietojams enerģijas taupīšanai pie lielām slodzēm \cite{gpu-dvfs}.
 
 Viena GPU puses atšķirība starp uzdevumiem ir nepieciešamība iteratīvi
 sagatovot atmiņu un to piepildīt ar straumētajām parolēm paroļu atguvēja

@@ -26,10 +26,9 @@ kopsummā apstrādāti un analizēti 810 žurnālfaili par CUDA, HIP, OpenCL
 dažādajiem GPGPU notikumu izpildes ilgumiem.
 
 Noskaidrots, ka paroļu atguvēja uzdevumā OpenCL darbojās par 30,18\% lēnāk nekā
-CUDA, bet ROCm HIP platforma par 2,25\% lēnāk.
-"Dzīves spēles" uzdevumā rezultāti sarindojās tieši tāpat, lai gan OpenCL
-starpība nebija tik liela kā pirmajā uzdevumā, - OpenCL lēnāks par
-7,71\%, bet ROCm HIP par 2,47\%.
+CUDA, bet ROCm HIP platforma par 2,25\% lēnāk. "Dzīves spēles" uzdevumā
+rezultāti sarindojās tieši tāpat, lai gan OpenCL starpība nebija tik liela kā
+pirmajā uzdevumā, - OpenCL lēnāks par 7,71\%, bet ROCm HIP par 2,47\%.
 
 Aptuveni šāds sniegums bija gaidāms, jo CUDA un ROCm ir gandrīz identiskas
 platformas, turpretī OpenCL konveijerapstrādes modelis, SPIR-V starp-posmu
@@ -38,6 +37,21 @@ virsdarbe ir minimāla, jo ar Nvidia videokartēm tiek atbalstīta CUDA
 kompilatora aizmugursistēma HIP rakstītām programmām. Tāpēc praktiski
 visos rādītājos CUDA bija ātrākā, ROCm HIP bija otrajā vietā, OpenCL - trešajā.
 
+Etalonuzdevumu veikšana pilnīgakiem datiem būtu veicama uz vairākām videokartēm
+- kā minimums gan Nvidia, gan AMD. Līdzīgi pētījumi ar vairākām GPU salīdzina
+GPGPU programmu veiktspēju starp CUDA un OpenCL, un nonāk pie līdzigiem
+secinājumiem -  fakta, ka CUDA darbojas par 30\%, 3.8\% - 5.4\% ātrāk nekā
+OpenCL \cite{6047190, memeti2017benchmarkingopenclopenaccopenmp}.
+
+Izmantojamo uzdevumu skaits etalonuzdevumos būtu jāpalielina, norādot konkrētas
+praktiskas GPGPU izmantošanas jomas, piemēram, mākslīgā intelekta  trenēšana.
+Esošie divi uzdevumi var nebūt pietiekoši konstruktīviem secinājumiem,  kurus
+varētu vispārināt vai attiecināt kādām GPGPU programmu jomām. Citos pētījumos
+izmantoti, piemēram, specifiski mākslīgā intelekta modeļi
+\cite{10.1145/3529538.3529980} vai attēlu apstrādes filtri
+\cite{memeti2017benchmarkingopenclopenaccopenmp}, bet fokuss pārsvarā ir vai nu
+tikai uz CUDA vai salīdzinājums starp CUDA un OpenCL, bet ne ROCm.
+
 Visās trijās platformās abos uzdevumos bija manāmas rimstošas svārstības
 kodolu izpildes laikos, bet papildus tika novērotas konsekventas variācijas un
 nestabilitāte kodolu izpildē ar OpenCL un ROCm platformām, kur šīs svārstības
@@ -45,6 +59,13 @@ aptuveni 80\% gadījumu nerimst. Pats periods arī nav vienmērīgs, un visos
 gadījumos vērojama lielāka nosliece uz mazākām vērtībām. Tāpēc, apskatot
 kodolu izpildes laikus kā histogrammas pēc biežumiem, CUDA risinājums veido
 vienu pīķi, bet OpenCL un ROCm - divus.
+
+Nerimstošās svārstības visdrīzāk skaidrojamas ar GPU dinamisko sprieguma un
+frekvences mērogošanu (DVFS). Pieejamā literatūra par šo tēma ir ierobežota, jo
+DVFS algoritmi, aparatūra ir GPU izstrādātāju tirdzniecības noslēpumi.
+Pieejamās publikācijas koncentrējas uz DVFS ietekmi uz patērēto enerģiju
+\cite{gpu-dvfs, MEI201789, GUERREIRO201993}. Tālāk šajā tēmā būtu pētāma ilgstoši ejošu programmu un/vai
+kodolu ietekme no dažādiem DVFS iestatījumiem apskatītajās platformās.
 
 Bet šīs svārstības nav salīdzinoši lielas - ar amplitūdu no 0,0212\si{\ms} līdz
 0,1147\si{\ms} kodoliem, kuru vidējais izpildes laiks ir no 0,6446\si{\ms} līdz
@@ -55,3 +76,22 @@ mērījumos iepriekšminētās svārstības netika novērotas nevienā platform�
 buferi \(2^{20}\) parolēm, kas aizņem aptuveni 33.55MiB, tiek nosūtīti vidēji
 no 2.7472\si{\ms} līdz 6.4135\si{\ms} ar amplitūdu no 0.03764\si{\ms}  līdz
 0.0558\si{\ms}.
+
+Pieejamā akadēmiskā literatūra, pētījumi, kuri salīdzina visas trīs platformas
+ir maz \cite{google_scholar, 10.1145/3529538.3529980}, pārsvarā tās tiek
+apskatītas individuāli konkrētos pielietojumos (visvairāk CUDA), kas ir
+loģiski, jo, kā tika noskaidrots šajā bakalaura darbā, lai gan visas trīs
+platformas paradzētas un izstrādātas augstas veiktspējas plašlietojuma GPU
+programmēšanas uzdevumiem, reālā tirgus situācija ar Nvidia pārsvaru krietni
+novirza GPGPU programmētājus lietot un izstrādāt risinājumus CUDA vidē
+\cite{kursa-darbs}. Individuāli CUDA arī ir pārsvarā, jo, ja, piemēram,
+atsevišķi meklē resursus LU "PRIMO" iMākonī, tad pieejamie rezultāti darba
+izstrādes brīdī (2025. gada maijā) par ROCm ir 400, OpenCL - 2093, bet CUDA -
+11117 \cite{primo}.
+
+Būtu vērtīgi veikt neatkarīgus pētījumus šo platformu salīdzināšanā, lai tālāk
+izprastu to stiprās un vājās puses. Papildus uzmanība jāvelta AMD izstrādatajam
+ROCm risinājumam, par kuru trūkst pētījumi, eksperimenti un programmatūra, kura
+izmanto šo CUDA savietojamo un veiktspējā līdzīgo platformu.
+
+
